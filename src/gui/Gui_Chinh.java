@@ -88,7 +88,6 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		lbl1 = new JLabel();
 		
 		pLeft.setBackground(new Color(40,156,164));
-        pLeft.setLocation(0, pHeader.getWidth());
 		pLogo.setBackground(new Color(40,156,164));
 		pMenu.setBackground(new Color(40,156,164));
 		btnTrangChu = this.createButtonMenu("Trang chủ", new ImageIcon(""));
@@ -102,7 +101,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		btnDangXuat = this.createButtonMenu("Đăng Xuất", new ImageIcon(""));
 		pMain.setBackground(new Color(40,156,164));
 		pHeader.setBackground(new Color(40,156,164));
-		pHeader.setLayout(new FlowLayout(FlowLayout.LEFT));
+		pHeader.setLayout(new BorderLayout());
 		lbl1.setText("   TRANG CHỦ");
 		lbl1.setFont(new Font("Arial", Font.BOLD, 20));
 		lbl1.setForeground(Color.WHITE);
@@ -140,7 +139,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
         pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
         pLeft.add(pLogo);
 		pLeft.add(pMenu);
-		pHeader.add(lbl1);
+		pHeader.add(lbl1, BorderLayout.WEST);
 		pMain.add(pHeader);
 		pMain.add(pContent);
 		this.add(pLeft, BorderLayout.WEST);
@@ -190,7 +189,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 			pContent.add(new Gui_HoaDon());
 		}else if (act.equals(btnKhachHang)) {
 			pContent.removeAll();
-			pContent.add(new Gui_KhachHang());
+			pContent.add(new Gui_KhachHang(pContent.getWidth(), pContent.getHeight()));
 		}else if (act.equals(btnKhuyenMai)) {
 			pContent.removeAll();
 			pContent.add(new Gui_KhuyenMai());
