@@ -60,6 +60,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	
 	private int widthFrame, heightFrame;
 	private Gui_TrangChu Gui_TrangChu;
+	private JButton actButtonBack = new JButton();
 
 	public Gui_Chinh() {
 		this.setTitle("Hệ thống quản lý hiệu thuốc Ân Cần");
@@ -72,6 +73,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	    this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		initCompoent();
+		this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
 		this.setVisible(true);
 		
 	}
@@ -102,7 +104,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		pMain.setBackground(new Color(40,156,164));
 		pHeader.setBackground(new Color(40,156,164));
 		pHeader.setLayout(new BorderLayout());
-		lbl1.setText("   TRANG CHỦ");
+		lbl1.setText("TRANG CHỦ");
 		lbl1.setFont(new Font("Arial", Font.BOLD, 20));
 		lbl1.setForeground(Color.WHITE);
 		pContent.setBackground(Color.WHITE);
@@ -118,6 +120,9 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		btnDangXuat.addActionListener(this);
 		
 		pContent.add(new Gui_TrangChu());
+		btnTrangChu.setBackground(new Color(224,255,255));
+		actButtonBack = btnTrangChu;
+
 		
 		pMenu.add(btnTrangChu);
         pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
@@ -179,27 +184,80 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		// TODO Auto-generated method stub
 		Object act = e.getSource();
 		if (act.equals(btnTrangChu)) {
-			pContent.removeAll();
-			pContent.add(new Gui_TrangChu());
+			if (!actButtonBack.equals(btnTrangChu)) {
+				actButtonBack.setBackground(new Color(224,220,220));
+				btnTrangChu.setBackground(new Color(224,255,255));
+				pContent.removeAll();
+				pContent.add(new Gui_TrangChu());
+				lbl1.setText("TRANG CHỦ");
+			}
+			actButtonBack = btnTrangChu;
 		}else if (act.equals(btnSanPham)) {
-			pContent.removeAll();
-			pContent.add(new Gui_SanPham());
+			if (!actButtonBack.equals(btnSanPham)) {
+				actButtonBack.setBackground(new Color(224,220,220));
+				btnSanPham.setBackground(new Color(224,255,255));
+				pContent.removeAll();
+				pContent.add(new Gui_SanPham(pContent.getWidth(), pContent.getHeight()));
+				lbl1.setText("SẢN PHẨM");
+			}
+			actButtonBack = btnSanPham;
 		}else if (act.equals(btnHoaDon)) {
-			pContent.removeAll();
-			pContent.add(new Gui_HoaDon());
+			if (!actButtonBack.equals(btnHoaDon)) {
+				actButtonBack.setBackground(new Color(224,220,220));
+				btnHoaDon.setBackground(new Color(224,255,255));
+				pContent.removeAll();
+				pContent.add(new Gui_HoaDon());
+				lbl1.setText("HÓA ĐƠN");
+			}
+			actButtonBack = btnHoaDon;
+		}else if (act.equals(btnNhanVien)) {
+			if (!actButtonBack.equals(btnNhanVien)) {
+				actButtonBack.setBackground(new Color(224,220,220));
+				btnNhanVien.setBackground(new Color(224,255,255));
+				pContent.removeAll();
+				pContent.add(new Gui_NhanVien(pContent.getWidth(), pContent.getHeight()));
+				lbl1.setText("NHÂN VIÊN");
+			}
+			actButtonBack = btnNhanVien;
 		}else if (act.equals(btnKhachHang)) {
-			pContent.removeAll();
-			pContent.add(new Gui_KhachHang(pContent.getWidth(), pContent.getHeight()));
+			if (!actButtonBack.equals(btnKhachHang)) {
+				actButtonBack.setBackground(new Color(224,220,220));
+				btnKhachHang.setBackground(new Color(224,255,255));
+				pContent.removeAll();
+				pContent.add(new Gui_KhachHang(pContent.getWidth(), pContent.getHeight()));
+				lbl1.setText("KHÁCH HÀNG");
+			}
+			actButtonBack = btnKhachHang;
 		}else if (act.equals(btnKhuyenMai)) {
-			pContent.removeAll();
-			pContent.add(new Gui_KhuyenMai());
+			if (!actButtonBack.equals(btnKhuyenMai)) {
+				actButtonBack.setBackground(new Color(224,220,220));
+				btnKhuyenMai.setBackground(new Color(224,255,255));
+				pContent.removeAll();
+				pContent.add(new Gui_KhuyenMai(pContent.getWidth(), pContent.getHeight()));
+				lbl1.setText("KHUYẾN MÃI");
+			}
+			actButtonBack = btnKhuyenMai;
 		}else if (act.equals(btnThongKe)) {
-			pContent.removeAll();
-			pContent.add(new Gui_ThongKe());
+			if (!actButtonBack.equals(btnSanPham)) {
+				actButtonBack.setBackground(new Color(224,220,220));
+				btnThongKe.setBackground(new Color(224,255,255));
+				pContent.removeAll();
+				pContent.add(new Gui_ThongKe(pContent.getWidth(), pContent.getHeight()));
+				lbl1.setText("THỐNG KÊ");
+			}
+			actButtonBack = btnThongKe;
 		}else if (act.equals(btnHuongDan)) {
-			pContent.removeAll();
-			pContent.add(new Gui_TroGiup());
+			if (!actButtonBack.equals(btnHuongDan)) {
+				actButtonBack.setBackground(new Color(224,220,220));
+				btnHuongDan.setBackground(new Color(224,255,255));
+				pContent.removeAll();
+				pContent.add(new Gui_TroGiup(pContent.getWidth(), pContent.getHeight()));
+				lbl1.setText("HƯỚNG DẪN");
+			}
+			actButtonBack = btnHuongDan;
 		}else if (act.equals(btnDangXuat)) {
+			actButtonBack.setBackground(new Color(224,220,220));
+			btnDangXuat.setBackground(new Color(224,255,255));
             Object[] options = {"Đăng Xuất", "Hủy", "Thoát"};
 			int response = JOptionPane.showOptionDialog(this, 
 	                "Bạn muốn làm gì?", 
@@ -218,6 +276,8 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	                case JOptionPane.NO_OPTION:
 	                    System.out.println("Hủy thao tác.");
 	                    // Không làm gì cả
+	                    btnDangXuat.setBackground(new Color(224,220,220));
+	                    actButtonBack.setBackground(new Color(224,255,255));
 	                    break;
 	                case JOptionPane.CANCEL_OPTION:
 	                    System.out.println("Thoát ứng dụng!");
@@ -226,6 +286,8 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	                    break;
 	                default:
 	                    System.out.println("Không có hành động nào được thực hiện.");
+	                    btnDangXuat.setBackground(new Color(224,220,220));
+	                    actButtonBack.setBackground(new Color(224,255,255));
 	                    break;
 	            }
 		}
