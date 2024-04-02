@@ -152,14 +152,14 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		this.addComponentListener(new ComponentAdapter() {
 	        @Override
 	        public void componentResized(ComponentEvent e) {
-	            pLeft.setPreferredSize(new Dimension((int) ((int)widthFrame*0.1), heightFrame));
-	            pLogo.setPreferredSize(new Dimension(pLeft.getWidth(), (int)(pLeft.getHeight() * 0.20)));
-	    		pMenu.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-	            pMenu.setPreferredSize(new Dimension(pLeft.getWidth(), (int)(pLeft.getHeight() * 0.8)));
+	        	pLeft.setPreferredSize(new Dimension((int) ((int)widthFrame*0.10), heightFrame));
+	            pLogo.setPreferredSize(new Dimension((int) ((int)widthFrame*0.10), (int) ((int)heightFrame *0.15)));
+	    		pMenu.setLayout(new FlowLayout(FlowLayout.LEFT));
+	            pMenu.setPreferredSize(new Dimension((int) ((int)widthFrame*0.10), (int) ((int)heightFrame *0.8)));
 	    		pMain.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 	            pMain.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), heightFrame));
-	    		pHeader.setPreferredSize(new Dimension(pMain.getWidth(), 75));
-	    		pContent.setPreferredSize(new Dimension(pMain.getWidth(), pMain.getHeight()-75));
+	    		pHeader.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), 75));
+	    		pContent.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), heightFrame-75));
 	            revalidate(); // Cần gọi revalidate() để đảm bảo cập nhật layout
 	        }
 	    });
@@ -170,11 +170,11 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		JButton btn = new JButton(titleButton, new ImageIcon(img));
 		btn.setBackground(new Color(224,220,220));
 		btn.setOpaque(true);
-        btn.setContentAreaFilled(true);
+		btn.setContentAreaFilled(true);
         btn.setBorderPainted(false);
         btn.setFocusPainted(false); // Loại bỏ trạng thái focus
-        btn.setPreferredSize(new Dimension(140, 35));
-        btn.setFont(new Font("Arial", Font.PLAIN, 17));
+        btn.setPreferredSize(new Dimension((int) ((int)widthFrame*0.09), 35));
+        btn.setFont(new Font("Arial", Font.BOLD, 14));
         btn.setHorizontalAlignment(SwingConstants.LEFT);
 		return btn;
 	}

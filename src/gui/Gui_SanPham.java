@@ -98,7 +98,7 @@ public class Gui_SanPham extends JPanel{
 		Object[] newRow = {"", ""};
 		dataModel.addRow(newRow);
 		tableModel = new JTable(dataModel);
-		tableModel.getColumn("Xóa").setPreferredWidth(15);
+		tableModel.getColumn("Xóa").setPreferredWidth(10);
 		tableModel.getColumn("Xóa").setCellRenderer(new ButtonRenderer());
 		tableModel.getColumn("Xóa").setCellEditor(new ButtonEditor(new JCheckBox()));
 		tableModel.getTableHeader().setFont(new Font("Arial", Font.BOLD, 17));

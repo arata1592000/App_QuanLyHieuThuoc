@@ -110,7 +110,7 @@ public class Gui_KhachHang extends JPanel{
 		pFillDate.add(lbl2);
 		pFillDate.add(dateChooserEndDate);
 		pAction.add(pSearch);
-		pAction.add(Box.createHorizontalStrut(500));
+		pAction.add(Box.createHorizontalStrut(300));
 		pAction.add(pFillDate);
 		pTable.add(lbl3);
 		pTable.add(pane);
