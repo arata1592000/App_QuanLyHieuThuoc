@@ -23,7 +23,7 @@ public class ButtonRenderer extends JButton implements TableCellRenderer{
                                                     boolean isSelected, boolean isFocus,
                                                     int row, int col) {
     	
-    	setBackground(Color.WHITE);
+	    setBackground(new Color(240,236,236));
     	setOpaque(true);
         setContentAreaFilled(true);
         setBorderPainted(false);

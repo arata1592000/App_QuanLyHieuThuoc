@@ -37,7 +37,7 @@ public class ButtonEditor extends DefaultCellEditor {
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 	    bListener.setRow(row);
 	    bListener.setTable(table);
-	    button.setBackground(Color.WHITE);
+	    button.setBackground(new Color(240,236,236));
 	    button.setOpaque(true);
 	    button.setContentAreaFilled(true);
 	    button.setBorderPainted(false);

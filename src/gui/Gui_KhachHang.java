@@ -49,7 +49,7 @@ public class Gui_KhachHang extends JPanel{
 	private int widthComp;
 	private int heightComp;
 	private JTextField txtSearch;
-	private JButton btnSearch;
+	private JButton btnTim;
 	private JPanel pSearch;
 	private JPanel pFillDate;
 	private JLabel lbl2;
@@ -69,7 +69,7 @@ public class Gui_KhachHang extends JPanel{
 		pAction = new JPanel();
 		pSearch = new JPanel();
 		txtSearch = new JTextField();
-		btnSearch = new JButton();
+		btnTim = new JButton();
 		pFillDate = new JPanel();
 		lbl1 = new JLabel();
         dateChooserStartDate = new JDateChooser();
@@ -81,13 +81,22 @@ public class Gui_KhachHang extends JPanel{
 		pSearch.setBackground(Color.WHITE);
 		pFillDate.setBackground(Color.WHITE);
 		pAction.setBackground(Color.WHITE);
+		pAction.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.1)));
 		txtSearch.setPreferredSize(new Dimension(150, 25));
-		btnSearch.setText("Tìm");
+		btnTim.setText("Tìm");
+		btnTim.setForeground(Color.WHITE);
+		btnTim.setFont(new Font("Arial", Font.BOLD, 16));
+		btnTim.setBackground(new Color(40,156,164));
+		btnTim.setOpaque(true);
+		btnTim.setContentAreaFilled(true);
+        btnTim.setBorderPainted(false);
+        btnTim.setFocusPainted(false);
 		lbl1.setText("Lọc từ ngày:");
 		dateChooserStartDate.setPreferredSize(new Dimension(200,25));
 		lbl2.setText("Đến ngày:");
 		dateChooserEndDate.setPreferredSize(new Dimension(200,25));
 		pTable.setLayout(new FlowLayout());
+		pTable.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.8)));
 		lbl3.setText("Danh sách khách hàng");
 		lbl3.setFont(new Font("Arial", Font.ITALIC, 30));
 		String headers[] = {"Mã khách hàng", "Họ và tên", "Số điện thoại", "Ngày mua gần nhất", "Số lần mua"};
@@ -102,9 +111,10 @@ public class Gui_KhachHang extends JPanel{
 		tableModel.setFont(new Font("Arial", Font.PLAIN, 16));
 		tableModel.setRowHeight(30);
 		JScrollPane pane = new JScrollPane(tableModel);
+		pane.setPreferredSize(new Dimension((int)(widthComp*0.9),(int) (heightComp*0.7)));
 		
 		pSearch.add(txtSearch);
-		pSearch.add(btnSearch);
+		pSearch.add(btnTim);
 		pFillDate.add(lbl1);
 		pFillDate.add(dateChooserStartDate);
 		pFillDate.add(lbl2);
@@ -117,17 +127,6 @@ public class Gui_KhachHang extends JPanel{
 		this.setLayout(new BorderLayout());
 		this.add(pAction, BorderLayout.NORTH);
 		this.add(pTable, BorderLayout.CENTER);
-		
-		this.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				pAction.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.1)));
-				pTable.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.9)));
-				pane.setPreferredSize(new Dimension((int)(widthComp*0.9),(int) (pTable.getHeight()*1.3)));
-				revalidate();
-			}
-		});
 	}
 
 	

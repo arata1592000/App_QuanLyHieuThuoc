@@ -30,22 +30,12 @@ import javax.swing.SwingConstants;
 
 public class Gui_Chinh extends JFrame implements ActionListener{
 
-	private JPanel pNoiDung;
-	private JLabel lblNV;
-	private JLabel lblKH;
-	private JLabel lblBD;
-	private JLabel lblThueBD;
-	private JLabel lblBC;
-	private JLabel lblTraBD;
 	private JPanel pMain;
 	private JPanel pHeader;
 	private JPanel pLeft;
-	private JPopupMenu popMenu;
 	private JButton btnTrangChu;
 	private JButton btnSanPham;
-	private JButton item4;
 	private JButton btnHoaDon;
-	private JButton item5;
 	private JPanel pMenu;
 	private JLabel lbl1;
 	private JButton btnNhanVien;
@@ -55,7 +45,6 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	private JButton btnDangXuat;
 	private JButton btnHuongDan;
 	private JPanel pLogo;
-	private JPanel pApplet;
 	private JPanel pContent;
 	
 	private int widthFrame, heightFrame;
@@ -90,8 +79,12 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		lbl1 = new JLabel();
 		
 		pLeft.setBackground(new Color(40,156,164));
+		pLeft.setPreferredSize(new Dimension((int) ((int)widthFrame*0.10), heightFrame));
 		pLogo.setBackground(new Color(40,156,164));
+        pLogo.setPreferredSize(new Dimension((int) ((int)widthFrame*0.10), (int) ((int)heightFrame *0.15)));
 		pMenu.setBackground(new Color(40,156,164));
+		pMenu.setLayout(new FlowLayout(FlowLayout.LEFT));
+        pMenu.setPreferredSize(new Dimension((int) ((int)widthFrame*0.10), (int) ((int)heightFrame *0.8)));
 		btnTrangChu = this.createButtonMenu("Trang chủ", new ImageIcon(""));
 		btnSanPham = this.createButtonMenu("Sản phẩm", new ImageIcon(""));
 		btnHoaDon = this.createButtonMenu("Hóa đơn", new ImageIcon(""));
@@ -102,12 +95,17 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		btnHuongDan = this.createButtonMenu("Hướng Dẫn", new ImageIcon(""));
 		btnDangXuat = this.createButtonMenu("Đăng Xuất", new ImageIcon(""));
 		pMain.setBackground(new Color(40,156,164));
+		pMain.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        pMain.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), heightFrame));
 		pHeader.setBackground(new Color(40,156,164));
 		pHeader.setLayout(new BorderLayout());
+		pHeader.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), 75));
 		lbl1.setText("TRANG CHỦ");
 		lbl1.setFont(new Font("Arial", Font.BOLD, 20));
 		lbl1.setForeground(Color.WHITE);
 		pContent.setBackground(Color.WHITE);
+		pContent.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), heightFrame-75));
+
 
 		btnTrangChu.addActionListener(this);
 		btnSanPham.addActionListener(this);
@@ -119,7 +117,6 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		btnHuongDan.addActionListener(this);
 		btnDangXuat.addActionListener(this);
 		
-		pContent.add(new Gui_TrangChu());
 		btnTrangChu.setBackground(new Color(224,255,255));
 		actButtonBack = btnTrangChu;
 
@@ -145,21 +142,17 @@ public class Gui_Chinh extends JFrame implements ActionListener{
         pLeft.add(pLogo);
 		pLeft.add(pMenu);
 		pHeader.add(lbl1, BorderLayout.WEST);
+		pContent.add(new Gui_TrangChu());
 		pMain.add(pHeader);
 		pMain.add(pContent);
 		this.add(pLeft, BorderLayout.WEST);
 		this.add(pMain, BorderLayout.CENTER);
+		
+		
 		this.addComponentListener(new ComponentAdapter() {
 	        @Override
 	        public void componentResized(ComponentEvent e) {
-	        	pLeft.setPreferredSize(new Dimension((int) ((int)widthFrame*0.10), heightFrame));
-	            pLogo.setPreferredSize(new Dimension((int) ((int)widthFrame*0.10), (int) ((int)heightFrame *0.15)));
-	    		pMenu.setLayout(new FlowLayout(FlowLayout.LEFT));
-	            pMenu.setPreferredSize(new Dimension((int) ((int)widthFrame*0.10), (int) ((int)heightFrame *0.8)));
-	    		pMain.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-	            pMain.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), heightFrame));
-	    		pHeader.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), 75));
-	    		pContent.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), heightFrame-75));
+	        	
 	            revalidate(); // Cần gọi revalidate() để đảm bảo cập nhật layout
 	        }
 	    });
