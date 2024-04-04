@@ -137,7 +137,7 @@ public class Gui_SanPham extends JPanel implements ActionListener{
 		}else if (act.equals(btnXemThongTin)) {
 			if (!btnBack.equals(btnXemThongTin)) {
 				pMain.removeAll();
-//				pMain.add(new Gui_DoiTraThuoc(pMain.getWidth(), pMain.getHeight()));
+				pMain.add(new Gui_XemThongTinThuoc(pMain.getWidth(), pMain.getHeight()));
 				btnXemThongTin.setBackground(new Color (40,156,164));
 				btnXemThongTin.setForeground(Color.WHITE);
 				btnBack.setBackground(new Color(224,220,220));

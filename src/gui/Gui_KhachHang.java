@@ -12,6 +12,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -68,7 +72,7 @@ public class Gui_KhachHang extends JPanel{
 		// TODO Auto-generated constructor stub
 		pAction = new JPanel();
 		pSearch = new JPanel();
-		txtSearch = new JTextField();
+		txtSearch = new JTextField(20);
 		btnTim = new JButton();
 		pFillDate = new JPanel();
 		lbl1 = new JLabel();
@@ -83,9 +87,11 @@ public class Gui_KhachHang extends JPanel{
 		pAction.setBackground(Color.WHITE);
 		pAction.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.1)));
 		txtSearch.setPreferredSize(new Dimension(150, 25));
+		txtSearch.setFont(new Font("Arial", Font.PLAIN, 16));
+		txtSearch.setText("Nhập mã hoặc tên của khách hàng");
 		btnTim.setText("Tìm");
 		btnTim.setForeground(Color.WHITE);
-		btnTim.setFont(new Font("Arial", Font.BOLD, 16));
+		btnTim.setFont(new Font("Arial", Font.BOLD, 15));
 		btnTim.setBackground(new Color(40,156,164));
 		btnTim.setOpaque(true);
 		btnTim.setContentAreaFilled(true);
@@ -105,7 +111,13 @@ public class Gui_KhachHang extends JPanel{
                 {"KH002", "Jane Smith", "987654321", "2024-03-28", 3},
                 {"KH003", "Tom Brown", "456123789", "2024-03-25", 2}
         };
-		dataModel = new DefaultTableModel( data, headers);
+		dataModel = new DefaultTableModel( data, headers) {
+			@Override
+            public boolean isCellEditable(int row, int column) {
+                // Đặt tất cả các ô không thể chỉnh sửa
+                return false;
+            }
+		};
 		tableModel = new JTable(dataModel);
 		tableModel.getTableHeader().setFont(new Font("Arial", Font.BOLD, 20));
 		tableModel.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -127,6 +139,25 @@ public class Gui_KhachHang extends JPanel{
 		this.setLayout(new BorderLayout());
 		this.add(pAction, BorderLayout.NORTH);
 		this.add(pTable, BorderLayout.CENTER);
+		txtSearch.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				if (txtSearch.getText().equals("")) {
+                	txtSearch.setText("Nhập mã hoặc tên của khách hàng");
+                }
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				// TODO Auto-generated method stub
+				if (txtSearch.getText().equals("Nhập mã hoặc tên của khách hàng")) {
+                	txtSearch.setText("");
+                }
+			}
+		});
+
 	}
 
 	

@@ -383,10 +383,8 @@ public class Gui_BanThuoc extends JPanel{
 		            // Lấy hàng và cột của ô được chọn
 		            int row = tableModel.getSelectedRow();
 		            int column = tableModel.getSelectedColumn();
-		            System.out.println(row);
-		            System.out.println(column);
 		            // Kiểm tra xem hàng và cột có hợp lệ không
-		            if (row != -1 && column != -1) {
+		            if (row == tableModel.getRowCount()-2 && column != -1) {
 		                // Lấy dữ liệu từ ô đó
 		                txtThem.requestFocus();
 		                // Thực hiện xử lý với dữ liệu lấy được từ ô đó
