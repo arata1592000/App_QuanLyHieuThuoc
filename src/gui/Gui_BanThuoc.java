@@ -28,14 +28,21 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
+import dao.Dao_Thuoc;
+import entity.Thuoc;
 import utils.ButtonEditor;
 import utils.ButtonRenderer;
 
@@ -375,24 +382,52 @@ public class Gui_BanThuoc extends JPanel{
 				addRowTable();
 			}
 		});
-		tableModel.addKeyListener(new KeyAdapter() {
+//		tableModel.addKeyListener(new KeyAdapter() {
+//		    @Override
+//		    public void keyPressed(KeyEvent e) {
+//		        // Kiểm tra xem phím được nhấn có phải là phím Enter không
+//		        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+//		            // Lấy hàng và cột của ô được chọn
+//		            int row = tableModel.getSelectedRow();
+//		            int column = tableModel.getSelectedColumn();
+//		            // Kiểm tra xem hàng và cột có hợp lệ không
+//		            if (row == tableModel.getRowCount()-2 && column != -1) {
+//		                // Lấy dữ liệu từ ô đó
+//		                txtThem.requestFocus();
+//		                // Thực hiện xử lý với dữ liệu lấy được từ ô đó
+//		            }
+//		        }
+//		    }
+//		});
+		
+		dataModel.addTableModelListener(new TableModelListener() {
 		    @Override
-		    public void keyPressed(KeyEvent e) {
-		        // Kiểm tra xem phím được nhấn có phải là phím Enter không
-		        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-		            // Lấy hàng và cột của ô được chọn
-		            int row = tableModel.getSelectedRow();
-		            int column = tableModel.getSelectedColumn();
-		            // Kiểm tra xem hàng và cột có hợp lệ không
-		            if (row == tableModel.getRowCount()-2 && column != -1) {
-		                // Lấy dữ liệu từ ô đó
-		                txtThem.requestFocus();
-		                // Thực hiện xử lý với dữ liệu lấy được từ ô đó
+		    public void tableChanged(TableModelEvent e) {
+		        if (e.getType() == TableModelEvent.UPDATE) {
+		            int row = e.getFirstRow();
+		            int column = e.getColumn();		            
+		            if (column == 2 && !dataModel.getValueAt(row, 2).equals("")) { // Kiểm tra xem cột thay đổi có phải là cột số lượng không
+		                int quantity = Integer.parseInt((String) dataModel.getValueAt(row, 2));
+		                float price = Float.valueOf(dataModel.getValueAt(row, 4).toString());
+		                float totalPrice = quantity * price;
+		                tableModel.setValueAt(totalPrice, row, 6);
+		                updateInforOrder();
+		                if (row == tableModel.getRowCount()-2) {
+		                	SwingUtilities.invokeLater(new Runnable() {
+			                    @Override
+			                    public void run() {
+			                        txtThem.requestFocus();
+			                    }
+			                }); 
+		                }
+		                
+		                
 		            }
 		        }
 		    }
 		});
 	}
+	
 	
 	public void updateInforOrder() {
 		txtTongTien.setText(getTongTienHD()+"");
@@ -401,21 +436,26 @@ public class Gui_BanThuoc extends JPanel{
 	public float getTongTienHD() {
 		float tongTienHD = 0;
 		for (int i = 0 ; i < tableModel.getRowCount()-1 ; i++) {
-			tongTienHD+=Float.parseFloat((String) dataModel.getValueAt(i, 6));
+			tongTienHD+=Float.valueOf(dataModel.getValueAt(i, 6).toString());
 		}
 		return tongTienHD;
 	}
 	
 	public void addRowTable() {
+		Thuoc thuoc = (new Dao_Thuoc()).findThuocByMaThuoc(txtThem.getText());
+		if (thuoc == null){
+            JOptionPane.showMessageDialog(null, "Không có loại thuốc này.");
+            return;
+		}
 		tableModel.setRowHeight(tableModel.getRowCount()-1, 30);
 		
-		dataModel.setValueAt("KH003", tableModel.getRowCount()-1, 0);
-		dataModel.setValueAt("Thuốc phá thai", tableModel.getRowCount()-1, 1);
+		dataModel.setValueAt(thuoc.getMaThuoc(), tableModel.getRowCount()-1, 0);
+		dataModel.setValueAt(thuoc.getTenThuoc(), tableModel.getRowCount()-1, 1);
 		dataModel.setValueAt("", tableModel.getRowCount()-1, 2);
-		dataModel.setValueAt("Hộp", tableModel.getRowCount()-1, 3);
-		dataModel.setValueAt("1500000", tableModel.getRowCount()-1, 4);
+		dataModel.setValueAt(thuoc.getDonViTinh(), tableModel.getRowCount()-1, 3);
+		dataModel.setValueAt(thuoc.getGia(), tableModel.getRowCount()-1, 4);
 		dataModel.setValueAt("0", tableModel.getRowCount()-1, 5);
-		dataModel.setValueAt("1500000", tableModel.getRowCount()-1, 6);
+		dataModel.setValueAt("0", tableModel.getRowCount()-1, 6);
 		
 		tableModel.editCellAt(tableModel.getRowCount()-1, 2);
 		Component editor = tableModel.getEditorComponent();

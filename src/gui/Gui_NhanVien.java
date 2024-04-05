@@ -11,6 +11,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -25,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.html.ImageView;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -91,13 +94,20 @@ public class Gui_NhanVien extends JPanel{
 		pInfor = new JPanel();
 		pInfor.setLayout(new GridBagLayout());
 		GridBagConstraints constraintsCustomer = new GridBagConstraints();
-        constraintsCustomer.insets = new Insets(5, 5, 5, 5);
+        constraintsCustomer.insets = new Insets(5,30, 5,30);
         
         btnThemAnh = new JButton("Thêm Ảnh");
         constraintsCustomer.gridx = 0;
         constraintsCustomer.gridy = 4;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(btnThemAnh, constraintsCustomer);
+        btnThemAnh.setForeground(Color.WHITE);
+        btnThemAnh.setFont(new Font("Arial", Font.BOLD, 15));
+        btnThemAnh.setBackground(new Color(40,156,164));
+        btnThemAnh.setOpaque(true);
+        btnThemAnh.setContentAreaFilled(true);
+        btnThemAnh.setBorderPainted(false);
+        btnThemAnh.setFocusPainted(false);
         
         lblMa = new JLabel("Mã nhân viên:");
         constraintsCustomer.gridx = 1;
@@ -208,16 +218,46 @@ public class Gui_NhanVien extends JPanel{
         constraintsCustomer.gridy = 3;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(txtDC,constraintsCustomer);
-              
-        pNorth.add(pInfor,BorderLayout.EAST);
+        
+//        pImage.setBackground(Color.WHITE);
+//        pImage.add(btnThemAnh);
         pNorth.add(pImage,BorderLayout.WEST);
+        pNorth.add(pInfor,BorderLayout.WEST);
         
 		row1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20));
 		row1.setBackground(Color.WHITE); 
 		btn1 = new JButton("Thêm nhân viên");
+		btn1.setFont(new Font("Arial", Font.BOLD, 15));
+		btn1.setForeground(Color.WHITE);
+		btn1.setBackground(new Color(40,156,164));
+		btn1.setOpaque(true);
+		btn1.setContentAreaFilled(true);
+        btn1.setBorderPainted(false);
+        btn1.setFocusPainted(false);
 	    btn2 = new JButton("Sửa nhân viên");
+		btn2.setFont(new Font("Arial", Font.BOLD, 15));
+		btn2.setForeground(Color.WHITE);
+		btn2.setBackground(new Color(40,156,164));
+		btn2.setOpaque(true);
+		btn2.setContentAreaFilled(true);
+        btn2.setBorderPainted(false);
+        btn2.setFocusPainted(false);
 	    btn3 = new JButton("Lưu");
+		btn3.setFont(new Font("Arial", Font.BOLD, 15));
+		btn3.setForeground(Color.WHITE);
+		btn3.setBackground(new Color(40,156,164));
+		btn3.setOpaque(true);
+		btn3.setContentAreaFilled(true);
+        btn3.setBorderPainted(false);
+        btn3.setFocusPainted(false);
 	    btn4 = new JButton("Nhập lại");
+		btn4.setFont(new Font("Arial", Font.BOLD, 15));
+		btn4.setForeground(Color.WHITE);
+		btn4.setBackground(new Color(40,156,164));
+		btn4.setOpaque(true);
+		btn4.setContentAreaFilled(true);
+        btn4.setBorderPainted(false);
+        btn4.setFocusPainted(false);
 		row1.add(btn1);
 		row1.add(btn2);
 		row1.add(btn3);
@@ -232,8 +272,33 @@ public class Gui_NhanVien extends JPanel{
         comboBoxTT = new JComboBox<>(new String[]{"Đang làm việc", "Tạm thời nghỉ"});
         comboBoxTT.setPreferredSize(new Dimension(135,25));
         btnTim = new JButton("Tìm");
-        txtTim = new JTextField("Tìm theo mã nhân viên", 20);
+		btnTim.setForeground(Color.WHITE);
+		btnTim.setFont(new Font("Arial", Font.BOLD, 15));
+		btnTim.setBackground(new Color(40,156,164));
+		btnTim.setOpaque(true);
+		btnTim.setContentAreaFilled(true);
+        btnTim.setBorderPainted(false);
+        btnTim.setFocusPainted(false);
+        txtTim = new JTextField("Nhập mã nhân viên",20);
         txtTim.setPreferredSize(new Dimension(135,25));
+    	txtTim.addFocusListener(new FocusListener() {
+		
+		@Override
+		public void focusLost(FocusEvent e) {
+			// TODO Auto-generated method stub
+			if (txtTim.getText().equals("")) {
+            	txtTim.setText("Nhập mã nhân viên");
+            }
+		}
+		
+		@Override
+		public void focusGained(FocusEvent e) {
+			// TODO Auto-generated method stub
+			if (txtTim.getText().equals("Nhập mã nhân viên")) {
+            	txtTim.setText("");
+            	}
+			}
+    	});
         row2.add(lblCV);
         row2.add(comboBoxCV);
         row2.add(Box.createHorizontalStrut(200)); 
@@ -248,7 +313,8 @@ public class Gui_NhanVien extends JPanel{
         pCenter.add(row2, BorderLayout.CENTER);
         
         
-		pTable.setLayout(new BorderLayout());
+		pTable.setLayout(new FlowLayout());
+		pTable.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.9)));
         lblDSNV = new JLabel("Danh sách nhân viên");
 		lblDSNV.setFont(new Font("Arial", Font.ITALIC, 30));
 		String headers[] = {"Mã nhân viên", "Họ và tên", "Giới tính", "SDT", "Ngày sinh","Ngày vào làm","Chức vụ","CCCD","Địa chỉ","Trạng thái"};
@@ -258,30 +324,22 @@ public class Gui_NhanVien extends JPanel{
                 {"NV001", "John Doe", "Nam", "012343425", "12/03/2001","25/09/2023","Quản lý","079xxxxxxx","Củ Chi","Làm việc"},
                 {"NV001", "John Doe", "Nam", "012343425", "12/03/2001","25/09/2023","Quản lý","079xxxxxxx","Củ Chi","Làm việc"},
                 {"NV001", "John Doe", "Nam", "012343425", "12/03/2001","25/09/2023","Quản lý","079xxxxxxx","Củ Chi","Làm việc"},
-
+                
         };
 		dataModel = new DefaultTableModel(data,headers);
 		tableModel = new JTable(dataModel);
 		tableModel.getTableHeader().setFont(new Font("Arial", Font.BOLD, 15));
-		tableModel.setFont(new Font("Arial", Font.PLAIN, 16));
+		tableModel.setFont(new Font("Arial", Font.PLAIN, 15));
 		tableModel.setRowHeight(25);
 		tableModel.setModel(dataModel);
 		scroll = new JScrollPane(tableModel);
+		scroll.setPreferredSize(new Dimension((int)(widthComp*0.9),(int) (heightComp*0.5)));
 		pTable.add(lblDSNV, BorderLayout.NORTH); 
 		pTable.add(scroll, BorderLayout.CENTER); 
 		
 		this.add(pNorth,BorderLayout.NORTH);
         this.add(pCenter,BorderLayout.CENTER);
         this.add(pTable,BorderLayout.SOUTH);
-        this.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				pNorth.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.3)));
-				pTable.setPreferredSize(new Dimension((int) (widthComp*0.1),(int) (heightComp*0.9)));
-				revalidate();
-			}
-		});
 	}
 
 }

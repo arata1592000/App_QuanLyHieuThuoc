@@ -7,11 +7,12 @@ public class HoaDon {
 	private String maHD;
 	private LocalDate ngayLap;
 	private String maNV;
-	private float tongTien;
-	private String ghiChu;;
 	private String maKH;
-	private float thue;
+	private float tongTien;
 	private String loaiHD;
+	private KhuyenMai khuyenMai;
+	private float thue;
+	private String ghiChu;
 	public String getMaHD() {
 		return maHD;
 	}
@@ -59,6 +60,19 @@ public class HoaDon {
 	}
 	public void setLoaiHD(String loaiHD) {
 		this.loaiHD = loaiHD;
+	}
+	public HoaDon(String maHD, LocalDate ngayLap, String maNV, String maKH, float tongTien, String loaiHD,
+			KhuyenMai khuyenMai, float thue, String ghiChu) {
+		super();
+		this.maHD = maHD;
+		this.ngayLap = ngayLap;
+		this.maNV = maNV;
+		this.maKH = maKH;
+		this.tongTien = tongTien;
+		this.loaiHD = loaiHD;
+		this.khuyenMai = khuyenMai;
+		this.thue = thue;
+		this.ghiChu = ghiChu;
 	}
 	
 	

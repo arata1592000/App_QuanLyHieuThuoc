@@ -34,6 +34,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
+import database.ConnectDB;
+
 public class Gui_Chinh extends JFrame implements ActionListener{
 
 	private JPanel pMain;
@@ -71,6 +73,11 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		this.setResizable(false);
 		initCompoent();
 		phimTat();
+		try {
+            ConnectDB.getConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 		this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
 		this.setVisible(true);
 		

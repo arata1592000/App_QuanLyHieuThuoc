@@ -5,15 +5,14 @@ import java.time.LocalDate;
 public class Thuoc {
 	private String maThuoc;
 	private String tenThuoc;
-	private float gia;
-	private int soLuong;
 	private LocalDate ngayNhapVe;
 	private LocalDate ngayHetHan;
-	private String noiSanXuat;
 	private LocalDate ngaySanXuat;
-	private String nhaCungCap;
+	private String noiSanXuat;
+	private float gia;
 	private String donViTinh;
 	private String thanhPhan;
+	private int soLuong;
 	private String maKM;
 	public String getMaThuoc() {
 		return maThuoc;
@@ -63,12 +62,6 @@ public class Thuoc {
 	public void setNgaySanXuat(LocalDate ngaySanXuat) {
 		this.ngaySanXuat = ngaySanXuat;
 	}
-	public String getNhaCungCap() {
-		return nhaCungCap;
-	}
-	public void setNhaCungCap(String nhaCungCap) {
-		this.nhaCungCap = nhaCungCap;
-	}
 	public String getDonViTinh() {
 		return donViTinh;
 	}
@@ -87,26 +80,32 @@ public class Thuoc {
 	public void setMaKM(String maKM) {
 		this.maKM = maKM;
 	}
-	public Thuoc(String maThuoc, String tenThuoc, float gia, int soLuong, LocalDate ngayNhapVe, LocalDate ngayHetHan,
-			String noiSanXuat, LocalDate ngaySanXuat, String nhaCungCap, String donViTinh, String thanhPhan) {
-		super();
-		this.maThuoc = maThuoc;
-		this.tenThuoc = tenThuoc;
-		this.gia = gia;
-		this.soLuong = soLuong;
-		this.ngayNhapVe = ngayNhapVe;
-		this.ngayHetHan = ngayHetHan;
-		this.noiSanXuat = noiSanXuat;
-		this.ngaySanXuat = ngaySanXuat;
-		this.nhaCungCap = nhaCungCap;
-		this.donViTinh = donViTinh;
-		this.thanhPhan = thanhPhan;
-		this.maKM = null;
-	}
 	public Thuoc() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	public Thuoc(String maThuoc, String tenThuoc, LocalDate ngayNhapVe, LocalDate ngayHetHan, LocalDate ngaySanXuat,
+			String noiSanXuat, float gia, String donViTinh, String thanhPhan, int soLuong) {
+		super();
+		this.maThuoc = maThuoc;
+		this.tenThuoc = tenThuoc;
+		this.ngayNhapVe = ngayNhapVe;
+		this.ngayHetHan = ngayHetHan;
+		this.ngaySanXuat = ngaySanXuat;
+		this.noiSanXuat = noiSanXuat;
+		this.gia = gia;
+		this.donViTinh = donViTinh;
+		this.thanhPhan = thanhPhan;
+		this.soLuong = soLuong;
+	}
+	@Override
+	public String toString() {
+		return "Thuoc [maThuoc=" + maThuoc + ", tenThuoc=" + tenThuoc + ", ngayNhapVe=" + ngayNhapVe + ", ngayHetHan="
+				+ ngayHetHan + ", ngaySanXuat=" + ngaySanXuat + ", noiSanXuat=" + noiSanXuat + ", gia=" + gia
+				+ ", donViTinh=" + donViTinh + ", thanhPhan=" + thanhPhan + ", soLuong=" + soLuong + ", maKM=" + maKM
+				+ "]";
+	}
+		
 	
 	
 }

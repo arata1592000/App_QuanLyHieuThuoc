@@ -2,14 +2,20 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -17,6 +23,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -28,7 +35,10 @@ import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JDateChooser;
 
-public class Gui_XemThongTinThuoc extends JPanel{
+import dao.Dao_Thuoc;
+import entity.Thuoc;
+
+public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 	private int widthComp;
 	private int heightComp;
 	private JPanel pCenter;
@@ -51,7 +61,6 @@ public class Gui_XemThongTinThuoc extends JPanel{
 	private JLabel lbl8;
 	private JTextField txtGia;
 	private JLabel lbl9;
-	private JTextField txtDonViTinhh;
 	private JLabel lbl10;
 	private JTextField txtThanhPhan;
 	private JLabel lbl11;
@@ -74,7 +83,8 @@ public class Gui_XemThongTinThuoc extends JPanel{
 	private JTable tableModel;
 	private JScrollPane scroll;
 	private JPanel pFormLeft;
-
+	private JTextField txtDonViTinh;
+	
 	public Gui_XemThongTinThuoc(int width, int height) {
 		// TODO Auto-generated constructor stub
 		widthComp = width;
@@ -82,6 +92,7 @@ public class Gui_XemThongTinThuoc extends JPanel{
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.WHITE);
 		initCompoent();
+		loadDataTable();
 	}
 	
 	public void initCompoent() {
@@ -90,9 +101,9 @@ public class Gui_XemThongTinThuoc extends JPanel{
 		pFormLeft = new JPanel();
 		lbl1 = new JLabel();
 		lbl2 = new JLabel();
-		txtMaThuoc = new JTextField();
+		txtMaThuoc = new JTextField(15);
 		lbl3 = new JLabel();
-		txtTenThuoc = new JTextField();
+		txtTenThuoc = new JTextField(15);
 		lbl4 = new JLabel();;
 		dateNgayNhapVe = new JDateChooser();
 		lbl5 = new JLabel();
@@ -100,15 +111,15 @@ public class Gui_XemThongTinThuoc extends JPanel{
 		lbl6 = new JLabel();
 		dateNgayHetHan = new JDateChooser();
 		lbl7 = new JLabel();
-		txtNoiSanXuat = new JTextField();
+		txtNoiSanXuat = new JTextField(15);
 		lbl8 = new JLabel();
-		txtGia = new JTextField();
+		txtGia = new JTextField(15);
 		lbl9 = new JLabel();
-		txtDonViTinhh = new JTextField();
+		txtDonViTinh = new JTextField(15);
 		lbl10 = new JLabel();
-		txtThanhPhan = new JTextField();
+		txtThanhPhan = new JTextField(15);
 		lbl11 = new JLabel();
-		txtSoLuong = new JTextField();
+		txtSoLuong = new JTextField(15);
 		pButton = new JPanel();
 		btnThemThuoc = new JButton();
 		btnXoaThuoc = new JButton();
@@ -206,13 +217,11 @@ public class Gui_XemThongTinThuoc extends JPanel{
         constraintsCustomer.gridx = 4;
         constraintsCustomer.gridy = 1;
         pFormLeft.add(txtNoiSanXuat,constraintsCustomer);
-        lbl8 = new JLabel("Chức vụ");
+        lbl8.setText("Giá");
         lbl8.setFont(new Font("Arial", Font.PLAIN, 16));
         constraintsCustomer.gridx = 3;
         constraintsCustomer.gridy = 2;
         pFormLeft.add(lbl8,constraintsCustomer);
-//        comboBoxChucVu = new JComboBox<>(new String[]{"Nhân Viên", "Quản lý"});
-//        comboBoxChucVu.setPreferredSize(new Dimension(135,25));
         constraintsCustomer.gridx = 4;
         constraintsCustomer.gridy = 2; 
         pFormLeft.add(txtGia, constraintsCustomer);
@@ -223,7 +232,7 @@ public class Gui_XemThongTinThuoc extends JPanel{
         pFormLeft.add(lbl9, constraintsCustomer);
         constraintsCustomer.gridx = 4;
         constraintsCustomer.gridy = 3;
-        pFormLeft.add(txtDonViTinhh, constraintsCustomer);
+        pFormLeft.add(txtDonViTinh, constraintsCustomer);
         lbl10.setText("Thành phần");
         lbl10.setFont(new Font("Arial", Font.PLAIN, 16));
         constraintsCustomer.gridx = 3;
@@ -262,6 +271,8 @@ public class Gui_XemThongTinThuoc extends JPanel{
 		pTable.setBackground(Color.WHITE);
 		scroll.setPreferredSize(new Dimension((int) (widthComp*0.94),(int) (heightComp*0.40)));
 
+		btnThemThuoc.addActionListener(this);
+		btnXoaThuoc.addActionListener(this);
 
 		pInput.add(pFormLeft);
 		pButton.add(btnThemThuoc);
@@ -284,5 +295,67 @@ public class Gui_XemThongTinThuoc extends JPanel{
 		
 		this.add(pCenter,BorderLayout.CENTER);
         this.add(pSouth,BorderLayout.SOUTH);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object act = e.getSource();
+		if(act.equals(btnThemThuoc)) {
+			Thuoc thuoc = new Thuoc(txtMaThuoc.getText(),
+					txtTenThuoc.getText(),
+					dateNgayNhapVe.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+					dateNgaySanXuat.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+					dateNgayHetHan.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+					txtNoiSanXuat.getText(),
+					Float.parseFloat(txtGia.getText()),
+					txtDonViTinh.getText(),
+					txtThanhPhan.getText(),
+					Integer.parseInt(txtSoLuong.getText()));
+			try {
+				if ((new Dao_Thuoc()).addThuoc(thuoc)) {
+					addRowThuoc(thuoc);
+				}
+			} catch (NumberFormatException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}		
+		}else if(act.equals(btnXoaThuoc)) {
+	        int selectRow = tableModel.getSelectedRow();
+	        // Kiểm tra nếu có hàng được chọn
+	        if (selectRow != -1) {
+        		String maThuoc = (String) tableModel.getValueAt(selectRow, 1);
+	        	if ((new Dao_Thuoc()).removeThuoc(maThuoc)) {
+		            ((DefaultTableModel) tableModel.getModel()).removeRow(selectRow);
+	            // Xóa hàng từ  JTable
+	        	}else {
+		            JOptionPane.showMessageDialog(null, "Hệ thống đang xảy ra lỗi");
+	        	}
+	        } else {
+	            // Hiển thị thông báo nếu không có hàng nào được chọn
+	            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hàng để xóa.");
+	        }
+		}
+	}
+	
+	public void addRowThuoc(Thuoc thuoc ) {
+		dataModel.addRow(new Object[] {thuoc.getMaThuoc(),
+				thuoc.getTenThuoc(),
+				thuoc.getNgayNhapVe(),
+				thuoc.getNgaySanXuat(),
+				thuoc.getNgayHetHan(),
+				thuoc.getNoiSanXuat(),
+				thuoc.getGia()+"",
+				thuoc.getDonViTinh(),
+				thuoc.getThanhPhan(),
+				thuoc.getSoLuong()+""});
+	}
+	
+	public void loadDataTable() {
+		List<Thuoc> listThuoc = new ArrayList();
+		listThuoc = (new Dao_Thuoc()).readFromSQL();
+		for (Thuoc thuoc : listThuoc) {
+			addRowThuoc(thuoc);
+		}
 	}
 }
