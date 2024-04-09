@@ -9,9 +9,9 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
  
-public class ButtonRenderer extends JButton implements TableCellRenderer{
+public class ButtonDeleteRenderer extends JButton implements TableCellRenderer{
  
-	public ButtonRenderer() {
+	public ButtonDeleteRenderer() {
 		ImageIcon image = new ImageIcon("images/delete.png");
 	    Image img = image.getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH);
 	    setIcon(new ImageIcon(img));

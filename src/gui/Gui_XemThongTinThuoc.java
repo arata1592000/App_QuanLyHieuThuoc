@@ -23,6 +23,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -84,18 +85,25 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 	private JScrollPane scroll;
 	private JPanel pFormLeft;
 	private JTextField txtDonViTinh;
+	private JLayeredPane layeredPane;
+	private JPanel pContent;
+	private JPanel pForm;
 	
 	public Gui_XemThongTinThuoc(int width, int height) {
 		// TODO Auto-generated constructor stub
 		widthComp = width;
 		heightComp = height;
-		this.setLayout(new BorderLayout());
+//		this.setLayout(new BorderLayout());
 		this.setBackground(Color.WHITE);
+		
+		pForm = new JPanel();
 		initCompoent();
 		loadDataTable();
 	}
 	
 	public void initCompoent() {
+		layeredPane = new JLayeredPane();
+		pContent = new JPanel();
 		pCenter = new JPanel();
 		pInput = new JPanel();
 		pFormLeft = new JPanel();
@@ -146,8 +154,16 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		tableModel.setModel(dataModel);
 		scroll = new JScrollPane(tableModel);
         
+		layeredPane.setOpaque(true);
+        layeredPane.setPreferredSize(new Dimension(widthComp, heightComp));
+        layeredPane.setBackground(Color.WHITE);
+        
+		pContent.setOpaque(true);
+        pContent.setBounds(0,0, widthComp, heightComp);
+		pContent.setBackground(Color.WHITE);
+
+        
 		pCenter.setLayout(new BorderLayout());
-		pCenter.setBackground(Color.RED);
 		pCenter.setPreferredSize(new Dimension((int)(widthComp*0.95), (int)(heightComp*0.4)));
 		
 		pInput.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -273,6 +289,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 
 		btnThemThuoc.addActionListener(this);
 		btnXoaThuoc.addActionListener(this);
+		btnSuaThuoc.addActionListener(this);
 
 		pInput.add(pFormLeft);
 		pButton.add(btnThemThuoc);
@@ -293,8 +310,13 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		pSouth.add(pAction);
 		pSouth.add(pTable);
 		
-		this.add(pCenter,BorderLayout.CENTER);
-        this.add(pSouth,BorderLayout.SOUTH);
+		pContent.add(pCenter,BorderLayout.CENTER);
+        pContent.add(pSouth,BorderLayout.SOUTH);
+        pContent.setPreferredSize(getPreferredSize());
+        
+        
+        layeredPane.add(pContent, JLayeredPane.DEFAULT_LAYER);
+        this.add(layeredPane);
 	}
 
 	@Override
@@ -324,7 +346,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 	        int selectRow = tableModel.getSelectedRow();
 	        // Kiểm tra nếu có hàng được chọn
 	        if (selectRow != -1) {
-        		String maThuoc = (String) tableModel.getValueAt(selectRow, 1);
+        		String maThuoc = (String) tableModel.getValueAt(selectRow, 0);
 	        	if ((new Dao_Thuoc()).removeThuoc(maThuoc)) {
 		            ((DefaultTableModel) tableModel.getModel()).removeRow(selectRow);
 	            // Xóa hàng từ  JTable
@@ -335,6 +357,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 	            // Hiển thị thông báo nếu không có hàng nào được chọn
 	            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hàng để xóa.");
 	        }
+		}else if(act.equals(btnSuaThuoc)) {
 		}
 	}
 	
@@ -353,7 +376,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 	
 	public void loadDataTable() {
 		List<Thuoc> listThuoc = new ArrayList();
-		listThuoc = (new Dao_Thuoc()).readFromSQL();
+		listThuoc = (new Dao_Thuoc()).readThuocFromSQL();
 		for (Thuoc thuoc : listThuoc) {
 			addRowThuoc(thuoc);
 		}

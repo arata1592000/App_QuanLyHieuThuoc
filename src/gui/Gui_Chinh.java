@@ -72,7 +72,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	    this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		initCompoent();
-		phimTat();
+//		phimTat();
 		try {
             ConnectDB.getConnection();
         } catch (Exception e) {

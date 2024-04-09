@@ -18,7 +18,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.Box;
@@ -37,6 +39,11 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import com.toedter.calendar.JDateChooser;
+
+import dao.Dao_KhachHang;
+import dao.Dao_Thuoc;
+import entity.KhachHang;
+import entity.Thuoc;
 
 
 
@@ -68,8 +75,13 @@ public class Gui_KhachHang extends JPanel{
 	private JLabel lbl3;
 	private JDateChooser dateChooserEndDate;
 	public Gui_KhachHang(int widthComp, int heightComp) {
-		super();
 		// TODO Auto-generated constructor stub
+		this.widthComp = widthComp;
+		this.heightComp = heightComp;
+		initCompoent();
+		loadDataTable();
+	}
+	public void initCompoent() {
 		pAction = new JPanel();
 		pSearch = new JPanel();
 		txtSearch = new JTextField(20);
@@ -105,13 +117,8 @@ public class Gui_KhachHang extends JPanel{
 		pTable.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.8)));
 		lbl3.setText("Danh sách khách hàng");
 		lbl3.setFont(new Font("Arial", Font.ITALIC, 30));
-		String headers[] = {"Mã khách hàng", "Họ và tên", "Số điện thoại", "Ngày mua gần nhất", "Số lần mua"};
-		Object[][] data = {
-                {"KH001", "John Doe", "123456789", "2024-03-30", 5},
-                {"KH002", "Jane Smith", "987654321", "2024-03-28", 3},
-                {"KH003", "Tom Brown", "456123789", "2024-03-25", 2}
-        };
-		dataModel = new DefaultTableModel( data, headers) {
+		String headers[] = {"Mã khách hàng", "Họ và tên", "Số điện thoại"};
+		dataModel = new DefaultTableModel(headers, 0) {
 			@Override
             public boolean isCellEditable(int row, int column) {
                 // Đặt tất cả các ô không thể chỉnh sửa
@@ -159,7 +166,21 @@ public class Gui_KhachHang extends JPanel{
 		});
 
 	}
-
+	
+	public void addRowKhachHang(KhachHang kh) {
+		dataModel.addRow(new Object[] {kh.getMaKH(),
+				kh.getHoTen(),
+				kh.getsDT()}
+				);
+	}
+	
+	public void loadDataTable() {
+		List<KhachHang> listKH = new ArrayList();
+		listKH = (new Dao_KhachHang()).readKhachHangFromSQL();
+		for (KhachHang kh : listKH) {
+			addRowKhachHang(kh);
+		}
+	}
 	
 	
 }

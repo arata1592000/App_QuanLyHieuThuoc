@@ -28,5 +28,7 @@ public class KhachHang {
 		this.hoTen = hoTen;
 		this.sDT = sDT;
 	}
-	
+	public KhachHang(String maKH) {
+		this.maKH = maKH;
+	}
 }

@@ -13,7 +13,7 @@ public class Thuoc {
 	private String donViTinh;
 	private String thanhPhan;
 	private int soLuong;
-	private String maKM;
+	private KhuyenMai khuyenMai;
 	public String getMaThuoc() {
 		return maThuoc;
 	}
@@ -74,11 +74,11 @@ public class Thuoc {
 	public void setThanhPhan(String thanhPhan) {
 		this.thanhPhan = thanhPhan;
 	}
-	public String getMaKM() {
-		return maKM;
+	public KhuyenMai getKhuyenMai() {
+		return khuyenMai;
 	}
-	public void setMaKM(String maKM) {
-		this.maKM = maKM;
+	public void setKhuyenMai(KhuyenMai khuyenMai) {
+		this.khuyenMai = khuyenMai;
 	}
 	public Thuoc() {
 		super();
@@ -97,14 +97,16 @@ public class Thuoc {
 		this.donViTinh = donViTinh;
 		this.thanhPhan = thanhPhan;
 		this.soLuong = soLuong;
+		this.khuyenMai = new KhuyenMai();
 	}
 	@Override
 	public String toString() {
 		return "Thuoc [maThuoc=" + maThuoc + ", tenThuoc=" + tenThuoc + ", ngayNhapVe=" + ngayNhapVe + ", ngayHetHan="
 				+ ngayHetHan + ", ngaySanXuat=" + ngaySanXuat + ", noiSanXuat=" + noiSanXuat + ", gia=" + gia
-				+ ", donViTinh=" + donViTinh + ", thanhPhan=" + thanhPhan + ", soLuong=" + soLuong + ", maKM=" + maKM
-				+ "]";
+				+ ", donViTinh=" + donViTinh + ", thanhPhan=" + thanhPhan + ", soLuong=" + soLuong + ", khuyenMai="
+				+ khuyenMai + "]";
 	}
+	
 		
 	
 	

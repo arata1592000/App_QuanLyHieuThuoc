@@ -6,13 +6,14 @@ import java.util.List;
 public class HoaDon {
 	private String maHD;
 	private LocalDate ngayLap;
-	private String maNV;
-	private String maKH;
+	private NhanVien nhanVien;
+	private KhachHang khachHang;
 	private float tongTien;
 	private String loaiHD;
 	private KhuyenMai khuyenMai;
 	private float thue;
 	private String ghiChu;
+	private List<ChiTietHoaDon> chiTietHoaDon;
 	public String getMaHD() {
 		return maHD;
 	}
@@ -25,11 +26,11 @@ public class HoaDon {
 	public void setNgayLap(LocalDate ngayLap) {
 		this.ngayLap = ngayLap;
 	}
-	public String getMaNV() {
-		return maNV;
+	public NhanVien getNhanVien() {
+		return nhanVien;
 	}
-	public void setMaNV(String maNV) {
-		this.maNV = maNV;
+	public void setNhanVien(NhanVien nhanVien) {
+		this.nhanVien = nhanVien;
 	}
 	public float getTongTien() {
 		return tongTien;
@@ -43,11 +44,11 @@ public class HoaDon {
 	public void setGhiChu(String ghiChu) {
 		this.ghiChu = ghiChu;
 	}
-	public String getMaKH() {
-		return maKH;
+	public KhachHang getKhachHang() {
+		return khachHang;
 	}
-	public void setMaKH(String maKH) {
-		this.maKH = maKH;
+	public void setKhachHang(KhachHang khachHang) {
+		this.khachHang = khachHang;
 	}
 	public float getThue() {
 		return thue;
@@ -61,16 +62,24 @@ public class HoaDon {
 	public void setLoaiHD(String loaiHD) {
 		this.loaiHD = loaiHD;
 	}
-	public HoaDon(String maHD, LocalDate ngayLap, String maNV, String maKH, float tongTien, String loaiHD,
-			KhuyenMai khuyenMai, float thue, String ghiChu) {
+	public KhuyenMai getKhuyenMai() {
+		return khuyenMai;
+	}
+	public void setKhuyenMai(KhuyenMai khuyenMai) {
+		this.khuyenMai = khuyenMai;
+	}
+	public List<ChiTietHoaDon> getChiTietHoaDon() {
+		return chiTietHoaDon;
+	}
+	public void setChiTietHoaDon(List<ChiTietHoaDon> chiTietHoaDon) {
+		this.chiTietHoaDon = chiTietHoaDon;
+	}
+	public HoaDon(String maHD, LocalDate ngayLap, float tongTien, String loaiHD, float thue, String ghiChu) {
 		super();
 		this.maHD = maHD;
 		this.ngayLap = ngayLap;
-		this.maNV = maNV;
-		this.maKH = maKH;
 		this.tongTien = tongTien;
 		this.loaiHD = loaiHD;
-		this.khuyenMai = khuyenMai;
 		this.thue = thue;
 		this.ghiChu = ghiChu;
 	}

@@ -18,7 +18,7 @@ public class Dao_Thuoc {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public List<Thuoc> readFromSQL(){
+	public List<Thuoc> readThuocFromSQL(){
 		Connection connect = null;
 	    PreparedStatement stmt = null;
 	    List<Thuoc> listThuoc = new ArrayList();
@@ -74,7 +74,7 @@ public class Dao_Thuoc {
 			stmt.setString(8, thuoc.getDonViTinh());
 			stmt.setString(9, thuoc.getThanhPhan());
 			stmt.setInt(10, thuoc.getSoLuong());
-			stmt.setString(11, null);
+			stmt.setString(11, thuoc.getKhuyenMai().getMaKM());
 
 			n = stmt.executeUpdate();
 		}  catch (SQLException e) {

@@ -20,7 +20,11 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.Box;
@@ -41,10 +45,16 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import dao.Dao_HoaDon;
 import dao.Dao_Thuoc;
+import entity.ChiTietHoaDon;
+import entity.HoaDon;
+import entity.KhachHang;
+import entity.KhuyenMai;
+import entity.NhanVien;
 import entity.Thuoc;
-import utils.ButtonEditor;
-import utils.ButtonRenderer;
+import utils.ButtonDeleteEditor;
+import utils.ButtonDeleteRenderer;
 
 public class Gui_BanThuoc extends JPanel{
 	private int widthComp, heightComp;
@@ -108,8 +118,8 @@ public class Gui_BanThuoc extends JPanel{
 		dataModel.addRow(newRow);
 		tableModel = new JTable(dataModel);
 		tableModel.getColumn("Xóa").setPreferredWidth(10);
-		tableModel.getColumn("Xóa").setCellRenderer(new ButtonRenderer());
-		tableModel.getColumn("Xóa").setCellEditor(new ButtonEditor(new JCheckBox()));
+		tableModel.getColumn("Xóa").setCellRenderer(new ButtonDeleteRenderer());
+		tableModel.getColumn("Xóa").setCellEditor(new ButtonDeleteEditor(new JCheckBox()));
 		tableModel.getTableHeader().setFont(new Font("Arial", Font.BOLD, 17));
 		tableModel.setFont(new Font("Arial", Font.PLAIN, 13));
 		tableModel.setRowHeight(30);
@@ -244,7 +254,7 @@ public class Gui_BanThuoc extends JPanel{
         pInforOrder.add(lbl5, constraintsOrder);
         constraintsOrder.gridx = 1;
         txtMaHD.setFont(new Font("Arial", Font.PLAIN, 14));
-        txtMaHD.setEditable(false);
+//        txtMaHD.setEditable(false);
         txtMaHD.setBorder(null);
         pInforOrder.add(txtMaHD, constraintsOrder);
         lbl6.setText("Ngày lập:");       //Field ngày lập
@@ -380,6 +390,52 @@ public class Gui_BanThuoc extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				addRowTable();
+			}
+		});
+		btnThanhToan.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				try {
+					NhanVien nv = new NhanVien("1");
+					KhachHang kh = new KhachHang("1",
+							txtHoTen.getText(),
+							txtSDT.getText()
+							);
+					List<ChiTietHoaDon> listCTHD= new ArrayList();
+					for (int row = 0 ; row < tableModel.getRowCount()-1 ; row++) {
+						ChiTietHoaDon cthd = new ChiTietHoaDon((String)dataModel.getValueAt(row, 1),
+								Integer.parseInt((String) dataModel.getValueAt(row, 2)),
+								(String)dataModel.getValueAt(row, 3),
+								Float.valueOf(dataModel.getValueAt(row, 4).toString()),
+								Float.valueOf(dataModel.getValueAt(row, 5).toString()),
+								Float.valueOf(dataModel.getValueAt(row, 6).toString())
+								);
+						listCTHD.add(cthd);
+					}
+					HoaDon hd = new HoaDon(txtMaHD.getText(),
+							LocalDate.parse(txtNgayLap.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+							Float.parseFloat(txtTongTien.getText()),
+							"HDBH",
+							(float)0.3,
+							""
+							);
+					hd.setNhanVien(nv);
+					hd.setKhachHang(kh);
+					hd.setChiTietHoaDon(listCTHD);
+					hd.setKhuyenMai(new KhuyenMai());
+					if ((new Dao_HoaDon().addHoaDon(hd))) {
+			            JOptionPane.showMessageDialog(null, "Thanh toán thành công");
+
+					}else {
+			            JOptionPane.showMessageDialog(null, "Không thanh toán thành công.");
+					}
+				} catch (Exception e2) {
+					// TODO: handle exception
+					e2.printStackTrace();
+				}
+				
 			}
 		});
 //		tableModel.addKeyListener(new KeyAdapter() {

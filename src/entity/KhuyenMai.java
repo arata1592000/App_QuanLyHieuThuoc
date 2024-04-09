@@ -2,7 +2,7 @@ package entity;
 
 import java.time.LocalDate;
 
-public abstract class KhuyenMai {
+public class KhuyenMai {
 	private String maKM;
 	private LocalDate ngayBatDau;
 	private LocalDate ngayKetThuc;
@@ -45,6 +45,15 @@ public abstract class KhuyenMai {
 		this.ngayKetThuc = ngayKetThuc;
 		this.tyLeKM = tyLeKM;
 		this.loaiKM = loaiKM;
+	}
+	public KhuyenMai() {
+		super();
+		// TODO Auto-generated constructor stub
+		this.maKM = null;
+		this.ngayBatDau = null;;
+		this.ngayKetThuc = null;;;
+		this.tyLeKM = 0;
+		this.loaiKM = null;
 	}
 	
 	

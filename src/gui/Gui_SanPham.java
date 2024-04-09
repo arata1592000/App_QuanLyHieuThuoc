@@ -34,8 +34,8 @@ import javax.swing.event.AncestorListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
-import utils.ButtonEditor;
-import utils.ButtonRenderer;
+import utils.ButtonDeleteEditor;
+import utils.ButtonDeleteRenderer;
 import utils.RoundBorder;
 
 public class Gui_SanPham extends JPanel implements ActionListener{

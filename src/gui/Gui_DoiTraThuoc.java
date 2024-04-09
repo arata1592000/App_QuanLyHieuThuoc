@@ -30,8 +30,8 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 
-import utils.ButtonEditor;
-import utils.ButtonRenderer;
+import utils.ButtonDeleteEditor;
+import utils.ButtonDeleteRenderer;
 import utils.RadioButtonEditor;
 import utils.RadioButtonRenderer;
 

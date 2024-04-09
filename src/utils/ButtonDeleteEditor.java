@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
  
-public class ButtonEditor extends DefaultCellEditor {
+public class ButtonDeleteEditor extends DefaultCellEditor {
  
 	protected JButton button;
 	protected JTable table;
@@ -26,7 +26,7 @@ public class ButtonEditor extends DefaultCellEditor {
 	 * @param count
 	 */
 	@SuppressWarnings("deprecation")
-	public ButtonEditor(JCheckBox checkBox) {
+	public ButtonDeleteEditor(JCheckBox checkBox) {
 		super(checkBox);
 		button = new JButton();
 	    button.setOpaque(true);
@@ -38,7 +38,7 @@ public class ButtonEditor extends DefaultCellEditor {
 	    bListener.setRow(row);
 	    bListener.setTable(table);
 	    button.setBackground(new Color(240,236,236));
-	    button.setOpaque(true);
+	    button.setOpaque(true);	
 	    button.setContentAreaFilled(true);
 	    button.setBorderPainted(false);
 	    button.setFocusPainted(false);
