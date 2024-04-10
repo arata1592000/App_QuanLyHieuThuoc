@@ -105,4 +105,5 @@ public class Dao_KhachHang {
 	    }
 	    return kh;
 	}
+	
 }

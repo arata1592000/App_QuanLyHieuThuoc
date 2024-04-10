@@ -13,12 +13,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.Flow;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -27,7 +25,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JDateChooser;
 
-public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
+public class Test1 extends JFrame implements ActionListener {
 	private JTextField txtMaKM;
 	private JDateChooser txtNgayBD;
 	private JButton btnThem;
@@ -43,21 +41,19 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
 	private JPanel panel3;
 	private JButton btnLeft;
 	private JButton btnRight;
-	private int widthComp;
-	private int heightComp;
-	public Gui_ThemKhuyenMai()
+	public Test1()
 	{
-		this.widthComp = 1000;
-		this.heightComp =500;
-		
-		this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+		setSize(1400,900);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		//setResizable(false);
+		setTitle("Thêm khuyến mãi");
+        setLocationRelativeTo(null);
         
 
         // Tạo JPanel
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        JPanel btnGroup = new JPanel();
-        //panel.setBackground(new Color (40,156,164));
+        panel.setBackground(new Color (40,156,164));
 
         // Tạo JLabel
         JLabel label1 = new JLabel("Thêm khuyến mãi");
@@ -87,11 +83,7 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
         btnHuy = new JButton("Hủy");
         btnLeft = new JButton("<-");
         btnRight = new JButton("->");
-        btnGroup.add(btnLeft);
-        btnGroup.add(btnRight);
         
-//        btnLeft.setPreferredSize(new Dimension(40,1));
-//        btnRight.setPreferredSize(new Dimension(40,1));
         
 
 
@@ -159,7 +151,7 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
         panel2.add(cbbLoai, gbc);
         
         
-        
+     
         
        
         JPanel pnelTable = new JPanel();
@@ -207,19 +199,15 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
         
         panel3.add(btnThem);
         panel3.add(btnHuy);
-//        panel.add(label1, BorderLayout.NORTH);
-        panel.add(panel2, BorderLayout.NORTH);
-        panel.add(btnGroup,BorderLayout.CENTER);
-//        panel.add(btnLeft,BorderLayout.CENTER);
-//        panel.add(btnRight,BorderLayout.CENTER);
-       
+        panel.add(label1, BorderLayout.NORTH);
+        panel.add(panel2, BorderLayout.CENTER);
+        
         panel.add(pnelTable,BorderLayout.WEST);
         panel.add(pnelTable2,BorderLayout.EAST);
         panel.add(panel3, BorderLayout.SOUTH);
 
-        this.setPreferredSize(new Dimension(this.widthComp, (int)(this.heightComp+panel2.getPreferredSize().getHeight()+panel3.getPreferredSize().getHeight())));
         add(panel);
-        
+        pack(); // set thèn ni cho nó nở cái bảng ra :V
         
         scrollPane.setVisible(false);
 		scrollPane2.setVisible(false);
@@ -232,7 +220,7 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
         
 	}
 	public static void main(String[] args) {
-		new Gui_ThemKhuyenMai().setVisible(true);
+		new Test1().setVisible(true);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -263,11 +251,7 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
 		}
 		if(o.equals(btnHuy))
 			{
-			JLayeredPane layeredPane = (JLayeredPane) getParent();
-            layeredPane.remove(Gui_ThemKhuyenMai.this);
-            // Cập nhật lại giao diện
-            layeredPane.validate();
-            layeredPane.repaint();
+				dispose();
 			}
 	}
 	

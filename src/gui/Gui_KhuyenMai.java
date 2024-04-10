@@ -1,3 +1,4 @@
+
 package gui;
 
 import java.awt.BorderLayout;
@@ -13,12 +14,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseAdapter;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -52,6 +55,11 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
 	private JDateChooser ngayBatDauDate;
 	private JDateChooser ngayKetThucDate;
 	private JComboBox cbbLoaiKM;
+	private JLayeredPane layeredPane;
+	private JPanel pContent;
+	private Gui_ThemKhuyenMai guiTKM;
+	
+	private boolean isGuiCTHDDisplayed = false;
 
 	public Gui_KhuyenMai(int width, int height) {
 		
@@ -66,7 +74,16 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
 		pNorth = new JPanel();
 		pCenter = new JPanel();
 		pTable = new JPanel();
+		layeredPane = new JLayeredPane();
+		pContent = new JPanel();
 		
+		layeredPane.setOpaque(true);
+        layeredPane.setPreferredSize(new Dimension(widthComp, heightComp));
+        layeredPane.setBackground(Color.WHITE);
+        
+		pContent.setOpaque(true);
+        pContent.setBounds(0,0, widthComp, heightComp);
+		pContent.setBackground(Color.WHITE);
 		
 		
 		pCenter.setLayout(new BorderLayout());
@@ -97,7 +114,7 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
         
         JLabel lblTyLe = new JLabel("Tỷ lệ khuyến mãi:");
         //lblTyLe.setPreferredSize(lblMa.getPreferredSize());
-constraintsCustomer.gridx = 1;
+        constraintsCustomer.gridx = 1;
         constraintsCustomer.gridy = 1;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(lblTyLe, constraintsCustomer);
@@ -225,9 +242,14 @@ constraintsCustomer.gridx = 1;
 		pCenter.add(pBut,BorderLayout.SOUTH);
 		pTable.add(lblDSKM); 
 		pTable.add(scroll);
-		this.add(pNorth,BorderLayout.NORTH);
-		this.add(pCenter,BorderLayout.CENTER);
-		this.add(pTable,BorderLayout.SOUTH);
+		
+		
+		pContent.add(pNorth,BorderLayout.NORTH);
+		pContent.add(pCenter,BorderLayout.CENTER);
+		pContent.add(pTable,BorderLayout.SOUTH);
+		layeredPane.add(pContent, JLayeredPane.DEFAULT_LAYER);
+        this.add(layeredPane);
+		
 		btnThem.addActionListener(this);
 		btnTim.addActionListener(this);
 		btnSua.addActionListener(this);
@@ -266,9 +288,37 @@ constraintsCustomer.gridx = 1;
 		Object o = e.getSource();
 		if(o.equals(btnThem))
 		{
-			Gui_ThemKhuyenMai guiPhu = new Gui_ThemKhuyenMai();
-			guiPhu.setVisible(true);
+
+			if(layeredPane.getComponentsInLayer(JLayeredPane.PALETTE_LAYER).length == 0){
+	    		isGuiCTHDDisplayed = false;
+	    	}
+
+
+	    	if (!isGuiCTHDDisplayed) {
+	        
+	    		
+		        guiTKM = new Gui_ThemKhuyenMai();
+		        guiTKM.setOpaque(true);
+		        Dimension sizeGuiCTHD= guiTKM.getPreferredSize(); // Lấy kích thước ưu tiên của guiCTHD
+		        Dimension sizeGuiLayeredPane = layeredPane.getPreferredSize(); // Lấy container cha (ví dụ, JLayeredPane hoặc JPanel)
+
+		        if (sizeGuiLayeredPane != null && sizeGuiLayeredPane.getWidth() > 0 && sizeGuiLayeredPane.getHeight() > 0) {
+		            int x = (int) ((sizeGuiLayeredPane.getWidth() - sizeGuiCTHD.width) / 2);
+		            int y = (int) ((sizeGuiLayeredPane.getHeight() - sizeGuiCTHD.height) / 2);
+
+		            guiTKM.setBounds(x, y, sizeGuiCTHD.width, sizeGuiCTHD.height);
+		        } else {
+		            guiTKM.setBounds(0, 0, sizeGuiCTHD.width, sizeGuiCTHD.height);
+		        }
+		        guiTKM.addMouseListener(new MouseAdapter() {});
+		        guiTKM.addMouseMotionListener(new MouseAdapter() {});
+
+		        layeredPane.add(guiTKM, JLayeredPane.PALETTE_LAYER);
+		     
+		        isGuiCTHDDisplayed  = true;
+	    	}
 		}
+		
 		
 	}
 	

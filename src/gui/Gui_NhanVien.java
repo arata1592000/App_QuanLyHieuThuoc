@@ -8,30 +8,52 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Calendar;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableRowSorter;
 import javax.swing.text.html.ImageView;
 
 import com.toedter.calendar.JDateChooser;
 
-public class Gui_NhanVien extends JPanel{
+import dao.Dao_NhanVien;
+import entity.NhanVien;
+
+public class Gui_NhanVien extends JPanel implements ActionListener , MouseListener{
 
 	private int widthComp;
 	private int heightComp;
@@ -66,10 +88,10 @@ public class Gui_NhanVien extends JPanel{
 	private JComboBox comboBoxTT;
 	private JButton btnTim;
 	private JTextField txtTim;
-	private JButton btn1; 
-    private JButton btn2;
-    private JButton btn3; 
-    private JButton btn4;
+	private JButton btnAdd; 
+    private JButton btnSua;
+    private JButton btnLuu; 
+    private JButton btnNhapLai;
 	private JPanel row1;
 	private JPanel row2;
 	private JLabel lblTT;
@@ -77,7 +99,15 @@ public class Gui_NhanVien extends JPanel{
 	private JTable tableModel;
 	private DefaultTableModel dataModel;
 	private JScrollPane scroll;
-	private JButton btnThemAnh; 
+	private JButton btnThemAnh;
+	private JLabel lblTTLV;
+	private JComboBox comboBoxTrangThai;
+	private JPanel pSouth;
+	private JLabel lblHinhAnh;
+	private int widthFrame;
+	private Image img;
+	private Image resizedImg;
+	private JButton btnTaiKhoan; 
 
 
 
@@ -85,22 +115,29 @@ public class Gui_NhanVien extends JPanel{
 		widthComp = width;
 		heightComp = height;
 		
+		
 		pImage = new JPanel();
 		pNorth = new JPanel();
 		pCenter = new JPanel();
+		pSouth = new JPanel();
 		pTable = new JPanel();
 		
         setLayout(new BorderLayout());
 		pInfor = new JPanel();
 		pInfor.setLayout(new GridBagLayout());
+		pImage.setLayout(new BoxLayout(pImage, BoxLayout.Y_AXIS));
 		GridBagConstraints constraintsCustomer = new GridBagConstraints();
-        constraintsCustomer.insets = new Insets(5,30, 5,30);
+        constraintsCustomer.insets = new Insets(5,20, 5,20);
         
+        ImageIcon imageIcon = new ImageIcon("images/user1.png");
+        Image image = imageIcon.getImage();
+        Image newImage = image.getScaledInstance(120, 120, Image.SCALE_SMOOTH); // Chỉnh kích thước ảnh theo ý muốn
+        ImageIcon resizedImageIcon = new ImageIcon(newImage);
+
+        lblHinhAnh = new JLabel( resizedImageIcon, JLabel.CENTER);
+        pImage.add(lblHinhAnh);
         btnThemAnh = new JButton("Thêm Ảnh");
-        constraintsCustomer.gridx = 0;
-        constraintsCustomer.gridy = 4;
-        constraintsCustomer.anchor = GridBagConstraints.WEST;
-        pInfor.add(btnThemAnh, constraintsCustomer);
+        pImage.add(btnThemAnh, constraintsCustomer);
         btnThemAnh.setForeground(Color.WHITE);
         btnThemAnh.setFont(new Font("Arial", Font.BOLD, 15));
         btnThemAnh.setBackground(new Color(40,156,164));
@@ -108,13 +145,13 @@ public class Gui_NhanVien extends JPanel{
         btnThemAnh.setContentAreaFilled(true);
         btnThemAnh.setBorderPainted(false);
         btnThemAnh.setFocusPainted(false);
-        
+        btnThemAnh.addActionListener(this);
         lblMa = new JLabel("Mã nhân viên:");
         constraintsCustomer.gridx = 1;
         constraintsCustomer.gridy = 0;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(lblMa, constraintsCustomer);
-        txtMa= new JTextField(13);
+        txtMa= new JTextField(16);
         constraintsCustomer.gridx = 2;
         constraintsCustomer.gridy = 0;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
@@ -125,7 +162,7 @@ public class Gui_NhanVien extends JPanel{
         constraintsCustomer.gridy = 1;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(lblHoTen, constraintsCustomer);
-        txtHoTen = new JTextField(13);
+        txtHoTen = new JTextField(16);
         constraintsCustomer.gridx = 2;
         constraintsCustomer.gridy = 1;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
@@ -155,7 +192,7 @@ public class Gui_NhanVien extends JPanel{
         constraintsCustomer.gridy = 3; 
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(lblSDT,constraintsCustomer);
-        txtSDT = new JTextField(13);
+        txtSDT = new JTextField(16);
         constraintsCustomer.gridx = 2;
         constraintsCustomer.gridy = 3;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
@@ -191,7 +228,8 @@ public class Gui_NhanVien extends JPanel{
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(lblCV,constraintsCustomer);
         comboBoxChucVu = new JComboBox<>(new String[]{"Nhân Viên", "Quản lý"});
-        comboBoxChucVu.setPreferredSize(new Dimension(135,25));
+        comboBoxChucVu.setPreferredSize(new Dimension(168,25));
+        
         constraintsCustomer.gridx = 4;
         constraintsCustomer.gridy = 1; 
         constraintsCustomer.anchor = GridBagConstraints.WEST;
@@ -202,7 +240,7 @@ public class Gui_NhanVien extends JPanel{
         constraintsCustomer.gridy = 2;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(lblCC, constraintsCustomer);
-        txtCC = new JTextField(13);
+        txtCC = new JTextField(16);
         constraintsCustomer.gridx = 4;
         constraintsCustomer.gridy = 2;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
@@ -213,63 +251,88 @@ public class Gui_NhanVien extends JPanel{
         constraintsCustomer.gridy = 3;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(lblDC, constraintsCustomer);
-        txtDC = new JTextField(13);
+        txtDC = new JTextField(16);
         constraintsCustomer.gridx = 4;
         constraintsCustomer.gridy = 3;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(txtDC,constraintsCustomer);
         
-//        pImage.setBackground(Color.WHITE);
-//        pImage.add(btnThemAnh);
+        lblTTLV = new JLabel("Trạng thái làm việc");
+        constraintsCustomer.gridx = 3;
+        constraintsCustomer.gridy = 4;
+        constraintsCustomer.anchor = GridBagConstraints.WEST;
+        pInfor.add(lblTTLV, constraintsCustomer);
+        comboBoxTrangThai = new JComboBox<>(new String[]{"Làm Việc", "Không làm việc"});
+        comboBoxTrangThai.setPreferredSize(new Dimension(168,25));
+        constraintsCustomer.gridx = 4;
+        constraintsCustomer.gridy = 4; 
+        constraintsCustomer.anchor = GridBagConstraints.WEST;
+        pInfor.add(comboBoxTrangThai, constraintsCustomer);
+        
         pNorth.add(pImage,BorderLayout.WEST);
         pNorth.add(pInfor,BorderLayout.WEST);
         
 		row1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20));
 		row1.setBackground(Color.WHITE); 
-		btn1 = new JButton("Thêm nhân viên");
-		btn1.setFont(new Font("Arial", Font.BOLD, 15));
-		btn1.setForeground(Color.WHITE);
-		btn1.setBackground(new Color(40,156,164));
-		btn1.setOpaque(true);
-		btn1.setContentAreaFilled(true);
-        btn1.setBorderPainted(false);
-        btn1.setFocusPainted(false);
-	    btn2 = new JButton("Sửa nhân viên");
-		btn2.setFont(new Font("Arial", Font.BOLD, 15));
-		btn2.setForeground(Color.WHITE);
-		btn2.setBackground(new Color(40,156,164));
-		btn2.setOpaque(true);
-		btn2.setContentAreaFilled(true);
-        btn2.setBorderPainted(false);
-        btn2.setFocusPainted(false);
-	    btn3 = new JButton("Lưu");
-		btn3.setFont(new Font("Arial", Font.BOLD, 15));
-		btn3.setForeground(Color.WHITE);
-		btn3.setBackground(new Color(40,156,164));
-		btn3.setOpaque(true);
-		btn3.setContentAreaFilled(true);
-        btn3.setBorderPainted(false);
-        btn3.setFocusPainted(false);
-	    btn4 = new JButton("Nhập lại");
-		btn4.setFont(new Font("Arial", Font.BOLD, 15));
-		btn4.setForeground(Color.WHITE);
-		btn4.setBackground(new Color(40,156,164));
-		btn4.setOpaque(true);
-		btn4.setContentAreaFilled(true);
-        btn4.setBorderPainted(false);
-        btn4.setFocusPainted(false);
-		row1.add(btn1);
-		row1.add(btn2);
-		row1.add(btn3);
-		row1.add(btn4);
-
+		btnAdd = new JButton("Thêm nhân viên");
+		btnAdd.setFont(new Font("Arial", Font.BOLD, 15));
+		btnAdd.setForeground(Color.WHITE);
+		btnAdd.setBackground(new Color(40,156,164));
+		btnAdd.setOpaque(true);
+		btnAdd.setContentAreaFilled(true);
+		btnAdd.setBorderPainted(false);
+		btnAdd.setFocusPainted(false);
+	    btnSua = new JButton("Sửa nhân viên");
+	    btnSua.setFont(new Font("Arial", Font.BOLD, 15));
+	    btnSua.setForeground(Color.WHITE);
+	    btnSua.setBackground(new Color(40,156,164));
+	    btnSua.setOpaque(true);
+	    btnSua.setContentAreaFilled(true);
+	    btnSua.setBorderPainted(false);
+	    btnSua.setFocusPainted(false);
+	    btnLuu = new JButton("Xóa");
+	    btnLuu.setFont(new Font("Arial", Font.BOLD, 15));
+	    btnLuu.setForeground(Color.WHITE);
+	    btnLuu.setBackground(new Color(40,156,164));
+	    btnLuu.setOpaque(true);
+	    btnLuu.setContentAreaFilled(true);
+	    btnLuu.setBorderPainted(false);
+	    btnLuu.setFocusPainted(false);
+	    btnNhapLai = new JButton("Nhập lại");
+	    btnNhapLai.setFont(new Font("Arial", Font.BOLD, 15));
+	    btnNhapLai.setForeground(Color.WHITE);
+		btnNhapLai.setBackground(new Color(40,156,164));
+		btnNhapLai.setOpaque(true);
+		btnNhapLai.setContentAreaFilled(true);
+		btnNhapLai.setBorderPainted(false);
+		btnNhapLai.setFocusPainted(false);
+		btnTaiKhoan = new JButton("Tài Khoản");
+		btnTaiKhoan.setFont(new Font("Arial", Font.BOLD, 15));
+		btnTaiKhoan.setForeground(Color.WHITE);
+		btnTaiKhoan.setBackground(new Color(40,156,164));
+		btnTaiKhoan.setOpaque(true);
+		btnTaiKhoan.setContentAreaFilled(true);
+		btnTaiKhoan.setBorderPainted(false);
+		btnTaiKhoan.setFocusPainted(false);
+		row1.add(btnAdd);
+		row1.add(btnSua);
+		row1.add(btnLuu);
+		row1.add(btnNhapLai);
+		row1.add(btnTaiKhoan);
+		
+		btnAdd.addActionListener(this);
+		btnSua.addActionListener(this);
+		btnLuu.addActionListener(this);
+		btnNhapLai.addActionListener(this);
+		btnTaiKhoan.addActionListener(this);
+		
 		row2 = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 20));
         row2.setBackground(Color.WHITE); 
         lblCV = new JLabel("Lọc theo chức vụ");
         comboBoxCV = new JComboBox<>(new String[]{"Nhân Viên", "Quản Lý"});
         comboBoxCV.setPreferredSize(new Dimension(135,25));
         lblTT = new JLabel("Lọc theo trạng thái");
-        comboBoxTT = new JComboBox<>(new String[]{"Đang làm việc", "Tạm thời nghỉ"});
+        comboBoxTT = new JComboBox<>(new String[]{"Làm việc", "Không làm việc"});
         comboBoxTT.setPreferredSize(new Dimension(135,25));
         btnTim = new JButton("Tìm");
 		btnTim.setForeground(Color.WHITE);
@@ -312,21 +375,18 @@ public class Gui_NhanVien extends JPanel{
         pCenter.add(row1, BorderLayout.NORTH); 
         pCenter.add(row2, BorderLayout.CENTER);
         
+        btnTim.addActionListener(this);
+        comboBoxCV.addActionListener(this);
+        comboBoxTT.addActionListener(this);
         
+        pSouth.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.55)));
+		pSouth.setBackground(Color.WHITE);
 		pTable.setLayout(new FlowLayout());
-		pTable.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.9)));
+		pTable.setPreferredSize(new Dimension((int) (widthComp*1),(int) (heightComp*0.5)));
         lblDSNV = new JLabel("Danh sách nhân viên");
 		lblDSNV.setFont(new Font("Arial", Font.ITALIC, 30));
 		String headers[] = {"Mã nhân viên", "Họ và tên", "Giới tính", "SDT", "Ngày sinh","Ngày vào làm","Chức vụ","CCCD","Địa chỉ","Trạng thái"};
-		Object[][] data = {
-                {"NV001", "John Doe", "Nam", "012343425", "12/03/2001","25/09/2023","Quản lý","079xxxxxxx","Củ Chi","Làm việc"},
-                {"NV001", "John Doe", "Nam", "012343425", "12/03/2001","25/09/2023","Quản lý","079xxxxxxx","Củ Chi","Làm việc"},
-                {"NV001", "John Doe", "Nam", "012343425", "12/03/2001","25/09/2023","Quản lý","079xxxxxxx","Củ Chi","Làm việc"},
-                {"NV001", "John Doe", "Nam", "012343425", "12/03/2001","25/09/2023","Quản lý","079xxxxxxx","Củ Chi","Làm việc"},
-                {"NV001", "John Doe", "Nam", "012343425", "12/03/2001","25/09/2023","Quản lý","079xxxxxxx","Củ Chi","Làm việc"},
-                
-        };
-		dataModel = new DefaultTableModel(data,headers);
+		dataModel = new DefaultTableModel(headers,0);
 		tableModel = new JTable(dataModel);
 		tableModel.getTableHeader().setFont(new Font("Arial", Font.BOLD, 15));
 		tableModel.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -334,12 +394,302 @@ public class Gui_NhanVien extends JPanel{
 		tableModel.setModel(dataModel);
 		scroll = new JScrollPane(tableModel);
 		scroll.setPreferredSize(new Dimension((int)(widthComp*0.9),(int) (heightComp*0.5)));
+		tableModel.addMouseListener(this);
+
+		
 		pTable.add(lblDSNV, BorderLayout.NORTH); 
 		pTable.add(scroll, BorderLayout.CENTER); 
+		pSouth.add(pTable);
 		
 		this.add(pNorth,BorderLayout.NORTH);
         this.add(pCenter,BorderLayout.CENTER);
-        this.add(pTable,BorderLayout.SOUTH);
+        this.add(pSouth,BorderLayout.SOUTH);
+        
+        loadDataTable();
 	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getSource();
+		if(o.equals(btnAdd)) {
+			if(validData()) {
+		        String maNV = txtMa.getText();
+		        String hoTen = txtHoTen.getText();
+		        String gioiTinh = radNam.isSelected() ? "Nam" : "Nữ";
+		        String soDienThoai = txtSDT.getText();
+		        LocalDate ngaySinh = ngaySinhDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		        LocalDate ngayVaoLam = ngayLamDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		        String chucVu = (String) comboBoxChucVu.getSelectedItem();
+		        String soCCCD = txtCC.getText();
+		        String diaChi = txtDC.getText();
+		        String trangThai = (String) comboBoxTrangThai.getSelectedItem();
+		        byte[] anh = null;
+		        
+		        NhanVien nhanVien = new NhanVien(maNV, hoTen, gioiTinh, soDienThoai, ngaySinh, ngayVaoLam, chucVu, soCCCD, diaChi, trangThai);
+		        Dao_NhanVien daoNhanVien = new Dao_NhanVien();
+		        boolean success = daoNhanVien.addNhanVien(nhanVien);
+
+		        if (success) {
+		            JOptionPane.showMessageDialog(this, "Thêm nhân viên thành công!");
+		            addRowNhanVien(nhanVien);
+		        } else {
+		            JOptionPane.showMessageDialog(this, "Thêm nhân viên thất bại!");
+		        }
+			}
+		}
+		if(o.equals(btnThemAnh)) {
+			themAnh();
+		}
+		if(o.equals(btnTim)) {
+			String maNV = txtTim.getText();
+			if(!maNV.equals("Nhập mã nhân viên")) {
+				NhanVien nhanVien = (new Dao_NhanVien()).findNhanVien(maNV);
+				if(nhanVien != null) {
+					dataModel.setRowCount(0);
+	                addRowNhanVien(nhanVien);
+				}else {
+	                JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên với mã " + maNV);
+				}
+			}
+		}
+		if(o.equals(btnLuu)) {
+	        int selectRow = tableModel.getSelectedRow();
+	        // Kiểm tra nếu có hàng được chọn
+	        if (selectRow != -1) {
+        		String maNV = (String) tableModel.getValueAt(selectRow, 0);
+	        	if ((new Dao_NhanVien()).removeNhanVien(maNV)) {
+		            ((DefaultTableModel) tableModel.getModel()).removeRow(selectRow);
+	            // Xóa hàng từ  JTable
+	        	}else {
+		            JOptionPane.showMessageDialog(null, "Hệ thống đang xảy ra lỗi");
+	        	}
+	        } else {
+	            // Hiển thị thông báo nếu không có hàng nào được chọn
+	            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hàng để xóa.");
+	        }
+		}
+		if (o.equals(btnSua)) {
+		    String maNV = txtMa.getText();
+		    String hoTen = txtHoTen.getText();
+		    String gioiTinh = radNam.isSelected() ? "Nam" : "Nữ";
+		    String soDienThoai = txtSDT.getText();
+		    LocalDate ngaySinh = ngaySinhDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		    LocalDate ngayVaoLam = ngayLamDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		    String chucVu = (String) comboBoxChucVu.getSelectedItem();
+		    String soCCCD = txtCC.getText();
+		    String diaChi = txtDC.getText();
+		    String trangThai = (String) comboBoxTrangThai.getSelectedItem();
+
+		    NhanVien nhanVien = new NhanVien(maNV, hoTen, gioiTinh, soDienThoai, ngaySinh, ngayVaoLam, chucVu, soCCCD, diaChi, trangThai);
+		    Dao_NhanVien daoNhanVien = new Dao_NhanVien();
+		    boolean success = daoNhanVien.updateNhanVien(nhanVien);
+
+		    if (success) {
+		        JOptionPane.showMessageDialog(this, "Sửa thông tin nhân viên thành công!");
+		        updateRowNhanVien(nhanVien);
+		    } else {
+		        JOptionPane.showMessageDialog(this, "Sửa thông tin nhân viên thất bại!");
+		    }
+		}
+		if (o.equals(btnNhapLai)) {
+		    // Xóa nội dung của các JTextField
+		    txtMa.setText("");
+		    txtHoTen.setText("");
+		    txtSDT.setText("");
+		    txtCC.setText("");
+		    txtDC.setText("");
+		    radNam.setSelected(true);
+		    comboBoxChucVu.setSelectedIndex(0); 
+		    comboBoxTrangThai.setSelectedIndex(0); 
+		    if(ngaySinhDate.getDate() == null && ngayLamDate.getDate() == null) {
+			    ngaySinhDate.setDate(null);
+			    ngaySinhDate.setDate(null);
+		    }
+		    ImageIcon userIcon = new ImageIcon("images/user1.png");
+		    img = userIcon.getImage();
+		    resizedImg = img.getScaledInstance(120,120, java.awt.Image.SCALE_SMOOTH);
+		    userIcon = new ImageIcon(resizedImg);
+		    lblHinhAnh.setIcon(userIcon);		    
+		}
+		if (o.equals(comboBoxCV)) {
+			String selectedChucVu = (String) comboBoxCV.getSelectedItem();
+	        filterByChucVu(selectedChucVu);
+	    }
+		if(o.equals(comboBoxTT)) {
+			String selectedTrangThai = (String) comboBoxTT.getSelectedItem();
+		    filterByTrangThai(selectedTrangThai);
+		}
+//		if (o.equals(btnTaiKhoan)) {
+//		    // Hiển thị Gui_CaiDat
+//		    Gui_CaiDat guiCaiDat = new Gui_CaiDat(); // Tạo một thể hiện mới của Gui_CaiDat
+//		    guiCaiDat.setVisible(true); // Hiển thị Gui_CaiDat
+//		}
+	}
+	private boolean validData() {
+	    boolean isValid = true;
+	    if (txtMa.getText().isEmpty()) {
+	        isValid = false;
+	        JOptionPane.showMessageDialog(this, "Vui lòng nhập mã nhân viên.");
+	        txtMa.requestFocus();
+	    } else if (txtHoTen.getText().isEmpty()) {
+	        isValid = false;
+	        JOptionPane.showMessageDialog(this, "Vui lòng nhập họ và tên nhân viên.");
+	        txtHoTen.requestFocus();
+	    } else if (!radNam.isSelected() && !radNu.isSelected()) {
+	        isValid = false;
+	        JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính của nhân viên.");
+	    } else if(txtSDT.getText().isEmpty()) {
+	    	isValid = false;
+	        JOptionPane.showMessageDialog(this, "Vui lòng nhập số điện thoại.");
+	    } else if(txtCC.getText().isEmpty()) {
+	    	isValid = false;
+	        JOptionPane.showMessageDialog(this, "Vui lòng nhập căn cước công dân.");
+	    } else if(txtDC.getText().isEmpty()) {
+	    	isValid = false;
+	        JOptionPane.showMessageDialog(this, "Vui lòng nhập địa chỉ.");
+	    }
+	    return isValid;
+	}
+	public void filterByChucVu(String chucVu) {
+	    DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
+	    TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
+	    tableModel.setRowSorter(rowSorter);
+	    
+	    RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+	        @Override
+	        public boolean include(Entry<?, ?> entry) {
+	            String cv = (String) entry.getValue(6); // Chức vụ ở cột 6 trong bảng
+	            return cv.equalsIgnoreCase(chucVu);
+	        }
+	    };
+	    if (chucVu.equalsIgnoreCase("Quản Lý") || chucVu.equalsIgnoreCase("Nhân Viên")) {
+	        rowSorter.setRowFilter(filter);
+	    } else {
+	        rowSorter.setRowFilter(null); 
+	    }
+	}
+
+	public void filterByTrangThai(String trangThai) {
+	    DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
+	    TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
+	    tableModel.setRowSorter(rowSorter);
+	    
+	    RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+	        @Override
+	        public boolean include(Entry<?, ?> entry) {
+	            String tt = (String) entry.getValue(9); // Trạng thái ở cột 9 trong bảng
+	            return tt.equalsIgnoreCase(trangThai);
+	        }
+	    };
+	    if (trangThai.equalsIgnoreCase("Làm việc") || trangThai.equalsIgnoreCase("Không làm việc")) {
+	        rowSorter.setRowFilter(filter);
+	    } else {
+	        rowSorter.setRowFilter(null); 
+	    }
+	}
+	private void updateRowNhanVien(NhanVien nhanVien) {
+	    int rowCount = dataModel.getRowCount();
+	    for (int i = 0; i < rowCount; i++) {
+	        if (dataModel.getValueAt(i, 0).toString().equals(nhanVien.getMaNV())) {
+	            dataModel.setValueAt(nhanVien.getHoTen(), i, 1);
+	            dataModel.setValueAt(nhanVien.getGioiTinh(), i, 2);
+	            dataModel.setValueAt(nhanVien.getSoDienThoai(), i, 3);
+	            dataModel.setValueAt(nhanVien.getNgaySinh(), i, 4);
+	            dataModel.setValueAt(nhanVien.getNgayVaoLam(), i, 5);
+	            dataModel.setValueAt(nhanVien.getChucVu(), i, 6);
+	            dataModel.setValueAt(nhanVien.getSoCCCD(), i, 7);
+	            dataModel.setValueAt(nhanVien.getDiaChi(), i, 8);
+	            dataModel.setValueAt(nhanVien.getTrangThai(), i, 9);
+	            break;
+	        }
+	    }
+	}
+
+	private void themAnh() {
+	    JFileChooser chooser = new JFileChooser();
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+	            "JPG, PNG, GIF Images", "jpg", "jpeg", "png", "gif");
+	    chooser.setFileFilter(filter);
+	    int returnVal = chooser.showOpenDialog(this);
+	    if (returnVal == JFileChooser.APPROVE_OPTION) {
+	        File file = chooser.getSelectedFile();
+	        ImageIcon imageIcon = new ImageIcon(new ImageIcon(file.getAbsolutePath()).getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT));
+	        lblHinhAnh.setIcon(imageIcon);
+	    }
+	}
+	private void addRowNhanVien(NhanVien nhanVien) {
+		JButton btnCaiDat = new JButton("Cài Đặt");
+
+		dataModel.addRow(new Object[] {
+					nhanVien.getMaNV(),
+					nhanVien.getHoTen(),
+					nhanVien.getGioiTinh(),
+					nhanVien.getSoDienThoai(),
+					nhanVien.getNgaySinh(),
+					nhanVien.getNgayVaoLam(),
+					nhanVien.getChucVu(),
+					nhanVien.getSoCCCD(),
+					nhanVien.getDiaChi(),
+					nhanVien.getTrangThai(),
+					});
+	}
+	public void loadDataTable() {
+		List<NhanVien> listNhanVien = new ArrayList();
+		listNhanVien = (new Dao_NhanVien()).readFromSQL();
+		for (NhanVien nhanVien : listNhanVien) {
+			addRowNhanVien(nhanVien);
+		}
+	}
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	    int row = tableModel.getSelectedRow();
+	    if (row >= 0) { 
+	        txtMa.setText(tableModel.getValueAt(row, 0).toString());
+	        txtHoTen.setText(tableModel.getValueAt(row, 1).toString());
+	        String gioiTinh = tableModel.getValueAt(row, 2).toString();
+	        if (gioiTinh.equals("Nam")) {
+	            radNam.setSelected(true);
+	        } else {
+	            radNu.setSelected(true);
+	        }
+	        txtSDT.setText(tableModel.getValueAt(row, 3).toString());
+	        LocalDate ngaySinh = (LocalDate) tableModel.getValueAt(row, 4);
+	        ngaySinhDate.setDate(java.sql.Date.valueOf(ngaySinh));
+	        LocalDate ngayVaoLam = (LocalDate) tableModel.getValueAt(row, 5);
+	        ngayLamDate.setDate(java.sql.Date.valueOf(ngayVaoLam));
+	        comboBoxChucVu.setSelectedItem(tableModel.getValueAt(row, 6).toString());
+	        txtCC.setText(tableModel.getValueAt(row, 7).toString());
+	        txtDC.setText(tableModel.getValueAt(row, 8).toString());
+	        comboBoxTrangThai.setSelectedItem(tableModel.getValueAt(row, 9).toString());
+	        
+	        String imagePath = "C:\\Users\\lephu\\OneDrive\\Hình ảnh";
+	        ImageIcon imageIcon = new ImageIcon(imagePath);
+	        Image image = imageIcon.getImage().getScaledInstance(lblHinhAnh.getWidth(), lblHinhAnh.getHeight(), Image.SCALE_SMOOTH);
+	        lblHinhAnh.setIcon(new ImageIcon(image));
+	    }
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

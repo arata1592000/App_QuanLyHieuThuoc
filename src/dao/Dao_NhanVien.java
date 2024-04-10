@@ -188,4 +188,42 @@ public class Dao_NhanVien {
 	    }
 	    return n > 0;
 	}
+	public NhanVien findNhanVienByMaNV(String maNV) {
+	    Connection connect = null;
+	    PreparedStatement stmt = null;
+	    NhanVien nv = null;
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("SELECT * FROM NhanVien WHERE maNV = ?");
+	        stmt.setString(1, maNV); // Thiết lập giá trị cho tham số maThuoc
+
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            nv = new NhanVien(rs.getString(1),
+	                    rs.getString(2),
+	                    rs.getString(3),
+	                    rs.getString(4),
+	                    rs.getDate(5).toLocalDate(),
+	                    rs.getDate(6).toLocalDate(),
+	                    rs.getString(7),
+	                    rs.getString(8),
+	                    rs.getString(9),
+	                    rs.getString(10)
+	            );
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return nv;
+	}
 }
