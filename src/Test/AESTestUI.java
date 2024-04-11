@@ -1,10 +1,25 @@
 package Test;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 
-public class TestAES {
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import Test.RSATestUI.KeyPair;
+
+public class AESTestUI extends JFrame{
 
     private static final int BLOCK_SIZE = 16;
 
@@ -91,18 +106,95 @@ public class TestAES {
             (byte) 0xe1, (byte) 0x69, (byte) 0x14, (byte) 0x63, (byte) 0x55, (byte) 0x21, (byte) 0x0c, (byte) 0x7d
     };
 
+	private JTextArea inputTextArea;
+
+	private JTextArea outputTextArea;
+
+	private JButton encryptButton;
+
+	private JButton decryptButton;
+
+	private JTextArea inputKeyArea;
+    
+    public AESTestUI() {
+		// TODO Auto-generated constructor stub
+            super("AES Test");
+
+            // Tạo cặp khóa
+
+            // Set up UI components
+            inputTextArea = new JTextArea(5, 20);
+            inputKeyArea = new JTextArea(1,10);
+            outputTextArea = new JTextArea(5, 20);
+            outputTextArea.setEditable(false);
+
+            encryptButton = new JButton("Encrypt");
+            decryptButton = new JButton("Decrypt");
+
+            // Add action listeners
+            encryptButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String plainText = inputTextArea.getText();
+                    String key = inputKeyArea.getText();
+                    byte[] originalBytes = addPadding(plainText.getBytes(StandardCharsets.UTF_8), BLOCK_SIZE);
+                    byte[] keyBytes = addPadding(key.getBytes(StandardCharsets.UTF_8), BLOCK_SIZE);
+
+                    byte[] encryptedText = null;
+					try {
+						encryptedText = encryptt(originalBytes, keyBytes);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+                    String encryptedBase64String = Base64.getEncoder().encodeToString(encryptedText);
+                    outputTextArea.setText(encryptedBase64String);
+                }
+            });
+
+            decryptButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String plainText = inputTextArea.getText();
+                    String key = inputKeyArea.getText();
+                    byte[] encryptedBytes = Base64.getDecoder().decode(plainText);
+                    byte[] keyBytes = addPadding(key.getBytes(StandardCharsets.UTF_8), BLOCK_SIZE);
+                    byte[] decryptedText = null;
+					try {
+						decryptedText = decryptt(encryptedBytes, keyBytes);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+                    String decryptedString = new String(removePadding(decryptedText), StandardCharsets.UTF_8);
+                    outputTextArea.setText(decryptedString);
+                }
+            });
+
+            // Set layout
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.add(new JLabel("Input:"));
+            panel.add(new JScrollPane(inputTextArea));
+            panel.add(new JLabel("Key:"));
+            panel.add(new JScrollPane(inputKeyArea));
+            panel.add(new JLabel("Output:"));
+            panel.add(new JScrollPane(outputTextArea));
+            panel.add(encryptButton);
+            panel.add(decryptButton);
+
+            add(panel);
+            setSize(500, 500);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setLocationRelativeTo(null); // Center the window
+            setVisible(true);
+        }
+
 
     
     public static byte[] encrypt(byte[] plaintext, byte[] key) {
         byte[][] state = new byte[4][4];
         byte[][] roundKey = keyExpansion(key);
-        for (int i = 0; i < roundKey.length; i++) {
-            for (int j = 0; j < roundKey[i].length; j++) {
-                System.out.print(roundKey[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println(roundKey.length);
         byte[] cipher = new byte[plaintext.length];
         int numBlocks = plaintext.length / BLOCK_SIZE ;
         
@@ -265,17 +357,16 @@ public class TestAES {
     public static void aesCipher(byte[][] state, byte[][] roundKey) {
         addRoundKey(state, roundKey, 0);
 
-        for (int round = 1; round < (roundKey.length)/4 -1; round++) {
+        for (int round = 1; round < (int)((roundKey.length)/4 -1); round++) {
             subBytes(state);
             shiftRows(state);
             mixColumns(state);
             addRoundKey(state, roundKey, round);
-            System.out.println(round);
         }
 
         subBytes(state);
         shiftRows(state);
-        addRoundKey(state, roundKey, (roundKey.length)/4 - 1);
+        addRoundKey(state, roundKey, (int)((roundKey.length)/4 - 1));
     }
 
     public static void invShiftRows(byte[][] state) {
@@ -344,21 +435,11 @@ public class TestAES {
     
     public static void main(String[] args) {
         try {
-            String originalText = "Hello, world!";
+           new AESTestUI();
 
-            String key = "Key"; // 16-byte key for AES-128
+            
 
-            byte[] originalBytes = addPadding(originalText.getBytes(StandardCharsets.UTF_8), BLOCK_SIZE);
-            byte[] keyBytes = addPadding(key.getBytes(StandardCharsets.UTF_8), BLOCK_SIZE);
-
-            byte[] encryptedText = encrypt(originalBytes, keyBytes);
-            String encryptedBase64String = Base64.getEncoder().encodeToString(encryptedText);
-            System.out.println("Encrypted (Base64): " + encryptedBase64String);
-            System.out.println("Encrypted (Bytes): " + Arrays.toString(encryptedText));
-
-            byte[] decryptedText = decrypt(encryptedText, keyBytes);
-            String decryptedString = new String(removePadding(decryptedText), StandardCharsets.UTF_8);
-            System.out.println("Decrypted: " + decryptedString);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -368,4 +449,23 @@ public class TestAES {
 //    xBPxeKDP3fsG7l86FT9lvQhbHbbIxwe+2DZekib+is=
 //    Encrypted (Bytes): [-60, 65, -110, -9, 42, 116, 74, -16, 77, -44, -116, 71, -42, -76, -110, 113, -76, 111, 104, 20, -11, 37, 58, -112, -101, 52, -54, 82, -35, 13, 24, -101]
 
+    
+    
+    
+    	
+    
+    public static byte[] encryptt(byte[] originalBytes, byte[] key) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        return cipher.doFinal(originalBytes);
+    }
+
+    public static byte[] decryptt(byte[] cipherText, byte[] key) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        byte[] decryptedBytes = cipher.doFinal(cipherText);
+        return decryptedBytes;
+    }
 }

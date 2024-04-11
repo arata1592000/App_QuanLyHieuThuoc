@@ -202,42 +202,46 @@ public class Dao_HoaDon {
 		return listHD;
 	}
 	
-//	public HoaDon findHoaDonByMaHD(String maHD) {
-//	    Connection connect = null;
-//	    PreparedStatement stmt = null;
-//	    HoaDon hd = null;
-//	    try {
-//	        connect = ConnectDB.getConnection();
-//	        stmt = connect.prepareStatement("SELECT * FROM HoaDon WHERE maHD = ?");
-//	        stmt.setString(1, maHD); // Thiết lập giá trị cho tham số maThuoc
-//
-//	        ResultSet rs = stmt.executeQuery();
-//	        if (rs.next()) {
-//	            hd = new HoaDon(rs.getString(1),
-//	                    rs.getDate(2).toLocalDate(),
-//	                    rs.getDate(3).toLocalDate(),
-//	                    rs.getDate(4).toLocalDate(),
-//	                    rs.getDate(5).toLocalDate(),
-//	                    rs.getString(6),
-//	                    rs.getFloat(7),
-//	                    rs.getString(8),
-//	                    rs.getString(9),
-//	                    rs.getInt(10)
-//	            );
-//	        }
-//	    } catch (SQLException e) {
-//	        e.printStackTrace();
-//	    } finally {
-//	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
-//	        try {
-//	            if (stmt != null) stmt.close();
-//	            if (connect != null) {
-//	                ConnectDB.close(connect);
-//	            }
-//	        } catch (SQLException e) {
-//	            e.printStackTrace();
-//	        }
-//	    }
-//	    return thuoc;
-//	}
+	public HoaDon findHoaDonByMaHD(String maHD) {
+	    Connection connect = null;
+	    PreparedStatement stmt = null;
+	    HoaDon hd = null;
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("SELECT * FROM HoaDon WHERE maHD = ?");
+	        stmt.setString(1, maHD); // Thiết lập giá trị cho tham số maThuoc
+
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	        	NhanVien nv = (new Dao_NhanVien()).findNhanVienByMaNV(rs.getString(3));
+	        	KhachHang kh = (new Dao_KhachHang()).findKhachHangByMaKH(rs.getString(4));
+	            KhuyenMai km = new KhuyenMai();
+	            List<ChiTietHoaDon> listCTHD = readChiTietHoaDonFromSQLByMaHD(maHD);
+	        	hd = new HoaDon(rs.getString(1),
+	                    rs.getDate(2).toLocalDate(),
+	                    rs.getFloat(5),
+	                    rs.getString(6),
+	                    rs.getFloat(8),
+	                    rs.getString(9)
+	            );
+	        	hd.setNhanVien(nv);
+	        	hd.setKhachHang(kh);
+	        	hd.setKhuyenMai(km);
+	        	hd.setChiTietHoaDon(listCTHD);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return hd;
+	}
 }

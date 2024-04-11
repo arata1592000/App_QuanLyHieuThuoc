@@ -237,7 +237,7 @@ public class Gui_HoaDon extends JPanel {
 	        // Xử lý sự kiện khi nhấn vào nút "Xem Chi Tiết"
 	    		int row = table.convertRowIndexToModel(table.getEditingRow());
 		        String maHD = (String) table.getModel().getValueAt(row, 0);
-		        guiCTHD = new Gui_ChiTietHoaDon();
+		        guiCTHD = new Gui_ChiTietHoaDon(maHD);
 		        guiCTHD.setOpaque(true);
 		        Dimension sizeGuiCTHD= guiCTHD.getPreferredSize(); // Lấy kích thước ưu tiên của guiCTHD
 		        Dimension sizeGuiLayeredPane = layeredPane.getPreferredSize(); // Lấy container cha (ví dụ, JLayeredPane hoặc JPanel)

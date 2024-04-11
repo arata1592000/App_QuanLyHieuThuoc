@@ -12,5 +12,6 @@ public class test {
 		        // Ví dụ: tạo và hiển thị một JFrame mới
 		        new Gui_Chinh();
 		    }
-		});	}
+		});	
+	}
 }

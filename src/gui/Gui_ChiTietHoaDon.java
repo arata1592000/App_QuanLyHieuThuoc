@@ -12,6 +12,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -24,6 +25,10 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import dao.Dao_HoaDon;
+import entity.ChiTietHoaDon;
+import entity.HoaDon;
 
 public class Gui_ChiTietHoaDon extends JPanel{
 	private JLabel lbl3;
@@ -44,14 +49,17 @@ public class Gui_ChiTietHoaDon extends JPanel{
 	private Vector<Vector<Object>> dataTable;
 	private JPanel pTitleContent;
 	private int widthComp;
+	private String maHD;
+	private HoaDon hd;
 	
-	public Gui_ChiTietHoaDon() {
+	public Gui_ChiTietHoaDon(String maHD) {
 		this.widthComp = 500;
+		this.maHD = maHD;
+		hd = (new Dao_HoaDon()).findHoaDonByMaHD(maHD);
 		this.setLayout(new BorderLayout());
 		this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 		initCompoent();
 		this.setPreferredSize(new Dimension(this.widthComp, (int)(pContent.getPreferredSize().getHeight()+pHeader.getPreferredSize().getHeight()+pFooter.getPreferredSize().getHeight())));
-		System.out.println(this.getPreferredSize().getWidth() + " " + this.getPreferredSize().getHeight());
 	}
 	
 	public void initCompoent() {
@@ -81,7 +89,7 @@ public class Gui_ChiTietHoaDon extends JPanel{
 		pTitleContent.setLayout(new FlowLayout(FlowLayout.LEFT));
 		pTitleContent.setPreferredSize(new Dimension(this.widthComp, 50));
         lbl2.setFont(new Font("Arial", Font.PLAIN, 15));
-        lbl2.setText("<html><div style='text-align: left;'>Mã HD:<br>Danh sách thuốc đã mua:</div></html>");
+        lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã mua:</div></html>");
         setDataTable();
         pTableContent.setPreferredSize(new Dimension(this.widthComp, (int)((dataTable.size()+1)*30)));
         pTableContent.setLayout(new GridBagLayout());
@@ -91,11 +99,11 @@ public class Gui_ChiTietHoaDon extends JPanel{
         pFooter.setBorder(new EmptyBorder(10, 10, 10, 10));
         pFooter.setPreferredSize(new Dimension(this.widthComp,100));
         pLeftFooter.setLayout(new GridLayout(3,1,5,5));
-        lbl3.setText("VAT:");
+        lbl3.setText("VAT: " + hd.getThue());
         lbl3.setFont(new Font("Arial", Font.PLAIN, 14));
         lbl4.setText("KM:");
         lbl4.setFont(new Font("Arial", Font.PLAIN, 14));
-        lbl5.setText("Tổng tiền");
+        lbl5.setText("Tổng tiền: " + hd.getTongTien());
         lbl5.setFont(new Font("Arial", Font.PLAIN, 14));
         btnDong.setText("Đóng");
 
@@ -159,85 +167,14 @@ public class Gui_ChiTietHoaDon extends JPanel{
         headerTable.add("Giá");
         headerTable.add("KM");
         headerTable.add("Tổng");
-		Vector<Object> row1 = new Vector<>();
-        row1.add("Tên thuốc 1");
-        row1.add(10);
-        row1.add(10000);
-        row1.add(0);
-        row1.add(100000);
-        dataTable.add(row1);
-
-        Vector<Object> row2 = new Vector<>();
-        row2.add("Tên thuốc 2");
-        row2.add(5);
-        row2.add(20000);
-        row2.add(0);
-        row2.add(100000);
-        dataTable.add(row2);
-
-        Vector<Object> row3 = new Vector<>();
-        row3.add("Tên thuốc 3");
-        row3.add(8);
-        row3.add(15000);
-        row3.add(0);
-        row3.add(120000);
-        dataTable.add(row3);
-        
-        Vector<Object> row4 = new Vector<>();
-        row4.add("Tên thuốc 4");
-        row4.add(8);
-        row4.add(15000);
-        row4.add(0);
-        row4.add(120000);
-        dataTable.add(row4);
-        
-        Vector<Object> row5 = new Vector<>();
-        row5.add("Tên thuốc 5");
-        row5.add(8);
-        row5.add(15000);
-        row5.add(0);
-        row5.add(120000);
-        dataTable.add(row5);
-        
-        Vector<Object> row6 = new Vector<>();
-        row6.add("Tên thuốc 6");
-        row6.add(10);
-        row6.add(10000);
-        row6.add(0);
-        row6.add(100000);
-        dataTable.add(row6);
-
-        Vector<Object> row7 = new Vector<>();
-        row7.add("Tên thuốc 7");
-        row7.add(5);
-        row7.add(20000);
-        row7.add(0);
-        row7.add(100000);
-        dataTable.add(row7);
-
-        Vector<Object> row8 = new Vector<>();
-        row8.add("Tên thuốc 8");
-        row8.add(8);
-        row8.add(15000);
-        row8.add(0);
-        row8.add(120000);
-        dataTable.add(row8);
-        
-        Vector<Object> row9 = new Vector<>();
-        row9.add("Tên thuốc 9");
-        row9.add(8);
-        row9.add(15000);
-        row9.add(0);
-        row9.add(120000);
-        dataTable.add(row9);
-        
-        Vector<Object> row10 = new Vector<>();
-        row10.add("Tên thuốc 10");
-        row10.add(8);
-        row10.add(15000);
-        row10.add(0);
-        row10.add(120000);
-        dataTable.add(row10);
-
+		for (ChiTietHoaDon cthd : hd.getChiTietHoaDon()) {
+			Vector<Object> rowTable = new Vector<>();
+			rowTable.add(cthd.getTenThuoc());
+			rowTable.add(cthd.getSoLuong() + " " + cthd.getDonViTinh());
+			rowTable.add(cthd.getGia());
+			rowTable.add(cthd.getKhuyenMai());
+			rowTable.add(cthd.getTongTienSanPham());
+			dataTable.add(rowTable);
+		}
 	}
 }

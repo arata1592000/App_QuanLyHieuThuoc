@@ -29,7 +29,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-
+import dao.Dao_HoaDon;
+import entity.ChiTietHoaDon;
+import entity.HoaDon;
 import utils.ButtonDeleteEditor;
 import utils.ButtonDeleteRenderer;
 import utils.RadioButtonEditor;
@@ -97,8 +99,6 @@ public class Gui_DoiTraThuoc extends JPanel{
                 return column==0;
             }
         };
-		Object[] newRow = {"", ""};
-		dataModel.addRow(newRow);
 		tableModel = new JTable(dataModel);
 		tableModel.getColumn("Chọn").setPreferredWidth(10);
 		tableModel.getColumn("Chọn").setCellRenderer(new RadioButtonRenderer());
@@ -138,30 +138,30 @@ public class Gui_DoiTraThuoc extends JPanel{
         btnTim.setFocusPainted(false);
 		Border titledBorder = BorderFactory.createTitledBorder("Thông tin hóa đơn");
 		if (titledBorder instanceof TitledBorder) {
-		    // Lấy phông chữ của tiêu đề hiện tại
 		    Font titleFont = ((TitledBorder) titledBorder).getTitleFont();
-		    // Tạo một phông chữ mới với kích thước mới (ở đây tăng 4 điểm)
 		    Font newTitleFont = titleFont.deriveFont(titleFont.getSize() + 15f);
-		    // Đặt phông chữ mới cho tiêu đề
 		    ((TitledBorder) titledBorder).setTitleFont(newTitleFont);
 		}
-		
+		Border emptyBorder = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+		Border compoundBorder = BorderFactory.createCompoundBorder(titledBorder, emptyBorder);
 		pRight.setPreferredSize(new Dimension((int)(widthComp*0.62), (int)(heightComp*0.8)));
-        pInforOrderDetail.setBorder(titledBorder);
         pInforOrderDetail.setPreferredSize(new Dimension((int)(widthComp*0.3), (int)(heightComp*0.5)));
 		pInforOrderDetail.setLayout(new BoxLayout(pInforOrderDetail, BoxLayout.Y_AXIS));
+		pInforOrderDetail.setBorder(compoundBorder);
 		pTable.setPreferredSize(new Dimension((int)(widthComp*0.6), (int)(heightComp*0.6)));
 		pTable.setLayout(new BoxLayout(pTable, BoxLayout.Y_AXIS));
 		pTable.setBorder(new EmptyBorder(10, 10, 10, 10)); // Đặt độ lề cho panel
-		lbl2.setText("    Mã khách hàng");
-		lbl2.setFont(new Font("Arial", Font.PLAIN, 23));
-		lbl3.setText("    Tên khách hàng");
+		lbl1.setText("Mã hóa đơn:");
+		lbl1.setFont(new Font("Arial:", Font.PLAIN, 23));
+		lbl2.setText("Mã khách hàng:");
+		lbl2.setFont(new Font("Arial:", Font.PLAIN, 23));
+		lbl3.setText("Tên khách hàng:");
 		lbl3.setFont(new Font("Arial", Font.PLAIN, 23));
-		lbl4.setText("    Tên nhân viên");
+		lbl4.setText("Tên nhân viên:");
 		lbl4.setFont(new Font("Arial", Font.PLAIN, 23));
-		lbl5.setText("    Ngày");
+		lbl5.setText("Ngày:");
 		lbl5.setFont(new Font("Arial", Font.PLAIN, 23));
-		lbl6.setText("    Giờ");		
+		lbl6.setText("Giờ:");		
 		lbl6.setFont(new Font("Arial", Font.PLAIN, 23));
 		lbl7.setText("Danh sách thuốc mà khách hàng đã mua");
 		lbl7.setFont(new Font("Arial", Font.BOLD, 25));
@@ -192,7 +192,7 @@ public class Gui_DoiTraThuoc extends JPanel{
 		pSearch.add(btnTim);
 		
 		pInforOrderDetail.add(lbl1);
-		pInforOrderDetail.add(Box.createVerticalStrut(25));
+		pInforOrderDetail.add(Box.createVerticalStrut(15));
 		pInforOrderDetail.add(lbl2);
 		pInforOrderDetail.add(Box.createVerticalStrut(15));
 		pInforOrderDetail.add(lbl3);
@@ -200,8 +200,8 @@ public class Gui_DoiTraThuoc extends JPanel{
 		pInforOrderDetail.add(lbl4);
 		pInforOrderDetail.add(Box.createVerticalStrut(15));
 		pInforOrderDetail.add(lbl5);
-		pInforOrderDetail.add(Box.createVerticalStrut(15));
-		pInforOrderDetail.add(lbl6);
+//		pInforOrderDetail.add(Box.createVerticalStrut(15));
+//		pInforOrderDetail.add(lbl6);
 		
 		pTable.add(lbl7);
 		pTable.add(Box.createVerticalStrut(20));
@@ -249,5 +249,34 @@ public class Gui_DoiTraThuoc extends JPanel{
 				}
 			}
 		});
+		
+		btnTim.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String maHD = txtTim.getText();
+				HoaDon hd = (new Dao_HoaDon()).findHoaDonByMaHD(maHD); 
+				if(hd != null) {
+					lbl1.setText("Mã hóa đơn: " + hd.getMaHD());
+					lbl2.setText("Mã khách hàng: " + hd.getKhachHang().getMaKH());
+					lbl3.setText("Tên khách hàng: " + hd.getKhachHang().getHoTen());
+					lbl4.setText("Tên nhân viên: " + hd.getNhanVien().getHoTen());
+					lbl5.setText("Ngày: " + hd.getNgayLap());
+					for (ChiTietHoaDon cthd : hd.getChiTietHoaDon()) {
+						dataModel.addRow(new Object[] {"",
+								cthd.getTenThuoc(),
+								cthd.getSoLuong()+"",
+								cthd.getGia()+"",
+								cthd.getKhuyenMai()+"",
+								cthd.getTongTienSanPham()+""});
+					}
+					
+				}else {
+					JOptionPane.showMessageDialog(null, "Không tìm thấy hóa đơn này!");
+				}
+			}
+		});
 	}
+	
 }

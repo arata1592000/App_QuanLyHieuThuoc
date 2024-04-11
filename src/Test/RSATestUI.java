@@ -52,15 +52,16 @@ public class RSATestUI extends JFrame {
 
         // Set layout
         JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(new JLabel("Input:"));
         panel.add(new JScrollPane(inputTextArea));
-        panel.add(encryptButton);
         panel.add(new JLabel("Output:"));
         panel.add(new JScrollPane(outputTextArea));
+        panel.add(encryptButton);
         panel.add(decryptButton);
 
         add(panel);
-        setSize(500, 800);
+        setSize(500, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the window
         setVisible(true);
