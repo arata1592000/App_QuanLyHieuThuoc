@@ -35,6 +35,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
 import database.ConnectDB;
+import entity.NhanVien;
 
 public class Gui_Chinh extends JFrame implements ActionListener{
 
@@ -60,8 +61,9 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	private JButton actButtonBack = new JButton();
 	private JLabel lbl2;
 	private JLabel lbl3;
-
-	public Gui_Chinh() {
+	private NhanVien nv;
+	
+	public Gui_Chinh(NhanVien nv) {
 		this.setTitle("Hệ thống quản lý hiệu thuốc Ân Cần");
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         Rectangle bounds = ge.getMaximumWindowBounds();
@@ -291,6 +293,8 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	                case JOptionPane.YES_OPTION:
 	                    System.out.println("Đăng xuất thành công!");
 	                    // Thực hiện đăng xuất
+	                    new Gui_DangNhap();
+	                    dispose();
 	                    break;
 	                case JOptionPane.NO_OPTION:
 	                    System.out.println("Hủy thao tác.");
@@ -381,6 +385,8 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	            btnDangXuat.doClick(); 
 	        }
 	    });
-}
-
+	}
+	public NhanVien getNhanVien() {
+		return nv;
+	}
 }

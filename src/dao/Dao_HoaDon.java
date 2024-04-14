@@ -33,7 +33,6 @@ public class Dao_HoaDon {
 			stmt.setString(1, hd.getMaHD());
 			stmt.setTimestamp(2, Timestamp.valueOf(hd.getNgayLap().atStartOfDay()));
 			stmt.setString(3, hd.getNhanVien().getMaNV());
-			(new Dao_KhachHang()).addKhachHang(hd.getKhachHang());
 			stmt.setString(4, hd.getKhachHang().getMaKH());
 			stmt.setFloat(5, hd.getTongTien());
 			stmt.setString(6, hd.getLoaiHD());
@@ -137,12 +136,12 @@ public class Dao_HoaDon {
 			stmt.setString(1, maHD);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				ChiTietHoaDon cthd = new ChiTietHoaDon(rs.getString(2),
-						rs.getInt(3),
-						rs.getString(4),
-						rs.getFloat(5),
+				ChiTietHoaDon cthd = new ChiTietHoaDon(rs.getString(3),
+						rs.getInt(4),
+						rs.getString(5),
 						rs.getFloat(6),
-						rs.getFloat(7)
+						rs.getFloat(7),
+						rs.getFloat(8)
 						);
 				listCTHD.add(cthd);
 			}
@@ -171,7 +170,7 @@ public class Dao_HoaDon {
 			Statement stt = connect.createStatement();
 			ResultSet rs = stt.executeQuery("SELECT * FROM HoaDon");
 			while (rs.next()) {
-				NhanVien nv = new NhanVien(rs.getString(3));
+				NhanVien nv = (new Dao_NhanVien()).findNhanVienByMaNV(rs.getString(3));
 				KhachHang kh = (new Dao_KhachHang()).findKhachHangByMaKH(rs.getString(4));
 				KhuyenMai km = new KhuyenMai();
 				HoaDon hd = new HoaDon(rs.getString(1),
@@ -244,4 +243,41 @@ public class Dao_HoaDon {
 	    }
 	    return hd;
 	}
+	
+	public String autoCreateMaHD() {
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    String maHD = null;
+	    try {
+	        connect = ConnectDB.getConnection();
+            Statement stm = connect.createStatement();
+            ResultSet rs = stm.executeQuery("DECLARE @TodayDate AS DATE = GETDATE(),\r\n"
+            		+ "        @Prefix AS VARCHAR(8),\r\n"
+            		+ "        @NextNumber AS INT;\r\n"
+            		+ "SET @Prefix = 'HD' + \r\n"
+            		+ "              FORMAT(@TodayDate, 'dd') + \r\n"
+            		+ "              FORMAT(@TodayDate, 'MM') + \r\n"
+            		+ "              RIGHT(YEAR(@TodayDate), 2);\r\n"
+            		+ "SELECT @NextNumber = ISNULL(MAX(CAST(SUBSTRING(maHD, 9, 4) AS INT)), 0) + 1\r\n"
+            		+ "FROM [dbo].[HoaDon]\r\n"
+            		+ "WHERE maHD LIKE @Prefix + '%';\r\n"
+            		+ "SELECT @Prefix + FORMAT(@NextNumber, '0000');");
+            while(rs.next()) {
+                maHD = rs.getString(1);
+            }
+	    }  catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	            	ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+		}
+        return maHD;
+    }
 }

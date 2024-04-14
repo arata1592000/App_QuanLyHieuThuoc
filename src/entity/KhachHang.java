@@ -1,5 +1,7 @@
 package entity;
 
+import dao.Dao_KhachHang;
+
 public class KhachHang {
 	private String maKH;
 	private String hoTen;;
@@ -22,6 +24,22 @@ public class KhachHang {
 	public void setsDT(String sDT) {
 		this.sDT = sDT;
 	}
+	public int getCountOrderIn30Days() {
+		return (new Dao_KhachHang()).getCountHoaDonIn30DayOfKhachHang(this.maKH);
+	}
+	public String getHangKH() {
+		int countOrder = getCountOrderIn30Days();
+		if (countOrder >= 10 ) {
+			return "Vàng";
+		}else if (countOrder >= 5) {
+			return "Bạc";
+		}else if (countOrder >= 3) {
+			return "Đồng";
+		}
+		return "Không có";
+	}
+	
+	
 	public KhachHang(String maKH, String hoTen, String sDT) {
 		super();
 		this.maKH = maKH;

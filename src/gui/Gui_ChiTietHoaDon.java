@@ -88,8 +88,7 @@ public class Gui_ChiTietHoaDon extends JPanel{
 		pContent.setBorder(new EmptyBorder(10, 10, 10, 10));
 		pTitleContent.setLayout(new FlowLayout(FlowLayout.LEFT));
 		pTitleContent.setPreferredSize(new Dimension(this.widthComp, 50));
-        lbl2.setFont(new Font("Arial", Font.PLAIN, 15));
-        lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã mua:</div></html>");
+        lbl2.setFont(new Font("Arial", Font.PLAIN, 15));        
         setDataTable();
         pTableContent.setPreferredSize(new Dimension(this.widthComp, (int)((dataTable.size()+1)*30)));
         pTableContent.setLayout(new GridBagLayout());
@@ -99,13 +98,26 @@ public class Gui_ChiTietHoaDon extends JPanel{
         pFooter.setBorder(new EmptyBorder(10, 10, 10, 10));
         pFooter.setPreferredSize(new Dimension(this.widthComp,100));
         pLeftFooter.setLayout(new GridLayout(3,1,5,5));
-        lbl3.setText("VAT: " + hd.getThue());
         lbl3.setFont(new Font("Arial", Font.PLAIN, 14));
-        lbl4.setText("KM:");
+    	lbl3.setMaximumSize(new Dimension(100, 45));
         lbl4.setFont(new Font("Arial", Font.PLAIN, 14));
-        lbl5.setText("Tổng tiền: " + hd.getTongTien());
         lbl5.setFont(new Font("Arial", Font.PLAIN, 14));
+        if (hd.getLoaiHD().equals("Bán hàng")) {
+            lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã mua:</div></html>");
+        	lbl3.setText("VAT: " + hd.getThue());
+            lbl4.setText("KM:");
+            lbl5.setText("Tổng tiền: " + hd.getTongTien());
+        }else if (hd.getLoaiHD().equals("Trả thuốc")) {
+            lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã trả:</div></html>");
+        	lbl3.setText(hd.getGhiChu() );
+        	lbl4.setText("Được hoàn trả " + hd.getTongTien() + "đ");
+        }else if (hd.getLoaiHD().equals("Đổi thuốc")) {
+            lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã đổi:</div></html>");
+        	lbl3.setText(hd.getGhiChu());
+
+        }
         btnDong.setText("Đóng");
+        
 
         
         pHeader.add(lbl1);

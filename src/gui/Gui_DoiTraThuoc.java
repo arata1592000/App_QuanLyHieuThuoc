@@ -11,8 +11,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Flow;
 import javax.swing.border.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -30,8 +37,10 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import dao.Dao_HoaDon;
+import dao.Dao_NhanVien;
 import entity.ChiTietHoaDon;
 import entity.HoaDon;
+import entity.NhanVien;
 import utils.ButtonDeleteEditor;
 import utils.ButtonDeleteRenderer;
 import utils.RadioButtonEditor;
@@ -67,10 +76,13 @@ public class Gui_DoiTraThuoc extends JPanel{
 	private JPanel pAction;
 	private JPanel pTable;
 	private ButtonGroup radGroup;
+	private HoaDon hd;
+	private NhanVien nv;
 
 	public Gui_DoiTraThuoc(int widthComp, int heightComp) {
 		this.widthComp = widthComp;
 		this.heightComp = heightComp;
+		nv = (new Dao_NhanVien()).findNhanVienByMaNV("NV241001");
 		this.setLayout(new BorderLayout());
 		initCompoent();
 	}
@@ -91,7 +103,7 @@ public class Gui_DoiTraThuoc extends JPanel{
 		pRight = new JPanel();
 		pTable = new JPanel();
 		lbl7 = new JLabel();
-		String headers[] = {"Chọn", "Tên thuốc", "Số lượng", "Giá", "Khuyến mãi", "Tổng tiền"};
+		String headers[] = {"Chọn", "Tên thuốc", "Số lượng", "Đơn vị tính", "Giá", "Khuyến mãi", "Tổng tiền"};
 		dataModel = new DefaultTableModel(headers, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -175,7 +187,7 @@ public class Gui_DoiTraThuoc extends JPanel{
 		lbl10.setText("Lý do:");
 		lbl10.setFont(new Font ("Arial", Font.PLAIN, 20));
 		txtLyDo.setFont(new Font ("Arial", Font.PLAIN, 20));
-		lbl11.setText("Số tiền được hoàn trả:" + "1.500.000đ");
+		lbl11.setText("Số tiền được hoàn trả: " + getTotalRefund(getListCTHD()));
 		lbl11.setFont(new Font ("Arial", Font.PLAIN, 20));
 		btnTaoLaiHoaDon.setText("Tạo lại hóa đơn");
 		btnTaoLaiHoaDon.setForeground(Color.WHITE);
@@ -228,13 +240,29 @@ public class Gui_DoiTraThuoc extends JPanel{
 		this.add(pSearch, BorderLayout.NORTH);
 		this.add(pMain, BorderLayout.CENTER);
 		
+		dataModel.addTableModelListener(new TableModelListener() {
+			
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				// TODO Auto-generated method stub
+				if (e.getType() == TableModelEvent.UPDATE) { // Kiểm tra xem sự kiện thay đổi có phải là một cập nhật dữ liệu không
+		            int column = e.getColumn();
+		            if (column >= 0 && column == 0) { // Kiểm tra xem cột thay đổi có phải là cột liên quan đến hoàn trả không
+		                lbl11.setText("Số tiền được hoàn trả: " + getTotalRefund(getListCTHD()));
+		                repaint();
+		            }
+		        }
+			}
+		});
+		
 		radTraThuoc.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				if(lbl11.getText().equals("")) {
-					lbl11.setText("Số tiền được hoàn trả: 1.500.000đ");
+					lbl11.setText("Số tiền được hoàn trả: " + getTotalRefund(getListCTHD()));
+					repaint();
 				}
 			}
 		});
@@ -257,6 +285,7 @@ public class Gui_DoiTraThuoc extends JPanel{
 				// TODO Auto-generated method stub
 				String maHD = txtTim.getText();
 				HoaDon hd = (new Dao_HoaDon()).findHoaDonByMaHD(maHD); 
+				Gui_DoiTraThuoc.this.hd = hd;
 				if(hd != null) {
 					lbl1.setText("Mã hóa đơn: " + hd.getMaHD());
 					lbl2.setText("Mã khách hàng: " + hd.getKhachHang().getMaKH());
@@ -264,9 +293,10 @@ public class Gui_DoiTraThuoc extends JPanel{
 					lbl4.setText("Tên nhân viên: " + hd.getNhanVien().getHoTen());
 					lbl5.setText("Ngày: " + hd.getNgayLap());
 					for (ChiTietHoaDon cthd : hd.getChiTietHoaDon()) {
-						dataModel.addRow(new Object[] {"",
+						dataModel.addRow(new Object[] {false,
 								cthd.getTenThuoc(),
 								cthd.getSoLuong()+"",
+								cthd.getDonViTinh(),
 								cthd.getGia()+"",
 								cthd.getKhuyenMai()+"",
 								cthd.getTongTienSanPham()+""});
@@ -277,6 +307,59 @@ public class Gui_DoiTraThuoc extends JPanel{
 				}
 			}
 		});
+		btnTaoLaiHoaDon.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				List<ChiTietHoaDon> listCTHD = getListCTHD();
+				HoaDon hdNew = new HoaDon();
+				hdNew.setMaHD((new Dao_HoaDon()).autoCreateMaHD());
+				hdNew.setKhachHang(hd.getKhachHang());
+				hdNew.setNhanVien(nv);
+				if (radDoiThuoc.isSelected()) {
+					hdNew.setLoaiHD("Đổi thuốc");
+					hdNew.setGhiChu("Đổi từ " + hd.getMaHD() + ", Lý do: " + txtLyDo.getText());
+				}else if (radTraThuoc.isSelected()) {
+					hdNew.setLoaiHD("Trả thuốc");
+					hdNew.setGhiChu("Trả từ " + hd.getMaHD() + ", Lý do: " + txtLyDo.getText());
+					hdNew.setTongTien(getTotalRefund(listCTHD));
+				}
+				hdNew.setNgayLap(LocalDate.now());
+				hdNew.setChiTietHoaDon(listCTHD);
+				hdNew.setKhuyenMai(hd.getKhuyenMai());
+				if ((new Dao_HoaDon()).addHoaDon(hdNew)) {
+					JOptionPane.showMessageDialog(null, "Tạo hóa đơn thành công!");
+				}else {
+					JOptionPane.showMessageDialog(null, "Có lỗi xảy ra!");
+				}
+			}
+		});
 	}
 	
+	public List<ChiTietHoaDon> getListCTHD(){
+		List<ChiTietHoaDon> listCTHD = new ArrayList();
+		for (int i = 0 ; i < tableModel.getRowCount() ; i ++) {
+			if (dataModel.getValueAt(i, 0).equals(true)) {
+				ChiTietHoaDon cthd = new ChiTietHoaDon(dataModel.getValueAt(i, 1).toString(),
+						Integer.parseInt(dataModel.getValueAt(i, 2).toString()),
+						dataModel.getValueAt(i, 3).toString(),
+						Float.valueOf(dataModel.getValueAt(i, 4).toString()),
+						Float.valueOf(dataModel.getValueAt(i, 5).toString()),
+						Float.valueOf(dataModel.getValueAt(i, 6).toString()));
+				listCTHD.add(cthd);
+			}
+		}
+		return listCTHD;
+	}
+	
+	public float getTotalRefund(List<ChiTietHoaDon> listCTHD) {
+		float total = 0;
+		if (listCTHD != null) {
+			for (ChiTietHoaDon cthd : listCTHD) {
+				total += cthd.getTongTienSanPham();
+			}
+		}
+		return total;
+	}
 }

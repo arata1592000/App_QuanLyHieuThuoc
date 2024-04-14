@@ -2,6 +2,7 @@ package gui;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -11,22 +12,31 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
+
+import dao.Dao_TaiKhoan;
+import entity.NhanVien;
+import entity.TaiKhoan;
+import utils.AES;
 public class Gui_DangNhap extends JFrame {
-    public Gui_DangNhap() {
+    private ImageIcon image;
+	private Image img;
+	public Gui_DangNhap() {
         this.setTitle("Hệ thống Quản lý Nhà Thuốc Ân Cần");
         this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
         this.setBackground(new Color(40, 156, 164));
         this.setResizable(false);
         this.getContentPane().setBackground(new Color(40,156,164));
         initComponents();
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
-        initComponents();
+//        initComponents();
     }
                        
     private void initComponents() {
@@ -44,7 +54,9 @@ public class Gui_DangNhap extends JFrame {
 
         lblTittle.setFont(new Font("Arial", 1, 36)); 
         lblTittle.setForeground(new Color(255, 255, 255));
-        lblTittle.setIcon(new ImageIcon(("images/logo1.png"))); 
+        image = new ImageIcon(("images/logo.png"));
+		img = image.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        lblTittle.setIcon(new ImageIcon(img)); 
         lblTittle.setText(" Nhà Thuốc Ân Cần");
 
         txtDangNhap.addFocusListener(new FocusAdapter() {
@@ -72,10 +84,17 @@ public class Gui_DangNhap extends JFrame {
         btnDangNhap.setText("Đăng nhập");
 
         btnQuenMK.setText("Quên mật khẩu ?");
+        btnQuenMK.setOpaque(true);
+        btnQuenMK.setFocusable(false);
+        btnQuenMK.setBackground(new Color(40, 156, 164));
 
-        jLabel1.setIcon(new ImageIcon(("images/user.png"))); 
+        image = new ImageIcon(("images/user.png"));
+		img = image.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        jLabel1.setIcon(new ImageIcon(img)); 
 
-        jLabel2.setIcon(new ImageIcon(("images/pass.png"))); 
+        image = new ImageIcon(("images/lock.png"));
+		img = image.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        jLabel2.setIcon(new ImageIcon(img)); 
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -121,6 +140,30 @@ public class Gui_DangNhap extends JFrame {
         );
 
         pack();
+        
+        btnDangNhap.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				TaiKhoan tk = new TaiKhoan(txtDangNhap.getText(), txtMatKhau.getText());
+				try {
+					System.out.println((new AES()).encrypt(txtMatKhau.getText(), txtDangNhap.getText()));
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				NhanVien nv = (new Dao_TaiKhoan()).authenticateTaiKhoanForNhanVien(tk);
+				if (nv != null) {
+			    	JOptionPane.showMessageDialog(null, "Đăng nhập thành công!");
+			    	new Gui_Chinh(nv);
+			    	dispose();
+				} else {
+					JOptionPane.showMessageDialog(null, "Đăng nhập thất bại!");
+
+				}
+			}
+		});
     }                     
 
     private void txtDangNhapFocusGained(FocusEvent evt) {                                        

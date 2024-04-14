@@ -10,5 +10,11 @@
 	<classpathentry kind="lib" path="libs/jcalendar-1.2.2.jar"/>
 	<classpathentry kind="lib" path="libs/jcalendar-1.4.jar"/>
 	<classpathentry kind="lib" path="libs/sqljdbc42.jar"/>
+	<classpathentry kind="lib" path="libs/jfreechart-1.0.1/lib/gnujaxp.jar"/>
+	<classpathentry kind="lib" path="libs/jfreechart-1.0.1/lib/jcommon-1.0.0.jar"/>
+	<classpathentry kind="lib" path="libs/jfreechart-1.0.1/lib/jfreechart-1.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/jfreechart-1.0.1/lib/junit.jar"/>
+	<classpathentry kind="lib" path="libs/jfreechart-1.0.1/lib/servlet.jar"/>
+	<classpathentry kind="lib" path="libs/jbcrypt-0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

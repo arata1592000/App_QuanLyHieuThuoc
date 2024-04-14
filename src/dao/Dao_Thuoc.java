@@ -156,4 +156,131 @@ public class Dao_Thuoc {
 	    }
 	    return thuoc;
 	}
+	
+	public List<Thuoc> listThuocContainTenThuocOrMaThuoc(String text){
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    List<Thuoc> listThuoc = new ArrayList<Thuoc>();
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("SELECT * FROM Thuoc WHERE tenThuoc LIKE CONCAT('%', ? , '%') OR maThuoc LIKE CONCAT('%', ?, '%')");
+	        stmt.setString(1, text);
+	        stmt.setString(2, text);
+
+	        ResultSet rs = stmt.executeQuery();
+	        while (rs.next()) {
+	        	Thuoc thuoc = new Thuoc(rs.getString(1),
+	                    rs.getString(2),
+	                    rs.getDate(3).toLocalDate(),
+	                    rs.getDate(4).toLocalDate(),
+	                    rs.getDate(5).toLocalDate(),
+	                    rs.getString(6),
+	                    rs.getFloat(7),
+	                    rs.getString(8),
+	                    rs.getString(9),
+	                    rs.getInt(10)
+	            );
+	        	listThuoc.add(thuoc);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return listThuoc;
+	}
+	public List<Thuoc> listThuocNoDiscount()
+	{
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    List<Thuoc> listThuoc = new ArrayList<Thuoc>();
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("select * from Thuoc where maKMSP IS NULL");
+	        //stmt.setString(1, maThuoc); // Thiết lập giá trị cho tham số maThuoc
+
+	        ResultSet rs = stmt.executeQuery();
+	        while (rs.next()) {
+	            Thuoc thuoc = new Thuoc(rs.getString(1),
+	                    rs.getString(2),
+	                    rs.getDate(3).toLocalDate(),
+	                    rs.getDate(4).toLocalDate(),
+	                    rs.getDate(5).toLocalDate(),
+	                    rs.getString(6),
+	                    rs.getFloat(7),
+	                    rs.getString(8),
+	                    rs.getString(9),
+	                    rs.getInt(10)
+	            );
+	            listThuoc.add(thuoc);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return listThuoc;
+		
+	}
+	public List<Thuoc> listThuocDiscountByID(String maKM)
+	{
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    List<Thuoc> listThuoc = new ArrayList<Thuoc>();
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("select * from Thuoc where maKMSP = ?");
+	        stmt.setString(1, maKM); // Thiết lập giá trị cho tham số maThuoc
+
+	        ResultSet rs = stmt.executeQuery();
+	        while (rs.next()) {
+	            Thuoc thuoc = new Thuoc(rs.getString(1),
+	                    rs.getString(2),
+	                    rs.getDate(3).toLocalDate(),
+	                    rs.getDate(4).toLocalDate(),
+	                    rs.getDate(5).toLocalDate(),
+	                    rs.getString(6),
+	                    rs.getFloat(7),
+	                    rs.getString(8),
+	                    rs.getString(9),
+	                    rs.getInt(10)
+	                   
+	                    
+	            );
+	            thuoc.setKhuyenMai((new Dao_KhuyenMai()).findKhuyenMaiByID(rs.getString(11)));;
+
+	            listThuoc.add(thuoc);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return listThuoc;
+		
+	}
 }

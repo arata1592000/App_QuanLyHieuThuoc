@@ -3,6 +3,10 @@ package dao;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +16,9 @@ import java.util.List;
 import java.sql.Date;
 import database.ConnectDB;
 import entity.NhanVien;
+import entity.TaiKhoan;
 import entity.Thuoc;
+import utils.AES;
 
 public class Dao_NhanVien {
 	
@@ -35,9 +41,29 @@ public class Dao_NhanVien {
 				String soCCCD = rs.getString(8);
 				String diaChi = rs.getString(9);
 				String trangThai = rs.getNString(10);
+				InputStream anh = rs.getBinaryStream(11); 
+				if (anh != null) {
+					byte[] anhByte = null;
+					try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+					    int nRead;
+					    byte[] data = new byte[16384]; // Adjust buffer size as needed
+					    while ((nRead = anh.read(data, 0, data.length)) != -1) {
+					        buffer.write(data, 0, nRead);
+					    }
+					    buffer.flush();
+					    anhByte = buffer.toByteArray(); // Chuyển dữ liệu từ ByteArrayOutputStream thành mảng byte
+					} catch (IOException e) {
+					    e.printStackTrace();
+					}
 
-				NhanVien nhanVien = new NhanVien(maNV,hoTen,gioiTinh,soDT,ngaySinh,ngayVaoLam,chucVu,soCCCD,diaChi,trangThai);
-				listNhanVien.add(nhanVien);
+					NhanVien nhanVien = new NhanVien(maNV,hoTen,gioiTinh,soDT,ngaySinh,ngayVaoLam,chucVu,soCCCD,diaChi,trangThai,anhByte);
+
+					listNhanVien.add(nhanVien);
+				} else {
+					NhanVien nhanVien = new NhanVien(maNV,hoTen,gioiTinh,soDT,ngaySinh,ngayVaoLam,chucVu,soCCCD,diaChi,trangThai);
+					listNhanVien.add(nhanVien);
+
+				}
 			}
 	    }catch (Exception e) {
 			e.printStackTrace();
@@ -55,6 +81,41 @@ public class Dao_NhanVien {
 		return listNhanVien;
 	}
 
+//	public boolean addNhanVien(NhanVien nhanVien) {
+//	    Connection connect = null;
+//	    PreparedStatement stmt = null;
+//	    int n = 0;
+//	    try {
+//	        connect = ConnectDB.getConnection();
+//	        stmt = connect.prepareStatement("INSERT INTO NhanVien VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
+//	        stmt.setString(1, nhanVien.getMaNV());
+//	        stmt.setString(2, nhanVien.getHoTen());
+//	        stmt.setString(3, nhanVien.getGioiTinh());
+//	        stmt.setString(4, nhanVien.getSoDienThoai());
+//	        stmt.setTimestamp(5, Timestamp.valueOf(nhanVien.getNgaySinh().atStartOfDay()));
+//	        stmt.setTimestamp(6, Timestamp.valueOf(nhanVien.getNgayVaoLam().atStartOfDay()));
+//	        stmt.setString(7, nhanVien.getChucVu());
+//	        stmt.setString(8, nhanVien.getSoCCCD());
+//	        stmt.setString(9, nhanVien.getDiaChi());
+//	        stmt.setString(10, nhanVien.getTrangThai());
+//	        stmt.setBytes(11, nhanVien.getAnh());
+//
+//	        n = stmt.executeUpdate();
+//	    } catch (SQLException e) {
+//	        e.printStackTrace();
+//	    } finally {
+//	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+//	        try {
+//	            if (stmt != null) stmt.close();
+//	            if (connect != null) {
+//	                ConnectDB.close(connect);
+//	            }
+//	        } catch (SQLException e) {
+//	            e.printStackTrace();
+//	        }
+//	    }
+//	    return n > 0;
+//	}
 	public boolean addNhanVien(NhanVien nhanVien) {
 	    Connection connect = null;
 	    PreparedStatement stmt = null;
@@ -75,6 +136,21 @@ public class Dao_NhanVien {
 	        stmt.setBytes(11, nhanVien.getAnh());
 
 	        n = stmt.executeUpdate();
+	        
+	        // Sau khi thêm nhân viên thành công, tạo tài khoản dựa trên mã nhân viên
+	        if (n > 0) {
+	            String tenTaiKhoan = nhanVien.getMaNV();
+	            String matKhau = "1111"; 
+	            try {
+					matKhau = (new AES()).encrypt(matKhau, tenTaiKhoan);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	            Dao_TaiKhoan daoTaiKhoan = new Dao_TaiKhoan();
+	            TaiKhoan taiKhoan = new TaiKhoan(tenTaiKhoan, matKhau);
+	            daoTaiKhoan.addTaiKhoan(taiKhoan);
+	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    } finally {
@@ -90,6 +166,7 @@ public class Dao_NhanVien {
 	    }
 	    return n > 0;
 	}
+
 	public boolean removeNhanVien(String maNV) {
 	Connection connect = null;
     PreparedStatement stmt = null;
@@ -114,7 +191,7 @@ public class Dao_NhanVien {
     }
 	return n>0;
 }
-	public NhanVien findNhanVien(String maNhanVien) {
+	public NhanVien findNhanVienByMaNV(String maNhanVien) {
 	    Connection connect = null;
 	    PreparedStatement stmt = null;
 	    NhanVien nhanVien = null;
@@ -125,6 +202,20 @@ public class Dao_NhanVien {
 
 	        ResultSet rs = stmt.executeQuery();
 	        if (rs.next()) {
+	        	InputStream anh = rs.getBinaryStream(11); 
+					byte[] anhByte = null;
+					try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+					    int nRead;
+					    byte[] data = new byte[16384]; // Adjust buffer size as needed
+					    while ((nRead = anh.read(data, 0, data.length)) != -1) {
+					        buffer.write(data, 0, nRead);
+					    }
+					    buffer.flush();
+					    anhByte = buffer.toByteArray(); // Chuyển dữ liệu từ ByteArrayOutputStream thành mảng byte
+					} catch (IOException e) {
+					    e.printStackTrace();
+					}
+
 	            nhanVien = new NhanVien(
 	                rs.getString(1),
 	                rs.getString(2),
@@ -135,7 +226,8 @@ public class Dao_NhanVien {
 	                rs.getString(7),
 	                rs.getString(8),
 	                rs.getString(9),
-	                rs.getString(10)
+	                rs.getString(10),
+	                anhByte
 	            );
 	        }
 	    } catch (SQLException e) {
@@ -188,33 +280,38 @@ public class Dao_NhanVien {
 	    }
 	    return n > 0;
 	}
-	public NhanVien findNhanVienByMaNV(String maNV) {
+
+	public String autoCreateMaNhanVien(String loaiNV) {
 	    Connection connect = null;
 	    PreparedStatement stmt = null;
-	    NhanVien nv = null;
+	    String maNhanVien = null;
 	    try {
 	        connect = ConnectDB.getConnection();
-	        stmt = connect.prepareStatement("SELECT * FROM NhanVien WHERE maNV = ?");
-	        stmt.setString(1, maNV); // Thiết lập giá trị cho tham số maThuoc
-
+	        stmt = connect.prepareStatement("DECLARE @LoaiNV NVARCHAR(50) = ?; " +
+	                                        "DECLARE @NamCuoi INT; " +
+	                                        "SET @NamCuoi = RIGHT(YEAR(GETDATE()), 2); " +
+	                                        "DECLARE @SoTT INT; " +
+	                                        "SET @SoTT = ISNULL((SELECT MAX(CAST(SUBSTRING(MaNV, 6, 3) AS INT)) FROM [dbo].[NhanVien] WHERE SUBSTRING(MaNV, 1, 4) = 'NV' + "
+	                                        + "CONVERT(NVARCHAR(2), @NamCuoi) AND SUBSTRING(MaNV, 5, 1) = CASE "
+	                                        + "WHEN @LoaiNV = N'Quản Lý' THEN '1'"
+	                                        + "WHEN @LoaiNV = N'Nhân Viên' Then '2' "
+	                                        + "ELSE '0' END), 0) + 1; " +
+	                                        "DECLARE @SoTTStr NVARCHAR(3); " +
+	                                        "SET @SoTTStr = RIGHT('000' + CONVERT(NVARCHAR(3), @SoTT), 3); " +
+	                                        "DECLARE @MaNV NVARCHAR(10); " +
+	                                        "SET @MaNV = 'NV' + CONVERT(NVARCHAR(2), @NamCuoi) + CASE "
+	                                        + "WHEN @LoaiNV = N'Quản Lý' THEN '1' "
+	                                        + "WHEN @LoaiNV = N'Nhân Viên'THEN '2' "
+	                                        + "ELSE '0' END + @SoTTStr; " +
+	                                        "SELECT @MaNV AS MaNhanVien;");
+	        stmt.setString(1, loaiNV);
 	        ResultSet rs = stmt.executeQuery();
 	        if (rs.next()) {
-	            nv = new NhanVien(rs.getString(1),
-	                    rs.getString(2),
-	                    rs.getString(3),
-	                    rs.getString(4),
-	                    rs.getDate(5).toLocalDate(),
-	                    rs.getDate(6).toLocalDate(),
-	                    rs.getString(7),
-	                    rs.getString(8),
-	                    rs.getString(9),
-	                    rs.getString(10)
-	            );
+	            maNhanVien = rs.getString("MaNhanVien");
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    } finally {
-	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
 	        try {
 	            if (stmt != null) stmt.close();
 	            if (connect != null) {
@@ -224,6 +321,7 @@ public class Dao_NhanVien {
 	            e.printStackTrace();
 	        }
 	    }
-	    return nv;
+	    return maNhanVien;
 	}
+
 }

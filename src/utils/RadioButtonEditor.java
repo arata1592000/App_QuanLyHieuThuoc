@@ -22,7 +22,7 @@ public class RadioButtonEditor extends DefaultCellEditor implements ItemListener
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
             int column) {
         if (value instanceof Boolean) {
-            button.setSelected((boolean) value);
+            button.setSelected((Boolean) value);
         } else if (value instanceof String) {
             button.setSelected(Boolean.parseBoolean((String) value));
         }

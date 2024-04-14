@@ -107,7 +107,7 @@ public class Gui_HoaDon extends JPanel {
 		pTable.setBackground(Color.WHITE);
 		lbl2.setText("Danh sách hóa đơn");
 		lbl2.setFont(new Font("Arial", Font.ITALIC, 30));
-		String headers[] = {"Mã hóa đơn", "Ngày lập", "Tên nhân viên", "Tên KH", "Tổng thanh toán", "Xem chi tiết", "Loại HĐ", "Ghi chú"};
+		String headers[] = {"Mã hóa đơn", "Ngày lập", "Tên NV", "Tên KH", "Tổng thanh toán", "Xem chi tiết", "Loại HĐ", "Ghi chú"};
 		dataModel = new DefaultTableModel(headers, 0) {
 			@Override
             public boolean isCellEditable(int row, int column) {
@@ -116,12 +116,20 @@ public class Gui_HoaDon extends JPanel {
             }
 		};
 		tableModel = new JTable(dataModel);
-		tableModel.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
-		tableModel.setFont(new Font("Arial", Font.PLAIN, 15));
+		tableModel.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+		tableModel.setFont(new Font("Arial", Font.PLAIN, 11));
 		tableModel.setRowHeight(30);
-		tableModel.getColumn("Ngày lập").setPreferredWidth(20);
-		tableModel.getColumn("Tên KH").setPreferredWidth(20);
-		tableModel.getColumn("Loại HĐ").setPreferredWidth(20);
+		tableModel.getColumnModel().getColumn(0).setPreferredWidth(5);
+		tableModel.getColumnModel().getColumn(1).setPreferredWidth(5);
+		tableModel.getColumnModel().getColumn(2).setPreferredWidth(30);
+		tableModel.getColumnModel().getColumn(3).setPreferredWidth(5);
+		tableModel.getColumnModel().getColumn(4).setPreferredWidth(5);
+		tableModel.getColumnModel().getColumn(5).setPreferredWidth(5);
+		tableModel.getColumnModel().getColumn(6).setPreferredWidth(5);
+		tableModel.getColumnModel().getColumn(7).setPreferredWidth(300);
+
+
+
 		tableModel.getColumn("Xem chi tiết").setCellRenderer(new ButtonShowOrderDetailsRenderer());
 		tableModel.getColumn("Xem chi tiết").setCellEditor(new ButtonShowOrderDetailsEditor(new JCheckBox()));
 		JScrollPane pane = new JScrollPane(tableModel);
@@ -146,7 +154,7 @@ public class Gui_HoaDon extends JPanel {
 	public void addRowHoaDon(HoaDon hd) {
 		dataModel.addRow(new Object[] {hd.getMaHD(),
 				hd.getNgayLap(),
-				"An",
+				hd.getNhanVien().getHoTen(),
 				hd.getKhachHang().getHoTen(),
 				hd.getTongTien(),
 				"Xem",
@@ -178,7 +186,11 @@ public class Gui_HoaDon extends JPanel {
 	    public ButtonShowOrderDetailsEditor(JCheckBox checkBox) {
 	        super(checkBox);
 	        button = new JButton();
-	        button.setOpaque(true);
+	        button.setBackground(new Color(240,236,236));
+		    button.setOpaque(true);	
+		    button.setContentAreaFilled(true);
+		    button.setBorderPainted(true);
+		    button.setFocusPainted(false);
 	        button.addActionListener(bListener);
 	    }
 
@@ -187,11 +199,17 @@ public class Gui_HoaDon extends JPanel {
 	    	bListener.setRow(row);
 	    	bListener.setTable(table);
 	        if (isSelected) {
-	            button.setForeground(table.getSelectionForeground());
-	            button.setBackground(table.getSelectionBackground());
+	        	button.setBackground(new Color(240,236,236));
+			    button.setOpaque(true);	
+			    button.setContentAreaFilled(true);
+			    button.setBorderPainted(true);
+			    button.setFocusPainted(false);
 	        } else {
-	            button.setForeground(table.getForeground());
-	            button.setBackground(table.getBackground());
+	        	button.setBackground(new Color(240,236,236));
+			    button.setOpaque(true);	
+			    button.setContentAreaFilled(true);
+			    button.setBorderPainted(true);
+			    button.setFocusPainted(false);
 	        }
 	        button.setText((value == null) ? "" : value.toString());
 	        return button;
@@ -204,7 +222,12 @@ public class Gui_HoaDon extends JPanel {
 	}
 	public class ButtonShowOrderDetailsRenderer extends JButton implements TableCellRenderer{
 		public ButtonShowOrderDetailsRenderer() {
-	        setOpaque(true);
+			setBackground(new Color(240,236,236));
+		    setOpaque(true);	
+		    setContentAreaFilled(true);
+		    setBorderPainted(true);
+		    setFocusPainted(false);
+
 	    }
 
 	    @Override

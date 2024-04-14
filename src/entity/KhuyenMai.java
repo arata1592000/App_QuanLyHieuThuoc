@@ -1,6 +1,7 @@
 package entity;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class KhuyenMai {
 	private String maKM;
@@ -8,6 +9,19 @@ public class KhuyenMai {
 	private LocalDate ngayKetThuc;
 	private float tyLeKM;
 	private String loaiKM;
+	private float giaTriHD;
+	
+	public KhuyenMai(String maKM, LocalDate ngayBatDau, LocalDate ngayKetThuc, float tyLeKM, String loaiKM
+			) {
+		super();
+		this.maKM = maKM;
+		this.ngayBatDau = ngayBatDau;
+		this.ngayKetThuc = ngayKetThuc;
+		this.loaiKM = loaiKM;
+		this.tyLeKM = tyLeKM;
+		this.giaTriHD = 0;
+	}
+
 	public String getMaKM() {
 		return maKM;
 	}
@@ -38,13 +52,18 @@ public class KhuyenMai {
 	public void setLoaiKM(String loaiKM) {
 		this.loaiKM = loaiKM;
 	}
-	public KhuyenMai(String maKM, LocalDate ngayBatDau, LocalDate ngayKetThuc, float tyLeKM, String loaiKM) {
-		super();
-		this.maKM = maKM;
-		this.ngayBatDau = ngayBatDau;
-		this.ngayKetThuc = ngayKetThuc;
-		this.tyLeKM = tyLeKM;
-		this.loaiKM = loaiKM;
+	public float getGiaTriHD() {
+		return giaTriHD;
+	}
+	public void setGiaTriHD(float giaTriHD) {
+		this.giaTriHD = giaTriHD;
+	}
+	public String getTrangThai()
+	{
+		if(!ngayKetThuc.isAfter(LocalDate.now()))
+			return "Hoạt động";
+		else
+			return "Không hoạt động";
 	}
 	public KhuyenMai() {
 		super();
@@ -54,7 +73,8 @@ public class KhuyenMai {
 		this.ngayKetThuc = null;;;
 		this.tyLeKM = 0;
 		this.loaiKM = null;
+		this.giaTriHD = 0;
 	}
-	
+
 	
 }

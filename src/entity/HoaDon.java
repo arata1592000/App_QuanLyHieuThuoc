@@ -83,6 +83,9 @@ public class HoaDon {
 		this.thue = thue;
 		this.ghiChu = ghiChu;
 	}
+	public HoaDon() {
+		// TODO Auto-generated constructor stub
+	}
 	
 	
 }

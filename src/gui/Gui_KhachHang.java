@@ -117,7 +117,7 @@ public class Gui_KhachHang extends JPanel{
 		pTable.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.8)));
 		lbl3.setText("Danh sách khách hàng");
 		lbl3.setFont(new Font("Arial", Font.ITALIC, 30));
-		String headers[] = {"Mã khách hàng", "Họ và tên", "Số điện thoại"};
+		String headers[] = {"Mã khách hàng", "Tên", "Số điện thoại", "Số lần mua trong 30 ngày qua", "Hạng khách hàng"};
 		dataModel = new DefaultTableModel(headers, 0) {
 			@Override
             public boolean isCellEditable(int row, int column) {
@@ -126,7 +126,10 @@ public class Gui_KhachHang extends JPanel{
             }
 		};
 		tableModel = new JTable(dataModel);
-		tableModel.getTableHeader().setFont(new Font("Arial", Font.BOLD, 20));
+		tableModel.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
+		tableModel.getColumn("Tên").setPreferredWidth(1);
+		tableModel.getColumn("Số điện thoại").setPreferredWidth(1);
+		tableModel.getColumn("Mã khách hàng").setPreferredWidth(1);
 		tableModel.setFont(new Font("Arial", Font.PLAIN, 16));
 		tableModel.setRowHeight(30);
 		JScrollPane pane = new JScrollPane(tableModel);
@@ -170,8 +173,10 @@ public class Gui_KhachHang extends JPanel{
 	public void addRowKhachHang(KhachHang kh) {
 		dataModel.addRow(new Object[] {kh.getMaKH(),
 				kh.getHoTen(),
-				kh.getsDT()}
-				);
+				kh.getsDT(),
+				kh.getCountOrderIn30Days()+"",
+				kh.getHangKH()
+				});
 	}
 	
 	public void loadDataTable() {

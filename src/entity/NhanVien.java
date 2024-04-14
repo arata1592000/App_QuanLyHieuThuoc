@@ -30,6 +30,23 @@ public class NhanVien {
 		this.diaChi = diaChi;
 		this.trangThai = trangThai;
 	}
+	
+	public NhanVien(String maNV, String hoTen, String gioiTinh, String soDienThoai, LocalDate ngaySinh,
+			LocalDate ngayVaoLam, String chucVu, String soCCCD, String diaChi, String trangThai, byte[] anh) {
+		super();
+		this.maNV = maNV;
+		this.hoTen = hoTen;
+		this.gioiTinh = gioiTinh;
+		this.soDienThoai = soDienThoai;
+		this.ngaySinh = ngaySinh;
+		this.ngayVaoLam = ngayVaoLam;
+		this.chucVu = chucVu;
+		this.soCCCD = soCCCD;
+		this.diaChi = diaChi;
+		this.trangThai = trangThai;
+		this.anh = anh;
+	}
+
 	public String getMaNV() {
 		return maNV;
 	}

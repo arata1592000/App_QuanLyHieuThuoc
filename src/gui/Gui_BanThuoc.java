@@ -14,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -26,17 +28,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.AbstractCellEditor;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SingleSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
@@ -46,6 +52,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import dao.Dao_HoaDon;
+import dao.Dao_KhachHang;
+import dao.Dao_NhanVien;
 import dao.Dao_Thuoc;
 import entity.ChiTietHoaDon;
 import entity.HoaDon;
@@ -55,12 +63,12 @@ import entity.NhanVien;
 import entity.Thuoc;
 import utils.ButtonDeleteEditor;
 import utils.ButtonDeleteRenderer;
+import utils.CustomMenuItemThuoc;
 
 public class Gui_BanThuoc extends JPanel{
 	private int widthComp, heightComp;
 	private JPanel pTable;
 	private JTextField txtThem;
-	private JButton btnThem;
 	private DefaultTableModel dataModel;
 	private JTable tableModel;
 	private JPanel pInfor;
@@ -93,10 +101,14 @@ public class Gui_BanThuoc extends JPanel{
 	private JPanel pButtonOrder;
 	private JButton btnThanhToan;
 	private JButton btnLamMoi;
-
+	private JPopupMenu suggestionMenu;
+	private int indexPopupMenu;
+	private NhanVien nv;
+	
 	public Gui_BanThuoc(int widthComp, int heightComp) {
 		this.widthComp = widthComp;
 		this.heightComp = heightComp;
+		nv = (new Dao_NhanVien()).findNhanVienByMaNV("NV241001");
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.WHITE);
 		initCompoent();
@@ -104,8 +116,8 @@ public class Gui_BanThuoc extends JPanel{
 	
 	private void initCompoent() {
 		pTable = new JPanel();
-		txtThem = new JTextField(35);
-		btnThem = new JButton();
+		txtThem = new JTextField();
+        suggestionMenu = new JPopupMenu();
 		String headers[] = {"Mã thuốc", "Tên thuốc", "Số lượng", "Đơn vị tính", "Giá bán", "KM", "Tổng tiền", "Xóa"};
 		dataModel = new DefaultTableModel(headers, 0){
             @Override
@@ -188,15 +200,8 @@ public class Gui_BanThuoc extends JPanel{
 		
   		pTable.setBackground(Color.WHITE);
 		pTable.setPreferredSize(new Dimension((int)(widthComp*0.75),(int) (heightComp*0.9)));
+		txtThem.setPreferredSize(new Dimension((int)(widthComp*0.70),(int) (heightComp*0.05)));
   		txtThem.setFont(new Font("Arial", Font.BOLD, 22));
-		btnThem.setText("Thêm");
-		btnThem.setForeground(Color.WHITE);
-		btnThem.setFont(new Font("Arial", Font.BOLD, 16));
-		btnThem.setBackground(new Color(40,156,164));
-		btnThem.setOpaque(true);
-		btnThem.setContentAreaFilled(true);
-        btnThem.setBorderPainted(false);
-        btnThem.setFocusPainted(false);
 		
 		
         pInfor.setPreferredSize(new Dimension((int) (widthComp*0.2), (int)(heightComp*0.85)));
@@ -253,8 +258,9 @@ public class Gui_BanThuoc extends JPanel{
         constraintsOrder.gridy = 1;
         pInforOrder.add(lbl5, constraintsOrder);
         constraintsOrder.gridx = 1;
+        txtMaHD.setText((new Dao_HoaDon()).autoCreateMaHD());
         txtMaHD.setFont(new Font("Arial", Font.PLAIN, 14));
-//        txtMaHD.setEditable(false);
+        txtMaHD.setEditable(false);
         txtMaHD.setBorder(null);
         pInforOrder.add(txtMaHD, constraintsOrder);
         lbl6.setText("Ngày lập:");       //Field ngày lập
@@ -357,7 +363,6 @@ public class Gui_BanThuoc extends JPanel{
 		pButtonOrder.setPreferredSize(new Dimension((int) (widthComp*0.18), (int)(heightComp*0.1)));
         
 		pTable.add(txtThem);
-		pTable.add(btnThem);
 		pTable.add(pane);
 		pButtonOrder.add(btnThanhToan);
 		pButtonOrder.add(btnLamMoi);
@@ -375,22 +380,94 @@ public class Gui_BanThuoc extends JPanel{
 		  		txtThem.requestFocus();
 			}
 		});
+		
 
-		txtThem.addKeyListener(new KeyAdapter() {
-		    @Override
-		    public void keyPressed(KeyEvent e) {
-		        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-		            // Thực hiện hành động khi nhấn phím Enter
-		            addRowTable();
-		        }
-		    }
-		});
-		btnThem.addActionListener(new ActionListener() {
+		suggestionMenu.addKeyListener(new KeyListener() {
+			
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void keyTyped(KeyEvent e) {
 				// TODO Auto-generated method stub
-				addRowTable();
+				
 			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				int keyCode = e.getKeyCode();
+				char keyChar = e.getKeyChar();
+				if (Character.isLetter(keyChar) || Character.isDigit(keyChar)) {
+					txtThem.requestFocus();
+					txtThem.setText(txtThem.getText() + keyChar);
+					if (txtThem.getText().length() >=1) {
+	                    showSuggestions(txtThem.getText());
+					}
+				} else if (keyCode == KeyEvent.VK_BACK_SPACE){
+					txtThem.requestFocus();
+					String newText = txtThem.getText().substring(0, txtThem.getText().length() - 1);
+				    txtThem.setText(newText); // Gán chuỗi mới vào txtThem để cập nhật nội dung
+				    if (newText.length() >= 1) {
+				        showSuggestions(newText);
+				    }
+				} else {
+					if (keyCode == KeyEvent.VK_DOWN) {
+						if (indexPopupMenu == suggestionMenu.getComponentCount()-1) {
+							suggestionMenu.getSelectionModel().setSelectedIndex(0);
+							indexPopupMenu = suggestionMenu.getSelectionModel().getSelectedIndex();
+						}else {
+							suggestionMenu.getSelectionModel().setSelectedIndex(indexPopupMenu+1);
+							indexPopupMenu = suggestionMenu.getSelectionModel().getSelectedIndex();
+						}
+					}else if (keyCode == KeyEvent.VK_UP) {
+						if (indexPopupMenu == 0) {
+							suggestionMenu.getSelectionModel().setSelectedIndex(suggestionMenu.getComponentCount()-1);
+							indexPopupMenu = suggestionMenu.getSelectionModel().getSelectedIndex();
+						}else {
+							suggestionMenu.getSelectionModel().setSelectedIndex(indexPopupMenu-1);
+							indexPopupMenu = suggestionMenu.getSelectionModel().getSelectedIndex();
+						}
+					}else if (keyCode == KeyEvent.VK_ENTER) {
+						handleSelectedItem(indexPopupMenu);
+					}else if(keyCode == KeyEvent.VK_ESCAPE) {
+						suggestionMenu.setVisible(false);
+					}
+				}
+			}
+		});
+		
+		txtThem.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				int keyCode = e.getKeyCode();
+				if (keyCode == KeyEvent.VK_DOWN) {
+					suggestionMenu.requestFocusInWindow();
+					indexPopupMenu = 0;
+				}else if(keyCode == KeyEvent.VK_UP) {
+					suggestionMenu.requestFocusInWindow();
+					indexPopupMenu = suggestionMenu.getComponentCount()-1;
+				}else if(keyCode == KeyEvent.VK_ESCAPE) {
+					suggestionMenu.setVisible(false);
+				}
+			}
+			
+		    @Override
+		    public void keyReleased(KeyEvent e) {
+                String text = txtThem.getText();
+                if (text.length() >= 1) {
+                    showSuggestions(text);
+                    suggestionMenu.validate();
+                    suggestionMenu.repaint();
+                } else {
+                    suggestionMenu.setVisible(false);
+                }
+            }
 		});
 		btnThanhToan.addActionListener(new ActionListener() {
 			
@@ -398,15 +475,17 @@ public class Gui_BanThuoc extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				try {
-					NhanVien nv = new NhanVien("1");
-					KhachHang kh = new KhachHang("1",
-							txtHoTen.getText(),
-							txtSDT.getText()
-							);
+					KhachHang kh = (new Dao_KhachHang()).findKhachHangBySDT(txtSDT.getText());
+					if (kh == null) {
+						kh = new KhachHang((new Dao_KhachHang()).autoCreateMaKH(),
+								txtHoTen.getText(),
+								txtSDT.getText());
+						(new Dao_KhachHang()).addKhachHang(kh);
+					}
 					List<ChiTietHoaDon> listCTHD= new ArrayList();
 					for (int row = 0 ; row < tableModel.getRowCount()-1 ; row++) {
 						ChiTietHoaDon cthd = new ChiTietHoaDon((String)dataModel.getValueAt(row, 1),
-								Integer.parseInt((String) dataModel.getValueAt(row, 2)),
+								Integer.parseInt(dataModel.getValueAt(row, 2).toString()),
 								(String)dataModel.getValueAt(row, 3),
 								Float.valueOf(dataModel.getValueAt(row, 4).toString()),
 								Float.valueOf(dataModel.getValueAt(row, 5).toString()),
@@ -417,7 +496,7 @@ public class Gui_BanThuoc extends JPanel{
 					HoaDon hd = new HoaDon(txtMaHD.getText(),
 							LocalDate.parse(txtNgayLap.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")),
 							Float.parseFloat(txtTongTien.getText()),
-							"HDBH",
+							"Bán hàng",
 							(float)0.3,
 							""
 							);
@@ -431,6 +510,9 @@ public class Gui_BanThuoc extends JPanel{
 					}else {
 			            JOptionPane.showMessageDialog(null, "Không thanh toán thành công.");
 					}
+					resetForm();
+					validate();
+					repaint();
 				} catch (Exception e2) {
 					// TODO: handle exception
 					e2.printStackTrace();
@@ -438,23 +520,6 @@ public class Gui_BanThuoc extends JPanel{
 				
 			}
 		});
-//		tableModel.addKeyListener(new KeyAdapter() {
-//		    @Override
-//		    public void keyPressed(KeyEvent e) {
-//		        // Kiểm tra xem phím được nhấn có phải là phím Enter không
-//		        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-//		            // Lấy hàng và cột của ô được chọn
-//		            int row = tableModel.getSelectedRow();
-//		            int column = tableModel.getSelectedColumn();
-//		            // Kiểm tra xem hàng và cột có hợp lệ không
-//		            if (row == tableModel.getRowCount()-2 && column != -1) {
-//		                // Lấy dữ liệu từ ô đó
-//		                txtThem.requestFocus();
-//		                // Thực hiện xử lý với dữ liệu lấy được từ ô đó
-//		            }
-//		        }
-//		    }
-//		});
 		
 		dataModel.addTableModelListener(new TableModelListener() {
 		    @Override
@@ -484,6 +549,15 @@ public class Gui_BanThuoc extends JPanel{
 		});
 	}
 	
+	public void resetForm() {
+		while(tableModel.getRowCount()>1) {
+			dataModel.removeRow(0);
+		}
+		txtThem.setText("");
+		txtHoTen.setText("");
+		txtSDT.setText("");
+        txtMaHD.setText((new Dao_HoaDon()).autoCreateMaHD());
+	}
 	
 	public void updateInforOrder() {
 		txtTongTien.setText(getTongTienHD()+"");
@@ -524,4 +598,54 @@ public class Gui_BanThuoc extends JPanel{
 		updateInforOrder();
 		revalidate();
 	}
+	
+	
+	private void showSuggestions(String text) {
+
+	    suggestionMenu.removeAll();
+	    List<Thuoc> listThuoc = (new Dao_Thuoc()).listThuocContainTenThuocOrMaThuoc(text);
+	    	for (int i = 0; i < listThuoc.size(); i++) {
+	    	final int index = i;
+	        Thuoc thuoc = listThuoc.get(i);
+	        CustomMenuItemThuoc item = new CustomMenuItemThuoc(txtThem.getPreferredSize().width, thuoc);
+	        item.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					suggestionMenu.setVisible(false);
+					txtThem.requestFocusInWindow();
+                    handleSelectedItem(index);
+				}
+			});
+	        item.add(item.getCustomPanel());
+	        item.setOpaque(true);
+	        item.setEnabled(true);
+	        
+	        suggestionMenu.add(item);
+	    }
+
+	    suggestionMenu.pack();
+
+	    if (!listThuoc.isEmpty()) {
+	        suggestionMenu.setFocusable(true);
+	        suggestionMenu.show(txtThem, 0, txtThem.getHeight());
+	        txtThem.requestFocusInWindow();
+	    } else {
+	        suggestionMenu.setVisible(false);
+	    }
+	}
+
+	// Phương thức để xử lý mục đã chọn
+	private void handleSelectedItem(int selectedIndex) {
+	    if (selectedIndex >= 0 && selectedIndex < suggestionMenu.getComponentCount()) {
+	        JMenuItem selectedItem = (JMenuItem) suggestionMenu.getComponent(selectedIndex);
+	        txtThem.setText(selectedItem.getText().split(" - ")[0]);
+	        selectedIndex = -1; // Reset selectedIndex sau khi đã xử lý mục đã chọn(áp dụng cho click chọn thẳng vào item)
+	        suggestionMenu.setVisible(false);
+	        addRowTable();
+	    }
+	}
+
+
 }
