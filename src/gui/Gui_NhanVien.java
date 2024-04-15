@@ -68,7 +68,7 @@ import gui.Gui_HoaDon.ButtonShowOrderDetailsEditor;
 import gui.Gui_HoaDon.ButtonShowOrderDetailsRenderer;
 import gui.Gui_HoaDon.ShowOrderDetailsButtonListener;
 
-public class Gui_NhanVien extends JPanel implements ActionListener , MouseListener{
+public class Gui_NhanVien extends JPanel implements ActionListener{
 
 	private int widthComp;
 	private int heightComp;
@@ -166,7 +166,7 @@ public class Gui_NhanVien extends JPanel implements ActionListener , MouseListen
 		GridBagConstraints constraintsCustomer = new GridBagConstraints();
         constraintsCustomer.insets = new Insets(5,20, 5,20);
         
-        ImageIcon imageIcon = new ImageIcon("images/user1.png");
+        ImageIcon imageIcon = new ImageIcon("images/avatar-default.png");
         Image image = imageIcon.getImage();
         Image newImage = image.getScaledInstance(150, 150, Image.SCALE_SMOOTH); // Chỉnh kích thước ảnh theo ý muốn
         ImageIcon resizedImageIcon = new ImageIcon(newImage);
@@ -465,12 +465,23 @@ public class Gui_NhanVien extends JPanel implements ActionListener , MouseListen
 			        txtCC.setText(tableModel.getValueAt(row, 7).toString());
 			        txtDC.setText(tableModel.getValueAt(row, 8).toString());
 			        comboBoxTrangThai.setSelectedItem(tableModel.getValueAt(row, 9).toString());
+			        byte[] anhBytes = (new Dao_NhanVien()).getAnhByMaNV(tableModel.getValueAt(row, 0).toString());
+			        try {
+			        	if (anhBytes != null) {
+			        		BufferedImage anh = ImageIO.read(new ByteArrayInputStream(anhBytes));
+			        		ImageIcon imageIcon = new ImageIcon(anh.getScaledInstance(150, 150, Image.SCALE_DEFAULT));
+			        		lblHinhAnh.setIcon(imageIcon);
+			        	}
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 		        }
 		    }
 		});
 		scroll = new JScrollPane(tableModel);
 		scroll.setPreferredSize(new Dimension((int)(widthComp*0.85),(int) (heightComp*0.35)));
-		tableModel.addMouseListener(this);
+//		tableModel.addMouseListener(this);
 
 		
 		pTable.add(lblDSNV, BorderLayout.NORTH); 
@@ -629,10 +640,6 @@ public class Gui_NhanVien extends JPanel implements ActionListener , MouseListen
 
 	}
 
-	private String autoCreateMaNV() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	private void clearFields() {
 		txtMa.setText("");
 	    txtHoTen.setText("");
@@ -778,68 +785,66 @@ public class Gui_NhanVien extends JPanel implements ActionListener , MouseListen
 			addRowNhanVien(nhanVien);
 		}
 	}
-	
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		
-	}
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		int row = tableModel.getSelectedRow();
-		if(row >= 0) {
-			NhanVien nhanVien = (new Dao_NhanVien()).findNhanVienByMaNV(tableModel.getValueAt(row, 0).toString());
-	        if (nhanVien.getAnh() == null) {
-	        	System.out.println("1");
-	        }
-	        
-	        try {
-	        	if (nhanVien.getAnh() != null) {
-	        		BufferedImage anh = ImageIO.read(new ByteArrayInputStream(nhanVien.getAnh()));
-	        		if (anh == null) {
-	        			System.out.println("2");
-	        		}
-	        		ImageIcon imageIcon = new ImageIcon(anh.getScaledInstance(150, 150, Image.SCALE_DEFAULT));
-	        		lblHinhAnh.setIcon(imageIcon);
-	        	}
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-//	        txtMa.setText(tableModel.getValueAt(row, 0).toString());
-//	        txtHoTen.setText(tableModel.getValueAt(row, 1).toString());
-//	        String gioiTinh = tableModel.getValueAt(row, 2).toString();
-//	        if (gioiTinh.equals("Nam")) {
-//	            radNam.setSelected(true);
-//	        } else {
-//	            radNu.setSelected(true);
+//	
+//	@Override
+//	public void mouseClicked(MouseEvent e) {
+//		
+//	}
+//	@Override
+//	public void mousePressed(MouseEvent e) {
+//		// TODO Auto-generated method stub
+//		int row = tableModel.getSelectedRow();
+//		if(row >= 0) {
+//			Byte nhanVien = (new Dao_NhanVien()).findNhanVienByMaNV(tableModel.getValueAt(row, 0).toString());
+//	        if (nhanVien.getAnh() == null) {
 //	        }
-//	        txtSDT.setText(tableModel.getValueAt(row, 3).toString());
-//	        LocalDate ngaySinh = (LocalDate) tableModel.getValueAt(row, 4);
-//	        ngaySinhDate.setDate(java.sql.Date.valueOf(ngaySinh));
-//	        LocalDate ngayVaoLam = (LocalDate) tableModel.getValueAt(row, 5);
-//	        ngayLamDate.setDate(java.sql.Date.valueOf(ngayVaoLam));
-//	        comboBoxChucVu.setSelectedItem(tableModel.getValueAt(row, 6).toString());
-//	        txtCC.setText(tableModel.getValueAt(row, 7).toString());
-//	        txtDC.setText(tableModel.getValueAt(row, 8).toString());
-//	        comboBoxTrangThai.setSelectedItem(tableModel.getValueAt(row, 9).toString());
-		}
-	}
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+//	        
+//	        try {
+//	        	if (nhanVien.getAnh() != null) {
+//	        		BufferedImage anh = ImageIO.read(new ByteArrayInputStream(nhanVien.getAnh()));
+//	        		if (anh == null) {
+//	        		}
+//	        		ImageIcon imageIcon = new ImageIcon(anh.getScaledInstance(150, 150, Image.SCALE_DEFAULT));
+//	        		lblHinhAnh.setIcon(imageIcon);
+//	        	}
+//			} catch (IOException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+////	        txtMa.setText(tableModel.getValueAt(row, 0).toString());
+////	        txtHoTen.setText(tableModel.getValueAt(row, 1).toString());
+////	        String gioiTinh = tableModel.getValueAt(row, 2).toString();
+////	        if (gioiTinh.equals("Nam")) {
+////	            radNam.setSelected(true);
+////	        } else {
+////	            radNu.setSelected(true);
+////	        }
+////	        txtSDT.setText(tableModel.getValueAt(row, 3).toString());
+////	        LocalDate ngaySinh = (LocalDate) tableModel.getValueAt(row, 4);
+////	        ngaySinhDate.setDate(java.sql.Date.valueOf(ngaySinh));
+////	        LocalDate ngayVaoLam = (LocalDate) tableModel.getValueAt(row, 5);
+////	        ngayLamDate.setDate(java.sql.Date.valueOf(ngayVaoLam));
+////	        comboBoxChucVu.setSelectedItem(tableModel.getValueAt(row, 6).toString());
+////	        txtCC.setText(tableModel.getValueAt(row, 7).toString());
+////	        txtDC.setText(tableModel.getValueAt(row, 8).toString());
+////	        comboBoxTrangThai.setSelectedItem(tableModel.getValueAt(row, 9).toString());
+//		}
+//	}
+//	@Override
+//	public void mouseReleased(MouseEvent e) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//	@Override
+//	public void mouseEntered(MouseEvent e) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//	@Override
+//	public void mouseExited(MouseEvent e) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 
 }

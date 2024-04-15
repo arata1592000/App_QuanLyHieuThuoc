@@ -483,6 +483,8 @@ public class Gui_BanThuoc extends JPanel{
 						(new Dao_KhachHang()).addKhachHang(kh);
 					}
 					List<ChiTietHoaDon> listCTHD= new ArrayList();
+					List<String> listMaThuoc = new ArrayList();
+					List<Integer> listSoLuong = new ArrayList<Integer>();
 					for (int row = 0 ; row < tableModel.getRowCount()-1 ; row++) {
 						ChiTietHoaDon cthd = new ChiTietHoaDon((String)dataModel.getValueAt(row, 1),
 								Integer.parseInt(dataModel.getValueAt(row, 2).toString()),
@@ -490,8 +492,10 @@ public class Gui_BanThuoc extends JPanel{
 								Float.valueOf(dataModel.getValueAt(row, 4).toString()),
 								Float.valueOf(dataModel.getValueAt(row, 5).toString()),
 								Float.valueOf(dataModel.getValueAt(row, 6).toString())
-								);
+								);						
 						listCTHD.add(cthd);
+						listMaThuoc.add(dataModel.getValueAt(row, 0).toString());
+						listSoLuong.add(Integer.parseInt(dataModel.getValueAt(row, 2).toString()));
 					}
 					HoaDon hd = new HoaDon(txtMaHD.getText(),
 							LocalDate.parse(txtNgayLap.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")),
@@ -505,7 +509,9 @@ public class Gui_BanThuoc extends JPanel{
 					hd.setChiTietHoaDon(listCTHD);
 					hd.setKhuyenMai(new KhuyenMai());
 					if ((new Dao_HoaDon().addHoaDon(hd))) {
+						(new Dao_Thuoc()).setCountByMaThuoc(listMaThuoc, listSoLuong);
 			            JOptionPane.showMessageDialog(null, "Thanh toán thành công");
+			            
 
 					}else {
 			            JOptionPane.showMessageDialog(null, "Không thanh toán thành công.");
@@ -528,21 +534,24 @@ public class Gui_BanThuoc extends JPanel{
 		            int row = e.getFirstRow();
 		            int column = e.getColumn();		            
 		            if (column == 2 && !dataModel.getValueAt(row, 2).equals("")) { // Kiểm tra xem cột thay đổi có phải là cột số lượng không
-		                int quantity = Integer.parseInt((String) dataModel.getValueAt(row, 2));
-		                float price = Float.valueOf(dataModel.getValueAt(row, 4).toString());
-		                float totalPrice = quantity * price;
-		                tableModel.setValueAt(totalPrice, row, 6);
-		                updateInforOrder();
-		                if (row == tableModel.getRowCount()-2) {
-		                	SwingUtilities.invokeLater(new Runnable() {
-			                    @Override
-			                    public void run() {
-			                        txtThem.requestFocus();
-			                    }
-			                }); 
-		                }
-		                
-		                
+		            	if (!(new Dao_Thuoc()).checkCountByMaThuoc(dataModel.getValueAt(row, 0).toString(), Integer.parseInt((String) dataModel.getValueAt(row, 2)))) {
+		            		JOptionPane.showMessageDialog(null, "Số lượng bạn nhập đã vượt qua số lượng tồn kho của loại thuốc này!");
+		            		dataModel.setValueAt("", row, 2);
+		            	}else {
+		            		int quantity = Integer.parseInt((String) dataModel.getValueAt(row, 2));
+			                float price = Float.valueOf(dataModel.getValueAt(row, 4).toString());
+			                float totalPrice = quantity * price;
+			                tableModel.setValueAt(totalPrice, row, 6);
+			                updateInforOrder();
+			                if (row == tableModel.getRowCount()-2) {
+			                	SwingUtilities.invokeLater(new Runnable() {
+				                    @Override
+				                    public void run() {
+				                        txtThem.requestFocus();
+				                    }
+				                }); 
+			                }
+		            	}   
 		            }
 		        }
 		    }

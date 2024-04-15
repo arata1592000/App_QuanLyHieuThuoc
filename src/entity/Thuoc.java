@@ -14,6 +14,7 @@ public class Thuoc {
 	private String thanhPhan;
 	private int soLuong;
 	private KhuyenMai khuyenMai;
+	private String trangThai;
 	public String getMaThuoc() {
 		return maThuoc;
 	}
@@ -80,11 +81,25 @@ public class Thuoc {
 	public void setKhuyenMai(KhuyenMai khuyenMai) {
 		this.khuyenMai = khuyenMai;
 	}
+	public String getTrangThai() {
+		String trangThai = "";
+		if (soLuong == 0) {
+			trangThai += "Đã hết thuốc";
+		}
+		if (!ngayHetHan.isAfter(LocalDate.now())) {
+			if (trangThai.equals("")) {
+				trangThai += "Đã hết hạn";
+			}else {
+				trangThai += ", đã hết hạn";
+			}
+		}
+		return trangThai;
+	}
 	public Thuoc() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Thuoc(String maThuoc, String tenThuoc, LocalDate ngayNhapVe, LocalDate ngayHetHan, LocalDate ngaySanXuat,
+	public Thuoc(String maThuoc, String tenThuoc, LocalDate ngayNhapVe, LocalDate ngaySanXuat, LocalDate ngayHetHan,
 			String noiSanXuat, float gia, String donViTinh, String thanhPhan, int soLuong) {
 		super();
 		this.maThuoc = maThuoc;

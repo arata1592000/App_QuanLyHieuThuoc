@@ -23,6 +23,7 @@ public class CustomMenuItemThuoc extends JMenuItem {
 	private JLabel lblTenThuoc;
 	private JLabel lblGia;
 	private JLabel lblDonViTinh;
+	private JLabel lblSoLuong;
 
     public CustomMenuItemThuoc(int widthComp, Thuoc thuoc) {
         super(thuoc.getMaThuoc());
@@ -35,15 +36,17 @@ public class CustomMenuItemThuoc extends JMenuItem {
     private JPanel createPanel(Thuoc thuoc) {
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension(widthComp, heightComp));
-        lblMaThuoc = new JLabel(String.format("%-30s", ("Mã thuốc: " + thuoc.getMaThuoc())));
-        lblTenThuoc = new JLabel(String.format("%-40s", ("Tên thuốc: " + thuoc.getTenThuoc())));
-        lblGia = new JLabel(String.format("%-25s", ("Giá: " + thuoc.getGia())));
-        lblDonViTinh = new JLabel(String.format("%-30s", ("Đơn vị tính: "+thuoc.getDonViTinh())));
+        lblMaThuoc = new JLabel(String.format("%-25s", ("Mã thuốc: " + thuoc.getMaThuoc())));
+        lblTenThuoc = new JLabel(String.format("%-35s", ("Tên thuốc: " + thuoc.getTenThuoc())));
+        lblGia = new JLabel(String.format("%-20s", ("Giá: " + thuoc.getGia())));
+        lblDonViTinh = new JLabel(String.format("%-25s", ("Đơn vị tính: "+thuoc.getDonViTinh())));
+        lblSoLuong = new JLabel(String.format("%-25s", ("Số lượng: "+thuoc.getSoLuong())));
         
         lblMaThuoc.setFont(new Font("Arial", Font.PLAIN, 17));
         lblTenThuoc.setFont(new Font("Arial", Font.PLAIN, 17));
         lblGia.setFont(new Font("Arial", Font.PLAIN, 17));
         lblDonViTinh.setFont(new Font("Arial", Font.PLAIN, 17));
+        lblSoLuong.setFont(new Font("Arial", Font.PLAIN, 17));
 
 
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -53,6 +56,7 @@ public class CustomMenuItemThuoc extends JMenuItem {
         panel.add(lblTenThuoc);
         panel.add(lblGia);
         panel.add(lblDonViTinh);
+        panel.add(lblSoLuong);
 
         return panel;
     }

@@ -117,6 +117,7 @@ public class Gui_SanPham extends JPanel implements ActionListener{
 		if (act.equals(btnBanThuoc)) {
 			if (!btnBack.equals(btnBanThuoc)) {
 				pMain.removeAll();
+				System.gc();
 				pMain.add(new Gui_BanThuoc(pMain.getWidth(), pMain.getHeight()));
 				btnBanThuoc.setBackground(new Color (40,156,164));
 				btnBanThuoc.setForeground(Color.WHITE);
@@ -127,6 +128,7 @@ public class Gui_SanPham extends JPanel implements ActionListener{
 		}else if (act.equals(btnDoiTraThuoc)) {
 			if (!btnBack.equals(btnDoiTraThuoc)) {
 				pMain.removeAll();
+				System.gc();
 				pMain.add(new Gui_DoiTraThuoc(pMain.getWidth(), pMain.getHeight()));
 				btnDoiTraThuoc.setBackground(new Color (40,156,164));
 				btnDoiTraThuoc.setForeground(Color.WHITE);
@@ -137,6 +139,7 @@ public class Gui_SanPham extends JPanel implements ActionListener{
 		}else if (act.equals(btnXemThongTin)) {
 			if (!btnBack.equals(btnXemThongTin)) {
 				pMain.removeAll();
+				System.gc();
 				pMain.add(new Gui_XemThongTinThuoc(pMain.getWidth(), pMain.getHeight()));
 				btnXemThongTin.setBackground(new Color (40,156,164));
 				btnXemThongTin.setForeground(Color.WHITE);

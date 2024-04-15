@@ -145,11 +145,11 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		pTable = new JPanel();
 		lbl15 = new JLabel();
 		dataModel = new DefaultTableModel();
-		String headers[] = {"Mã thuốc", "Tên thuốc", "Ngày nhập về", "Ngày sản xuất", "Ngày hết hạn","Nơi sản xuất", "Giá", "Đơn vị tính", "Thành phần", "Số  lượng", "Trạng thái"};
+		String headers[] = {"Mã thuốc", "Tên thuốc", "Ngày nhập về", "Ngày sản xuất", "Ngày hết hạn","Nơi sản xuất", "Giá", "Đơn vị tính", "Thành phần", "Khuyến mãi", "Số  lượng", "Trạng thái"};
 		dataModel = new DefaultTableModel(headers, 0);
 		tableModel = new JTable(dataModel);
-		tableModel.getTableHeader().setFont(new Font("Arial", Font.BOLD, 15));
-		tableModel.setFont(new Font("Arial", Font.PLAIN, 16));
+		tableModel.getTableHeader().setFont(new Font("Arial", Font.BOLD, 13));
+		tableModel.setFont(new Font("Arial", Font.PLAIN, 11));
 		tableModel.setRowHeight(25);
 		tableModel.setModel(dataModel);
 		scroll = new JScrollPane(tableModel);
@@ -371,7 +371,9 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 				thuoc.getGia()+"",
 				thuoc.getDonViTinh(),
 				thuoc.getThanhPhan(),
-				thuoc.getSoLuong()+""});
+				thuoc.getKhuyenMai().getMaKM(),
+				thuoc.getSoLuong()+"",
+				thuoc.getTrangThai()});
 	}
 	
 	public void loadDataTable() {

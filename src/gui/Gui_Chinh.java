@@ -57,7 +57,6 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	private JPanel pContent;
 	
 	private int widthFrame, heightFrame;
-	private Gui_TrangChu Gui_TrangChu;
 	private JButton actButtonBack = new JButton();
 	private JLabel lbl2;
 	private JLabel lbl3;
@@ -70,10 +69,13 @@ public class Gui_Chinh extends JFrame implements ActionListener{
         this.setBounds(bounds);		
         widthFrame = getWidth();
         heightFrame = getHeight();
+        this.nv = nv;
         this.setLayout(new BorderLayout());
 	    this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		initCompoent();
+		pContent.add(new Gui_TrangChu(nv, (int) (widthFrame*0.9), heightFrame-75));
+
 //		phimTat();
 		try {
             ConnectDB.getConnection();
@@ -170,7 +172,6 @@ public class Gui_Chinh extends JFrame implements ActionListener{
         pLeft.add(pAvatar);
 		pLeft.add(pMenu);
 		pHeader.add(lbl1, BorderLayout.WEST);
-		pContent.add(new Gui_TrangChu());
 		pMain.add(pHeader);
 		pMain.add(pContent);
 		this.add(pLeft, BorderLayout.WEST);
@@ -209,7 +210,8 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				actButtonBack.setBackground(new Color(224,220,220));
 				btnTrangChu.setBackground(new Color(224,255,255));
 				pContent.removeAll();
-				pContent.add(new Gui_TrangChu());
+				System.gc();
+				pContent.add(new Gui_TrangChu(nv, pContent.getWidth(), pContent.getHeight()));
 				lbl1.setText("TRANG CHỦ");
 			}
 			actButtonBack = btnTrangChu;
@@ -218,6 +220,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				actButtonBack.setBackground(new Color(224,220,220));
 				btnSanPham.setBackground(new Color(224,255,255));
 				pContent.removeAll();
+				System.gc();
 				pContent.add(new Gui_SanPham(pContent.getWidth(), pContent.getHeight()));
 				lbl1.setText("SẢN PHẨM");
 			}
@@ -227,6 +230,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				actButtonBack.setBackground(new Color(224,220,220));
 				btnHoaDon.setBackground(new Color(224,255,255));
 				pContent.removeAll();
+				System.gc();
 				pContent.add(new Gui_HoaDon(pContent.getWidth(), pContent.getHeight()));
 				lbl1.setText("HÓA ĐƠN");
 			}
@@ -236,6 +240,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				actButtonBack.setBackground(new Color(224,220,220));
 				btnNhanVien.setBackground(new Color(224,255,255));
 				pContent.removeAll();
+				System.gc();
 				pContent.add(new Gui_NhanVien(pContent.getWidth(), pContent.getHeight()));
 				lbl1.setText("NHÂN VIÊN");
 			}
@@ -245,6 +250,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				actButtonBack.setBackground(new Color(224,220,220));
 				btnKhachHang.setBackground(new Color(224,255,255));
 				pContent.removeAll();
+				System.gc();
 				pContent.add(new Gui_KhachHang(pContent.getWidth(), pContent.getHeight()));
 				lbl1.setText("KHÁCH HÀNG");
 			}
@@ -254,6 +260,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				actButtonBack.setBackground(new Color(224,220,220));
 				btnKhuyenMai.setBackground(new Color(224,255,255));
 				pContent.removeAll();
+				System.gc();
 				pContent.add(new Gui_KhuyenMai(pContent.getWidth(), pContent.getHeight()));
 				lbl1.setText("KHUYẾN MÃI");
 			}
@@ -263,6 +270,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				actButtonBack.setBackground(new Color(224,220,220));
 				btnThongKe.setBackground(new Color(224,255,255));
 				pContent.removeAll();
+				System.gc();
 				pContent.add(new Gui_ThongKe(pContent.getWidth(), pContent.getHeight()));
 				lbl1.setText("THỐNG KÊ");
 			}
@@ -272,6 +280,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				actButtonBack.setBackground(new Color(224,220,220));
 				btnHuongDan.setBackground(new Color(224,255,255));
 				pContent.removeAll();
+				System.gc();
 				pContent.add(new Gui_TroGiup(pContent.getWidth(), pContent.getHeight()));
 				lbl1.setText("HƯỚNG DẪN");
 			}

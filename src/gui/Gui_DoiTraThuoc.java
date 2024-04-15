@@ -38,9 +38,11 @@ import javax.swing.table.DefaultTableModel;
 
 import dao.Dao_HoaDon;
 import dao.Dao_NhanVien;
+import dao.Dao_Thuoc;
 import entity.ChiTietHoaDon;
 import entity.HoaDon;
 import entity.NhanVien;
+import entity.Thuoc;
 import utils.ButtonDeleteEditor;
 import utils.ButtonDeleteRenderer;
 import utils.RadioButtonEditor;
@@ -241,15 +243,30 @@ public class Gui_DoiTraThuoc extends JPanel{
 		this.add(pMain, BorderLayout.CENTER);
 		
 		dataModel.addTableModelListener(new TableModelListener() {
-			
+			private boolean isShowingDialog = false;
+
 			@Override
 			public void tableChanged(TableModelEvent e) {
-				// TODO Auto-generated method stub
-				if (e.getType() == TableModelEvent.UPDATE) { // Kiểm tra xem sự kiện thay đổi có phải là một cập nhật dữ liệu không
+		        if (e.getType() == TableModelEvent.UPDATE) {
 		            int column = e.getColumn();
-		            if (column >= 0 && column == 0) { // Kiểm tra xem cột thay đổi có phải là cột liên quan đến hoàn trả không
-		                lbl11.setText("Số tiền được hoàn trả: " + getTotalRefund(getListCTHD()));
-		                repaint();
+		            int row = e.getFirstRow();
+		            if (column == 0 && row <= dataModel.getRowCount() - 1 ) {
+		            	if (getItemSelectedRadGroup().equals("Đổi thuốc")) {
+		            		if (!isShowingDialog) { // Kiểm tra xem hộp thoại đã được hiển thị hay chưa
+			                    Thuoc thuoc = (new Dao_Thuoc()).getThuocByTenSoLuongDonViTinh(dataModel.getValueAt(row, 1).toString(), 
+			                                Integer.parseInt(dataModel.getValueAt(row, 2).toString()), 
+			                                dataModel.getValueAt(row, 3).toString());
+			                    if (thuoc == null  && getItemSelectedRadGroup().equals("Đổi thuốc")) {
+			                        isShowingDialog = true; // Đặt biến thành true để chỉ ra rằng hộp thoại đang được hiển thị
+			                        JOptionPane.showMessageDialog(null, "Số lượng của thuốc này không còn đủ để đổi!");
+			                        isShowingDialog = false; // Đặt lại biến thành false sau khi hộp thoại được đóng
+			                    }
+		            		}
+		            	} else {
+		                        lbl11.setText("Số tiền được hoàn trả: " + getTotalRefund(getListCTHD()));
+		                        repaint();
+		                }
+		               
 		            }
 		        }
 			}
@@ -292,6 +309,7 @@ public class Gui_DoiTraThuoc extends JPanel{
 					lbl3.setText("Tên khách hàng: " + hd.getKhachHang().getHoTen());
 					lbl4.setText("Tên nhân viên: " + hd.getNhanVien().getHoTen());
 					lbl5.setText("Ngày: " + hd.getNgayLap());
+					removeDataTable();
 					for (ChiTietHoaDon cthd : hd.getChiTietHoaDon()) {
 						dataModel.addRow(new Object[] {false,
 								cthd.getTenThuoc(),
@@ -320,6 +338,8 @@ public class Gui_DoiTraThuoc extends JPanel{
 				if (radDoiThuoc.isSelected()) {
 					hdNew.setLoaiHD("Đổi thuốc");
 					hdNew.setGhiChu("Đổi từ " + hd.getMaHD() + ", Lý do: " + txtLyDo.getText());
+					List<Object> listThuocTrade = getListThuocTrade();
+					boolean n = (new Dao_Thuoc()).setCountByMaThuoc((List<String>)listThuocTrade.get(0), (List<Integer>)listThuocTrade.get(1));
 				}else if (radTraThuoc.isSelected()) {
 					hdNew.setLoaiHD("Trả thuốc");
 					hdNew.setGhiChu("Trả từ " + hd.getMaHD() + ", Lý do: " + txtLyDo.getText());
@@ -328,6 +348,7 @@ public class Gui_DoiTraThuoc extends JPanel{
 				hdNew.setNgayLap(LocalDate.now());
 				hdNew.setChiTietHoaDon(listCTHD);
 				hdNew.setKhuyenMai(hd.getKhuyenMai());
+				
 				if ((new Dao_HoaDon()).addHoaDon(hdNew)) {
 					JOptionPane.showMessageDialog(null, "Tạo hóa đơn thành công!");
 				}else {
@@ -353,6 +374,24 @@ public class Gui_DoiTraThuoc extends JPanel{
 		return listCTHD;
 	}
 	
+	public List<Object> getListThuocTrade(){
+		List<Object> list = new ArrayList<Object>();
+		List<String> listMaThuoc = new ArrayList();
+		List<Integer> listSoLuong = new ArrayList<Integer>();
+		for (int i = 0 ; i < tableModel.getRowCount() ; i ++) {
+			if (dataModel.getValueAt(i, 0).equals(true)) {
+				Thuoc thuoc = (new Dao_Thuoc()).getThuocByTenSoLuongDonViTinh(dataModel.getValueAt(i, 1).toString(), 
+						Integer.parseInt(dataModel.getValueAt(i, 2).toString()), 
+						dataModel.getValueAt(i, 3).toString());
+				listMaThuoc.add(thuoc.getMaThuoc());
+				listSoLuong.add(Integer.parseInt(dataModel.getValueAt(i, 2).toString()));
+			}
+		}
+		list.add(listMaThuoc);
+		list.add(listSoLuong);
+		return list;
+	}
+	
 	public float getTotalRefund(List<ChiTietHoaDon> listCTHD) {
 		float total = 0;
 		if (listCTHD != null) {
@@ -361,5 +400,20 @@ public class Gui_DoiTraThuoc extends JPanel{
 			}
 		}
 		return total;
+	}
+	
+	public String getItemSelectedRadGroup() {
+		if (radDoiThuoc.isSelected()) {
+			return "Đổi thuốc";
+		}else if (radTraThuoc.isSelected()) {
+			return "Trả thuốc";
+		}
+		return "";
+	}
+	
+	public void removeDataTable() {
+		while (dataModel.getRowCount() > 0) {
+			dataModel.removeRow(0);
+		}
 	}
 }

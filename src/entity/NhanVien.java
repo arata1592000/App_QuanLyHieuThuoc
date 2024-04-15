@@ -29,6 +29,7 @@ public class NhanVien {
 		this.soCCCD = soCCCD;
 		this.diaChi = diaChi;
 		this.trangThai = trangThai;
+		this.anh = null;
 	}
 	
 	public NhanVien(String maNV, String hoTen, String gioiTinh, String soDienThoai, LocalDate ngaySinh,

@@ -37,6 +37,18 @@ public class Gui_DangNhap extends JFrame {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
 //        initComponents();
+        if ((new Dao_TaiKhoan()).readFromTaiKhoanSQL() == null) {
+        	try {
+				boolean flag = (new Dao_TaiKhoan()).addTaiKhoan(new TaiKhoan("NV241000", (new AES()).encrypt("1111", "NV241000")));
+				if (flag == true) {
+					JOptionPane.showMessageDialog(null, "Hệ thống kiểm tra thấy không có bất kỳ tài khoản nào trong cơ sở dữ liệu.\n Tự động tạo tên tài khoản: NV241000\n Tự động tạo mật khẩu: 1111");
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	
+        }
     }
                        
     private void initComponents() {
@@ -59,6 +71,9 @@ public class Gui_DangNhap extends JFrame {
         lblTittle.setIcon(new ImageIcon(img)); 
         lblTittle.setText(" Nhà Thuốc Ân Cần");
 
+        txtDangNhap.setText("NV241001");
+        txtMatKhau.setText("1111");
+        
         txtDangNhap.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent evt) {
                 txtDangNhapFocusGained(evt);
@@ -148,7 +163,6 @@ public class Gui_DangNhap extends JFrame {
 				// TODO Auto-generated method stub
 				TaiKhoan tk = new TaiKhoan(txtDangNhap.getText(), txtMatKhau.getText());
 				try {
-					System.out.println((new AES()).encrypt(txtMatKhau.getText(), txtDangNhap.getText()));
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

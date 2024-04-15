@@ -14,7 +14,7 @@ import entity.TaiKhoan;
 import utils.AES;
 
 public class Dao_TaiKhoan {
-	public List<TaiKhoan> readFromTaiKhoanSQL(String maNV) {
+	public List<TaiKhoan> readFromTaiKhoanSQL() {
 	    Connection connect = null;
 	    PreparedStatement stmt = null;
 	    List<TaiKhoan> listTaiKhoan = new ArrayList<>();
@@ -108,7 +108,6 @@ public class Dao_TaiKhoan {
 	        String mkEncrypt = null;
 	        try {
 				mkEncrypt = (new AES()).encrypt(tk.getMatKhau(), tk.getTenTaiKhoan());
-				System.out.println(mkEncrypt);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

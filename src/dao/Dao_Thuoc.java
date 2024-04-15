@@ -281,6 +281,118 @@ public class Dao_Thuoc {
 	        }
 	    }
 	    return listThuoc;
-		
+	}
+	
+	public boolean setCountByMaThuoc(List<String> listMaThuoc, List<Integer> listSoLuong) {
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    int n = 0;
+	    try {
+	    	for (int i = 0 ; i < listMaThuoc.size(); i++) {
+	    		connect = ConnectDB.getConnection();
+		        stmt = connect.prepareStatement("UPDATE Thuoc SET soLuong = soLuong - ? WHERE maThuoc=?");
+		        stmt.setInt(1, listSoLuong.get(i)); // Thiết lập giá trị cho tham số maThuoc
+		        stmt.setString(2, listMaThuoc.get(i));
+		        
+		        n = stmt.executeUpdate();
+	    	}
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return n>0;
+	}
+	
+	public boolean checkCountByMaThuoc(String maThuoc, int soLuong) {
+        Connection connect = null;
+	    PreparedStatement stmt = null;
+	    int n = 0;
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("SELECT CASE \r\n"
+	        		+ "        WHEN ? > soLuong THEN 0\r\n"
+	        		+ "        ELSE 1 \r\n"
+	        		+ "      END AS isGreater \r\n"
+	        		+ "FROM Thuoc \r\n"
+	        		+ "WHERE maThuoc = ?");
+	        stmt.setInt(1, soLuong); // Thiết lập giá trị cho tham số maThuoc
+	        stmt.setString(2, maThuoc);
+	        
+	        ResultSet rs = stmt.executeQuery();
+	        if(rs.next() && (rs.getInt(1) == 1)) {
+	        	n = 1;
+	        }
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return n>0;
+	}
+	
+	public Thuoc getThuocByTenSoLuongDonViTinh(String tenThuoc, int soLuong, String donViTinh) {
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    Thuoc thuoc = null;
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("SELECT * \r\n"
+	        		+ "FROM Thuoc \r\n"
+	        		+ "WHERE tenThuoc = ? \r\n"
+	        		+ "  AND donViTinh = ? \r\n"
+	        		+ "  AND soLuong > ?;");
+	        stmt.setString(1, tenThuoc); // Thiết lập giá trị cho tham số maThuoc
+	        stmt.setString(2, donViTinh);
+	        stmt.setInt(3, soLuong);
+	        
+	        ResultSet rs = stmt.executeQuery();
+	        if(rs.next()) {
+	        	thuoc = new Thuoc(rs.getString(1),
+						rs.getString(2),
+						rs.getDate(3).toLocalDate(),
+						rs.getDate(4).toLocalDate(),
+						rs.getDate(5).toLocalDate(),
+						rs.getString(6),
+						rs.getFloat(7),
+						rs.getString(8),
+						rs.getString(9),
+						rs.getInt(10)
+						
+					);
+	        }
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return thuoc;
 	}
 }
