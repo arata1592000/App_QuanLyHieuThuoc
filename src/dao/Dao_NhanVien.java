@@ -32,6 +32,9 @@ public class Dao_NhanVien {
 			ResultSet rs = stt.executeQuery("SELECT * FROM NhanVien");
 			while(rs.next()) {
 				String maNV = rs.getString(1);
+				if (maNV.equals("NV000000")) {
+	                continue;
+	            }
 				String hoTen = rs.getString(2);
 				String gioiTinh = rs.getString(3);
 				String soDT = rs.getString(4);

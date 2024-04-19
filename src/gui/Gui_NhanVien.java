@@ -452,7 +452,9 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 		        int row = tableModel.getSelectedRow();
 		        // Kiểm tra xem dòng đã được chọn chưa
 		        if(row >= 0) {
-			        txtMa.setText(tableModel.getValueAt(row, 0).toString());
+			        NhanVien nhanVien = (new Dao_NhanVien()).findNhanVienByMaNV(tableModel.getValueAt(row, 0).toString());
+			        comboBoxChucVu.setSelectedItem(tableModel.getValueAt(row, 6).toString());
+			        txtMa.setText(nhanVien.getMaNV());
 			        txtHoTen.setText(tableModel.getValueAt(row, 1).toString());
 			        String gioiTinh = tableModel.getValueAt(row, 2).toString();
 			        if (gioiTinh.equals("Nam")) {
@@ -465,11 +467,9 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 			        ngaySinhDate.setDate(java.sql.Date.valueOf(ngaySinh));
 			        LocalDate ngayVaoLam = (LocalDate) tableModel.getValueAt(row, 5);
 			        ngayLamDate.setDate(java.sql.Date.valueOf(ngayVaoLam));
-			        comboBoxChucVu.setSelectedItem(tableModel.getValueAt(row, 6).toString());
 			        txtCC.setText(tableModel.getValueAt(row, 7).toString());
 			        txtDC.setText(tableModel.getValueAt(row, 8).toString());
 			        comboBoxTrangThai.setSelectedItem(tableModel.getValueAt(row, 9).toString());
-			        NhanVien nhanVien = (new Dao_NhanVien()).findNhanVienByMaNV(tableModel.getValueAt(row, 0).toString());
 			        ImageIcon imageIcon = new ImageIcon(nhanVien.getAnh()); // Tạo ImageIcon từ đường dẫn ảnh
 					Image image = imageIcon.getImage(); // Lấy Image từ ImageIcon
 					Image scaledImage = image.getScaledInstance(150, 150, Image.SCALE_DEFAULT); // Thay đổi kích thước ảnh
@@ -477,6 +477,7 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 					lblHinhAnh.setIcon(scaledImageIcon); // Hiển thị ảnh trong JLabel
 					fileAnh = new File(nhanVien.getAnh());
 					isImageAdded = true;
+
 			    }
 		    }
 		});
