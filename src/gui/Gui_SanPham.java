@@ -34,6 +34,7 @@ import javax.swing.event.AncestorListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import entity.NhanVien;
 import utils.ButtonDeleteEditor;
 import utils.ButtonDeleteRenderer;
 import utils.RoundBorder;
@@ -47,11 +48,13 @@ public class Gui_SanPham extends JPanel implements ActionListener{
 	private JButton btnXemThongTin;
 	private JPanel pMain;
 	private JButton btnBack;
+	private NhanVien nv;
 
 
-	public Gui_SanPham(int width, int height) {
+	public Gui_SanPham(NhanVien nv, int width, int height) {
 		widthComp = width;
 		heightComp = height;
+		this.nv = nv;
 		this.setLayout(new BorderLayout());
 		initCompoent();
 	}
@@ -104,7 +107,7 @@ public class Gui_SanPham extends JPanel implements ActionListener{
 		pMenu.add(btnDoiTraThuoc);
 		pMenu.add(Box.createHorizontalStrut(40));
 		pMenu.add(btnXemThongTin);
-		pMain.add(new Gui_BanThuoc(widthComp, (int) (heightComp*0.9)));
+		pMain.add(new Gui_BanThuoc(nv, widthComp, (int) (heightComp*0.9)));
 		btnBack = btnBanThuoc;
 		this.add(pMenu, BorderLayout.NORTH);
 		this.add(pMain, BorderLayout.CENTER);
@@ -118,7 +121,7 @@ public class Gui_SanPham extends JPanel implements ActionListener{
 			if (!btnBack.equals(btnBanThuoc)) {
 				pMain.removeAll();
 				System.gc();
-				pMain.add(new Gui_BanThuoc(pMain.getWidth(), pMain.getHeight()));
+				pMain.add(new Gui_BanThuoc(nv, pMain.getWidth(), pMain.getHeight()));
 				btnBanThuoc.setBackground(new Color (40,156,164));
 				btnBanThuoc.setForeground(Color.WHITE);
 				btnBack.setBackground(new Color(224,220,220));
@@ -129,7 +132,7 @@ public class Gui_SanPham extends JPanel implements ActionListener{
 			if (!btnBack.equals(btnDoiTraThuoc)) {
 				pMain.removeAll();
 				System.gc();
-				pMain.add(new Gui_DoiTraThuoc(pMain.getWidth(), pMain.getHeight()));
+				pMain.add(new Gui_DoiTraThuoc(nv, pMain.getWidth(), pMain.getHeight()));
 				btnDoiTraThuoc.setBackground(new Color (40,156,164));
 				btnDoiTraThuoc.setForeground(Color.WHITE);
 				btnBack.setBackground(new Color(224,220,220));

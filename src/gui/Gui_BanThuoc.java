@@ -105,10 +105,10 @@ public class Gui_BanThuoc extends JPanel{
 	private int indexPopupMenu;
 	private NhanVien nv;
 	
-	public Gui_BanThuoc(int widthComp, int heightComp) {
+	public Gui_BanThuoc(NhanVien nv, int widthComp, int heightComp) {
 		this.widthComp = widthComp;
 		this.heightComp = heightComp;
-		nv = (new Dao_NhanVien()).findNhanVienByMaNV("NV241001");
+		this.nv = nv;
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.WHITE);
 		initCompoent();
@@ -486,7 +486,8 @@ public class Gui_BanThuoc extends JPanel{
 					List<String> listMaThuoc = new ArrayList();
 					List<Integer> listSoLuong = new ArrayList<Integer>();
 					for (int row = 0 ; row < tableModel.getRowCount()-1 ; row++) {
-						ChiTietHoaDon cthd = new ChiTietHoaDon((String)dataModel.getValueAt(row, 1),
+						ChiTietHoaDon cthd = new ChiTietHoaDon(dataModel.getValueAt(row, 0).toString(),
+								(String)dataModel.getValueAt(row, 1),
 								Integer.parseInt(dataModel.getValueAt(row, 2).toString()),
 								(String)dataModel.getValueAt(row, 3),
 								Float.valueOf(dataModel.getValueAt(row, 4).toString()),

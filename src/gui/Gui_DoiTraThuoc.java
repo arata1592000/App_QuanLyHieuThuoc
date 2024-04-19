@@ -30,6 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -81,10 +82,10 @@ public class Gui_DoiTraThuoc extends JPanel{
 	private HoaDon hd;
 	private NhanVien nv;
 
-	public Gui_DoiTraThuoc(int widthComp, int heightComp) {
+	public Gui_DoiTraThuoc(NhanVien nv, int widthComp, int heightComp) {
 		this.widthComp = widthComp;
 		this.heightComp = heightComp;
-		nv = (new Dao_NhanVien()).findNhanVienByMaNV("NV241001");
+		this.nv = nv;
 		this.setLayout(new BorderLayout());
 		initCompoent();
 	}
@@ -105,7 +106,7 @@ public class Gui_DoiTraThuoc extends JPanel{
 		pRight = new JPanel();
 		pTable = new JPanel();
 		lbl7 = new JLabel();
-		String headers[] = {"Chọn", "Tên thuốc", "Số lượng", "Đơn vị tính", "Giá", "Khuyến mãi", "Tổng tiền"};
+		String headers[] = {"Chọn", "Mã thuốc", "Tên thuốc", "Số lượng", "Đơn vị tính", "Giá", "Khuyến mãi", "Tổng tiền"};
 		dataModel = new DefaultTableModel(headers, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -189,7 +190,7 @@ public class Gui_DoiTraThuoc extends JPanel{
 		lbl10.setText("Lý do:");
 		lbl10.setFont(new Font ("Arial", Font.PLAIN, 20));
 		txtLyDo.setFont(new Font ("Arial", Font.PLAIN, 20));
-		lbl11.setText("Số tiền được hoàn trả: " + getTotalRefund(getListCTHD()));
+		lbl11.setText("Số tiền được hoàn trả: " + getTotalRefund());
 		lbl11.setFont(new Font ("Arial", Font.PLAIN, 20));
 		btnTaoLaiHoaDon.setText("Tạo lại hóa đơn");
 		btnTaoLaiHoaDon.setForeground(Color.WHITE);
@@ -253,9 +254,9 @@ public class Gui_DoiTraThuoc extends JPanel{
 		            if (column == 0 && row <= dataModel.getRowCount() - 1 ) {
 		            	if (getItemSelectedRadGroup().equals("Đổi thuốc")) {
 		            		if (!isShowingDialog) { // Kiểm tra xem hộp thoại đã được hiển thị hay chưa
-			                    Thuoc thuoc = (new Dao_Thuoc()).getThuocByTenSoLuongDonViTinh(dataModel.getValueAt(row, 1).toString(), 
-			                                Integer.parseInt(dataModel.getValueAt(row, 2).toString()), 
-			                                dataModel.getValueAt(row, 3).toString());
+			                    Thuoc thuoc = (new Dao_Thuoc()).getThuocByTenSoLuongDonViTinh(dataModel.getValueAt(row, 2).toString(), 
+			                                Integer.parseInt(dataModel.getValueAt(row, 3).toString()), 
+			                                dataModel.getValueAt(row, 4).toString());
 			                    if (thuoc == null  && getItemSelectedRadGroup().equals("Đổi thuốc")) {
 			                        isShowingDialog = true; // Đặt biến thành true để chỉ ra rằng hộp thoại đang được hiển thị
 			                        JOptionPane.showMessageDialog(null, "Số lượng của thuốc này không còn đủ để đổi!");
@@ -263,7 +264,7 @@ public class Gui_DoiTraThuoc extends JPanel{
 			                    }
 		            		}
 		            	} else {
-		                        lbl11.setText("Số tiền được hoàn trả: " + getTotalRefund(getListCTHD()));
+		                        lbl11.setText("Số tiền được hoàn trả: " + getTotalRefund());
 		                        repaint();
 		                }
 		               
@@ -278,7 +279,7 @@ public class Gui_DoiTraThuoc extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				if(lbl11.getText().equals("")) {
-					lbl11.setText("Số tiền được hoàn trả: " + getTotalRefund(getListCTHD()));
+					lbl11.setText("Số tiền được hoàn trả: " + getTotalRefund());
 					repaint();
 				}
 			}
@@ -312,6 +313,7 @@ public class Gui_DoiTraThuoc extends JPanel{
 					removeDataTable();
 					for (ChiTietHoaDon cthd : hd.getChiTietHoaDon()) {
 						dataModel.addRow(new Object[] {false,
+								cthd.getMaThuoc(),
 								cthd.getTenThuoc(),
 								cthd.getSoLuong()+"",
 								cthd.getDonViTinh(),
@@ -330,7 +332,6 @@ public class Gui_DoiTraThuoc extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				List<ChiTietHoaDon> listCTHD = getListCTHD();
 				HoaDon hdNew = new HoaDon();
 				hdNew.setMaHD((new Dao_HoaDon()).autoCreateMaHD());
 				hdNew.setKhachHang(hd.getKhachHang());
@@ -339,14 +340,18 @@ public class Gui_DoiTraThuoc extends JPanel{
 					hdNew.setLoaiHD("Đổi thuốc");
 					hdNew.setGhiChu("Đổi từ " + hd.getMaHD() + ", Lý do: " + txtLyDo.getText());
 					List<Object> listThuocTrade = getListThuocTrade();
+					hdNew.setChiTietHoaDon(getListCTHDDoiThuoc());
 					boolean n = (new Dao_Thuoc()).setCountByMaThuoc((List<String>)listThuocTrade.get(0), (List<Integer>)listThuocTrade.get(1));
+					if ( n == false) {
+						JOptionPane.showMessageDialog(null, "Có lỗi xảy ra");
+					}
 				}else if (radTraThuoc.isSelected()) {
 					hdNew.setLoaiHD("Trả thuốc");
 					hdNew.setGhiChu("Trả từ " + hd.getMaHD() + ", Lý do: " + txtLyDo.getText());
-					hdNew.setTongTien(getTotalRefund(listCTHD));
+					hdNew.setTongTien(getTotalRefund());
+					hdNew.setChiTietHoaDon(getListCTHDTraThuoc());
 				}
 				hdNew.setNgayLap(LocalDate.now());
-				hdNew.setChiTietHoaDon(listCTHD);
 				hdNew.setKhuyenMai(hd.getKhuyenMai());
 				
 				if ((new Dao_HoaDon()).addHoaDon(hdNew)) {
@@ -358,16 +363,36 @@ public class Gui_DoiTraThuoc extends JPanel{
 		});
 	}
 	
-	public List<ChiTietHoaDon> getListCTHD(){
+	public List<ChiTietHoaDon> getListCTHDDoiThuoc(){
+		List<Object> listThuocTrade = getListThuocTrade();
+		List<String> listMaThuoc = (List<String>) listThuocTrade.get(0);
+		List<Integer> listSoLuong = (List<Integer>) listThuocTrade.get(1);
+		List<ChiTietHoaDon> listCTHD = new ArrayList();
+		for (int i = 0 ; i < listMaThuoc.size() ; i ++) {
+				ChiTietHoaDon cthd = new ChiTietHoaDon();
+				cthd.setMaThuoc(listMaThuoc.get(i));
+				Thuoc thuoc = (new Dao_Thuoc()).findThuocByMaThuoc(listMaThuoc.get(i));
+				cthd.setGia(thuoc.getGia());
+				cthd.setTenThuoc(thuoc.getTenThuoc());
+				cthd.setSoLuong(listSoLuong.get(i));
+				cthd.setDonViTinh(thuoc.getDonViTinh());
+				listCTHD.add(cthd);
+		}
+		return listCTHD;
+	}
+	
+	public List<ChiTietHoaDon> getListCTHDTraThuoc(){
 		List<ChiTietHoaDon> listCTHD = new ArrayList();
 		for (int i = 0 ; i < tableModel.getRowCount() ; i ++) {
 			if (dataModel.getValueAt(i, 0).equals(true)) {
 				ChiTietHoaDon cthd = new ChiTietHoaDon(dataModel.getValueAt(i, 1).toString(),
-						Integer.parseInt(dataModel.getValueAt(i, 2).toString()),
-						dataModel.getValueAt(i, 3).toString(),
-						Float.valueOf(dataModel.getValueAt(i, 4).toString()),
+						dataModel.getValueAt(i, 2).toString(),
+						Integer.parseInt(dataModel.getValueAt(i, 3).toString()),
+						dataModel.getValueAt(i, 4).toString(),
 						Float.valueOf(dataModel.getValueAt(i, 5).toString()),
-						Float.valueOf(dataModel.getValueAt(i, 6).toString()));
+						Float.valueOf(dataModel.getValueAt(i, 6).toString()),
+						Float.valueOf(dataModel.getValueAt(i, 7).toString())
+						);
 				listCTHD.add(cthd);
 			}
 		}
@@ -380,11 +405,11 @@ public class Gui_DoiTraThuoc extends JPanel{
 		List<Integer> listSoLuong = new ArrayList<Integer>();
 		for (int i = 0 ; i < tableModel.getRowCount() ; i ++) {
 			if (dataModel.getValueAt(i, 0).equals(true)) {
-				Thuoc thuoc = (new Dao_Thuoc()).getThuocByTenSoLuongDonViTinh(dataModel.getValueAt(i, 1).toString(), 
-						Integer.parseInt(dataModel.getValueAt(i, 2).toString()), 
-						dataModel.getValueAt(i, 3).toString());
+				Thuoc thuoc = (new Dao_Thuoc()).getThuocByTenSoLuongDonViTinh(dataModel.getValueAt(i, 2).toString(), 
+						Integer.parseInt(dataModel.getValueAt(i, 3).toString()), 
+						dataModel.getValueAt(i, 4).toString());
 				listMaThuoc.add(thuoc.getMaThuoc());
-				listSoLuong.add(Integer.parseInt(dataModel.getValueAt(i, 2).toString()));
+				listSoLuong.add(Integer.parseInt(dataModel.getValueAt(i, 3).toString()));
 			}
 		}
 		list.add(listMaThuoc);
@@ -392,11 +417,11 @@ public class Gui_DoiTraThuoc extends JPanel{
 		return list;
 	}
 	
-	public float getTotalRefund(List<ChiTietHoaDon> listCTHD) {
+	public float getTotalRefund() {
 		float total = 0;
-		if (listCTHD != null) {
-			for (ChiTietHoaDon cthd : listCTHD) {
-				total += cthd.getTongTienSanPham();
+		for (int i = 0 ; i < tableModel.getRowCount() ; i ++) {
+			if (dataModel.getValueAt(i, 0).equals(true)) {
+				total += Float.valueOf(dataModel.getValueAt(i, 7).toString());
 			}
 		}
 		return total;

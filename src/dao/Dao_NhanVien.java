@@ -41,23 +41,9 @@ public class Dao_NhanVien {
 				String soCCCD = rs.getString(8);
 				String diaChi = rs.getString(9);
 				String trangThai = rs.getNString(10);
-				InputStream anh = rs.getBinaryStream(11); 
-//				if (anh != null) {
-//					byte[] anhByte = null;
-//					try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
-//					    int nRead;
-//					    byte[] data = new byte[16384]; // Adjust buffer size as needed
-//					    while ((nRead = anh.read(data, 0, data.length)) != -1) {
-//					        buffer.write(data, 0, nRead);
-//					    }
-//					    buffer.flush();
-//					    anhByte = buffer.toByteArray(); // Chuyển dữ liệu từ ByteArrayOutputStream thành mảng byte
-//					} catch (IOException e) {
-//					    e.printStackTrace();
-//					}
+				String anh = rs.getString(11); 
 
-
-				NhanVien nhanVien = new NhanVien(maNV,hoTen,gioiTinh,soDT,ngaySinh,ngayVaoLam,chucVu,soCCCD,diaChi,trangThai);
+				NhanVien nhanVien = new NhanVien(maNV,hoTen,gioiTinh,soDT,ngaySinh,ngayVaoLam,chucVu,soCCCD,diaChi,trangThai,anh);
 				listNhanVien.add(nhanVien);
 
 				}
@@ -76,42 +62,25 @@ public class Dao_NhanVien {
 	    
 		return listNhanVien;
 	}
+	
+	public boolean createNhanVienADMIN() {
+		NhanVien nvADMIN = new NhanVien("NV000000",
+				"ADMIN",
+				"",
+				"",
+				LocalDate.now(),
+				LocalDate.now(),
+				"ADMIN",
+				"",
+				"",
+				"",
+				"images/avatar-default.png");
+		if (addNhanVien(nvADMIN)) {
+			return true;
+		}
+		return false;
+	}
 
-//	public boolean addNhanVien(NhanVien nhanVien) {
-//	    Connection connect = null;
-//	    PreparedStatement stmt = null;
-//	    int n = 0;
-//	    try {
-//	        connect = ConnectDB.getConnection();
-//	        stmt = connect.prepareStatement("INSERT INTO NhanVien VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
-//	        stmt.setString(1, nhanVien.getMaNV());
-//	        stmt.setString(2, nhanVien.getHoTen());
-//	        stmt.setString(3, nhanVien.getGioiTinh());
-//	        stmt.setString(4, nhanVien.getSoDienThoai());
-//	        stmt.setTimestamp(5, Timestamp.valueOf(nhanVien.getNgaySinh().atStartOfDay()));
-//	        stmt.setTimestamp(6, Timestamp.valueOf(nhanVien.getNgayVaoLam().atStartOfDay()));
-//	        stmt.setString(7, nhanVien.getChucVu());
-//	        stmt.setString(8, nhanVien.getSoCCCD());
-//	        stmt.setString(9, nhanVien.getDiaChi());
-//	        stmt.setString(10, nhanVien.getTrangThai());
-//	        stmt.setBytes(11, nhanVien.getAnh());
-//
-//	        n = stmt.executeUpdate();
-//	    } catch (SQLException e) {
-//	        e.printStackTrace();
-//	    } finally {
-//	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
-//	        try {
-//	            if (stmt != null) stmt.close();
-//	            if (connect != null) {
-//	                ConnectDB.close(connect);
-//	            }
-//	        } catch (SQLException e) {
-//	            e.printStackTrace();
-//	        }
-//	    }
-//	    return n > 0;
-//	}
 	public boolean addNhanVien(NhanVien nhanVien) {
 	    Connection connect = null;
 	    PreparedStatement stmt = null;
@@ -129,7 +98,7 @@ public class Dao_NhanVien {
 	        stmt.setString(8, nhanVien.getSoCCCD());
 	        stmt.setString(9, nhanVien.getDiaChi());
 	        stmt.setString(10, nhanVien.getTrangThai());
-	        stmt.setBytes(11, nhanVien.getAnh());
+	        stmt.setString(11, nhanVien.getAnh());
 
 	        n = stmt.executeUpdate();
 	        
@@ -198,20 +167,6 @@ public class Dao_NhanVien {
 
 	        ResultSet rs = stmt.executeQuery();
 	        if (rs.next()) {
-	        	InputStream anh = rs.getBinaryStream(11); 
-					byte[] anhByte = null;
-					try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
-					    int nRead;
-					    byte[] data = new byte[16384]; // Adjust buffer size as needed
-					    while ((nRead = anh.read(data, 0, data.length)) != -1) {
-					        buffer.write(data, 0, nRead);
-					    }
-					    buffer.flush();
-					    anhByte = buffer.toByteArray(); // Chuyển dữ liệu từ ByteArrayOutputStream thành mảng byte
-					} catch (IOException e) {
-					    e.printStackTrace();
-					}
-
 	            nhanVien = new NhanVien(
 	                rs.getString(1),
 	                rs.getString(2),
@@ -222,7 +177,8 @@ public class Dao_NhanVien {
 	                rs.getString(7),
 	                rs.getString(8),
 	                rs.getString(9),
-	                rs.getString(10)
+	                rs.getString(10),
+	                rs.getString(11)
 	            );
 	        }
 	    } catch (SQLException e) {
@@ -256,7 +212,7 @@ public class Dao_NhanVien {
 	        stmt.setString(7, nhanVien.getSoCCCD());
 	        stmt.setString(8, nhanVien.getDiaChi());
 	        stmt.setString(9, nhanVien.getTrangThai());
-	        stmt.setBytes(10,nhanVien.getAnh());
+	        stmt.setString(10,nhanVien.getAnh());
 	        stmt.setString(11, nhanVien.getMaNV());
 
 	        n = stmt.executeUpdate();
@@ -275,7 +231,6 @@ public class Dao_NhanVien {
 	    }
 	    return n > 0;
 	}
-
 	public String autoCreateMaNhanVien(String loaiNV) {
 	    Connection connect = null;
 	    PreparedStatement stmt = null;
@@ -320,42 +275,42 @@ public class Dao_NhanVien {
 	}
 
 	
-	public byte[] getAnhByMaNV(String maNV) {
-		Connection connect = null;
-	    PreparedStatement stmt = null;
-	    byte[] anhByte = null;
-	    try {
-	        connect = ConnectDB.getConnection();
-	        stmt = connect.prepareStatement("SELECT anh FROM NhanVien WHERE maNV = ?");
-	        stmt.setString(1, maNV);
-
-	        ResultSet rs = stmt.executeQuery();
-	        if (rs.next()) {
-	        	InputStream anh = rs.getBinaryStream(1); 
-					try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
-					    int nRead;
-					    byte[] data = new byte[16384]; // Adjust buffer size as needed
-					    while ((nRead = anh.read(data, 0, data.length)) != -1) {
-					        buffer.write(data, 0, nRead);
-					    }
-					    buffer.flush();
-					    anhByte = buffer.toByteArray(); // Chuyển dữ liệu từ ByteArrayOutputStream thành mảng byte
-					} catch (IOException e) {
-					    e.printStackTrace();
-					}
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    } finally {
-	        try {
-	            if (stmt != null) stmt.close();
-	            if (connect != null) {
-	                ConnectDB.close(connect);
-	            }
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-	    }
-	    return anhByte;
-	}
+//	public byte[] getAnhByMaNV(String maNV) {
+//		Connection connect = null;
+//	    PreparedStatement stmt = null;
+//	    byte[] anhByte = null;
+//	    try {
+//	        connect = ConnectDB.getConnection();
+//	        stmt = connect.prepareStatement("SELECT anh FROM NhanVien WHERE maNV = ?");
+//	        stmt.setString(1, maNV);
+//
+//	        ResultSet rs = stmt.executeQuery();
+//	        if (rs.next()) {
+//	        	InputStream anh = rs.getBinaryStream(1); 
+//					try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+//					    int nRead;
+//					    byte[] data = new byte[16384]; // Adjust buffer size as needed
+//					    while ((nRead = anh.read(data, 0, data.length)) != -1) {
+//					        buffer.write(data, 0, nRead);
+//					    }
+//					    buffer.flush();
+//					    anhByte = buffer.toByteArray(); // Chuyển dữ liệu từ ByteArrayOutputStream thành mảng byte
+//					} catch (IOException e) {
+//					    e.printStackTrace();
+//					}
+//	        }
+//	    } catch (SQLException e) {
+//	        e.printStackTrace();
+//	    } finally {
+//	        try {
+//	            if (stmt != null) stmt.close();
+//	            if (connect != null) {
+//	                ConnectDB.close(connect);
+//	            }
+//	        } catch (SQLException e) {
+//	            e.printStackTrace();
+//	        }
+//	    }
+//	    return anhByte;
+//	}
 }

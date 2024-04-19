@@ -1,52 +1,28 @@
-package gui;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-
-public class Test1 extends JFrame {
-    private BufferedImage originalImage;
-
-    public Test1() {
-        try {
-            originalImage = ImageIO.read(new File("C:\\Users\\truon\\OneDrive\\Hình ảnh\\133549934930738840.jpg")); // Đọc hình ảnh từ tập tin
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        setTitle("Ellipse Image");
-
-        // Kích thước của JFrame sẽ là kích thước của hình ảnh
-        setSize(300, 600);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-
-        JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
-
-                // Tạo một hình ellipse với kích thước của hình ảnh
-                Ellipse2D.Double ellipse = new Ellipse2D.Double(0, 0, originalImage.getWidth(), originalImage.getHeight());
-                g2d.setClip(ellipse);
-
-                // Vẽ hình ảnh vào hình ellipse với kích thước đã được định nghĩa
-                g2d.drawImage(originalImage, 0, 0, 150, 300, this);
-            }
-        };
-        setContentPane(panel);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Test1 ex = new Test1();
-            ex.setVisible(true);
-        });
-    }
-}
+//package gui;
+//
+//import com.itextpdf.text.Document;
+//import com.itextpdf.text.Paragraph;
+//import com.itextpdf.text.pdf.PdfWriter;
+//
+//import java.io.FileOutputStream;
+//
+//public class Test1 {
+//    public static void main(String[] args) {
+//        Document document = new Document();
+//        try {
+//            // Tạo một tệp PDF mới
+//            PdfWriter.getInstance(document, new FileOutputStream("output.pdf"));
+//            document.open();
+//            
+//            // Viết nội dung vào tệp PDF
+//            document.add(new Paragraph("Đây là nội dung được viết vào tệp PDF bằng Java."));
+//            document.add(new Paragraph("Xin chào, đây là một ví dụ đơn giản về việc sử dụng thư viện iText để tạo và viết nội dung vào tệp PDF."));
+//            document.add(new Paragraph("Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!"));
+//            
+//            document.close();
+//            System.out.println("Tệp PDF đã được tạo thành công!");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//}

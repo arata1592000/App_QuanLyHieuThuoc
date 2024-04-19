@@ -174,6 +174,7 @@ public class Gui_ChiTietHoaDon extends JPanel{
 	}
 	
 	public void setDataTable() {
+		headerTable.add("Mã");
 		headerTable.add("Tên");
         headerTable.add("SL");
         headerTable.add("Giá");
@@ -181,6 +182,7 @@ public class Gui_ChiTietHoaDon extends JPanel{
         headerTable.add("Tổng");
 		for (ChiTietHoaDon cthd : hd.getChiTietHoaDon()) {
 			Vector<Object> rowTable = new Vector<>();
+			rowTable.add(cthd.getMaThuoc());
 			rowTable.add(cthd.getTenThuoc());
 			rowTable.add(cthd.getSoLuong() + " " + cthd.getDonViTinh());
 			rowTable.add(cthd.getGia());

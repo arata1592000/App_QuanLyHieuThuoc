@@ -24,6 +24,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -134,6 +136,8 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 	private NhanVien nhanVien;
 	private String tenTaiKhoan;
 	private String matKhau;
+	private boolean isImageAdded;
+	private File fileAnh;
 	
 	public Gui_NhanVien(int width, int height) {
 		widthComp = width;
@@ -174,7 +178,7 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
         lblHinhAnh = new JLabel( resizedImageIcon, JLabel.CENTER);
         pImage.add(lblHinhAnh);
         btnThemAnh = new JButton("Thêm Ảnh");
-        pImage.add(btnThemAnh, constraintsCustomer);
+        pImage.add(btnThemAnh);
         btnThemAnh.setForeground(Color.WHITE);
         btnThemAnh.setFont(new Font("Arial", Font.BOLD, 15));
         btnThemAnh.setBackground(new Color(40,156,164));
@@ -366,9 +370,9 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 		btnTaiKhoan.setFocusPainted(false);
 		row1.add(btnAdd);
 		row1.add(btnSua);
-		row1.add(btnLuu);
+//		row1.add(btnLuu);
 		row1.add(btnNhapLai);
-		row1.add(btnTaiKhoan);
+//		row1.add(btnTaiKhoan);
 		
 		btnAdd.addActionListener(this);
 		btnSua.addActionListener(this);
@@ -379,10 +383,10 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 		row2 = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 20));
         row2.setBackground(Color.WHITE); 
         lblCV = new JLabel("Lọc theo chức vụ");
-        comboBoxCV = new JComboBox<>(new String[]{"Nhân Viên", "Quản Lý"});
+        comboBoxCV = new JComboBox<>(new String[]{"Tất cả","Nhân Viên", "Quản Lý"});
         comboBoxCV.setPreferredSize(new Dimension(135,25));
         lblTT = new JLabel("Lọc theo trạng thái");
-        comboBoxTT = new JComboBox<>(new String[]{"Làm việc", "Không làm việc"});
+        comboBoxTT = new JComboBox<>(new String[]{"Tất cả","Làm việc", "Không làm việc"});
         comboBoxTT.setPreferredSize(new Dimension(135,25));
         btnTim = new JButton("Tìm");
 		btnTim.setForeground(Color.WHITE);
@@ -465,23 +469,19 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 			        txtCC.setText(tableModel.getValueAt(row, 7).toString());
 			        txtDC.setText(tableModel.getValueAt(row, 8).toString());
 			        comboBoxTrangThai.setSelectedItem(tableModel.getValueAt(row, 9).toString());
-			        byte[] anhBytes = (new Dao_NhanVien()).getAnhByMaNV(tableModel.getValueAt(row, 0).toString());
-			        try {
-			        	if (anhBytes != null) {
-			        		BufferedImage anh = ImageIO.read(new ByteArrayInputStream(anhBytes));
-			        		ImageIcon imageIcon = new ImageIcon(anh.getScaledInstance(150, 150, Image.SCALE_DEFAULT));
-			        		lblHinhAnh.setIcon(imageIcon);
-			        	}
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-		        }
+			        NhanVien nhanVien = (new Dao_NhanVien()).findNhanVienByMaNV(tableModel.getValueAt(row, 0).toString());
+			        ImageIcon imageIcon = new ImageIcon(nhanVien.getAnh()); // Tạo ImageIcon từ đường dẫn ảnh
+					Image image = imageIcon.getImage(); // Lấy Image từ ImageIcon
+					Image scaledImage = image.getScaledInstance(150, 150, Image.SCALE_DEFAULT); // Thay đổi kích thước ảnh
+					ImageIcon scaledImageIcon = new ImageIcon(scaledImage); // Tạo ImageIcon từ ảnh đã thay đổi kích thước
+					lblHinhAnh.setIcon(scaledImageIcon); // Hiển thị ảnh trong JLabel
+					fileAnh = new File(nhanVien.getAnh());
+					isImageAdded = true;
+			    }
 		    }
 		});
 		scroll = new JScrollPane(tableModel);
 		scroll.setPreferredSize(new Dimension((int)(widthComp*0.85),(int) (heightComp*0.35)));
-//		tableModel.addMouseListener(this);
 
 		
 		pTable.add(lblDSNV, BorderLayout.NORTH); 
@@ -507,9 +507,6 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 		    if (validData()) {
 		        Dao_NhanVien daoNhanVien = new Dao_NhanVien();
 
-//		        String maNV = daoNhanVien.autoCreateMaNhanVien();
-		        
-		        // Lấy thông tin khác từ giao diện
 		        String maNV = txtMa.getText();
 		        String hoTen = txtHoTen.getText();
 		        String gioiTinh = radNam.isSelected() ? "Nam" : "Nữ";
@@ -520,8 +517,9 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 		        String soCCCD = txtCC.getText();
 		        String diaChi = txtDC.getText();
 		        String trangThai = (String) comboBoxTrangThai.getSelectedItem();
+		        String anh = getPathAnh();
 
-		        NhanVien nhanVien = new NhanVien(maNV, hoTen, gioiTinh, soDienThoai, ngaySinh, ngayVaoLam, chucVu, soCCCD, diaChi, trangThai, anhByte);
+		        NhanVien nhanVien = new NhanVien(maNV, hoTen, gioiTinh, soDienThoai, ngaySinh, ngayVaoLam, chucVu, soCCCD, diaChi, trangThai, anh);
 
 		        boolean success = daoNhanVien.addNhanVien(nhanVien);
 
@@ -550,96 +548,58 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 				}
 			}
 		}
-		if(o.equals(btnLuu)) {
-	        int selectRow = tableModel.getSelectedRow();
-	        // Kiểm tra nếu có hàng được chọn
-	        if (selectRow != -1) {
-        		String maNV = (String) tableModel.getValueAt(selectRow, 0);
-	        	if ((new Dao_NhanVien()).removeNhanVien(maNV)) {
-		            ((DefaultTableModel) tableModel.getModel()).removeRow(selectRow);
-	            // Xóa hàng từ  JTable
-	        	}else {
-		            JOptionPane.showMessageDialog(null, "Hệ thống đang xảy ra lỗi");
-	        	}
-	        } else {
-	            // Hiển thị thông báo nếu không có hàng nào được chọn
-	            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hàng để xóa.");
-	        }
-		}
-		if (o.equals(btnSua)) {
-		    String maNV = txtMa.getText();
-		    String hoTen = txtHoTen.getText();
-		    String gioiTinh = radNam.isSelected() ? "Nam" : "Nữ";
-		    String soDienThoai = txtSDT.getText();
-		    LocalDate ngaySinh = ngaySinhDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		    LocalDate ngayVaoLam = ngayLamDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		    String chucVu = (String) comboBoxChucVu.getSelectedItem();
-		    String soCCCD = txtCC.getText();
-		    String diaChi = txtDC.getText();
-		    String trangThai = (String) comboBoxTrangThai.getSelectedItem();
-
-		    NhanVien nhanVien = new NhanVien(maNV, hoTen, gioiTinh, soDienThoai, ngaySinh, ngayVaoLam, chucVu, soCCCD, diaChi, trangThai);
-		    Dao_NhanVien daoNhanVien = new Dao_NhanVien();
-		    boolean success = daoNhanVien.updateNhanVien(nhanVien);
-
-		    if (success) {
-		        JOptionPane.showMessageDialog(this, "Sửa thông tin nhân viên thành công!");
-		        updateRowNhanVien(nhanVien);
+		if(o.equals(btnSua)) {
+		    int selectedRow = tableModel.getSelectedRow();
+		    if (selectedRow != -1) {
+		        String maNV = (String) tableModel.getValueAt(selectedRow, 0);
+		        String hoTen = txtHoTen.getText();
+		        String gioiTinh = radNam.isSelected() ? "Nam" : "Nữ";
+		        String soDienThoai = txtSDT.getText();
+		        LocalDate ngaySinh = ngaySinhDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		        LocalDate ngayVaoLam = ngayLamDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		        String chucVu = (String) comboBoxChucVu.getSelectedItem();
+		        String soCCCD = txtCC.getText();
+		        String diaChi = txtDC.getText();
+		        String trangThai = (String) comboBoxTrangThai.getSelectedItem();
+		        String anh = getPathAnh();
+		        
+		        NhanVien nhanVien = new NhanVien(maNV, hoTen, gioiTinh, soDienThoai, ngaySinh, ngayVaoLam, chucVu, soCCCD, diaChi, trangThai, anh);
+		        
+		        boolean success = (new Dao_NhanVien()).updateNhanVien(nhanVien);
+		        
+		        if (success) {
+		            JOptionPane.showMessageDialog(this, "Cập nhật thông tin nhân viên thành công!");
+		            tableModel.setValueAt(hoTen, selectedRow, 1);
+		            tableModel.setValueAt(gioiTinh, selectedRow, 2);
+		            tableModel.setValueAt(soDienThoai, selectedRow, 3);
+		            tableModel.setValueAt(ngaySinh, selectedRow, 4);
+		            tableModel.setValueAt(ngayVaoLam, selectedRow, 5);
+		            tableModel.setValueAt(chucVu, selectedRow, 6);
+		            tableModel.setValueAt(soCCCD, selectedRow, 7);
+		            tableModel.setValueAt(diaChi, selectedRow, 8);
+		            tableModel.setValueAt(trangThai, selectedRow, 9);
+		        } else {
+		            JOptionPane.showMessageDialog(this, "Cập nhật thông tin nhân viên thất bại!");
+		            clearFields();
+		        }
 		    } else {
-		        JOptionPane.showMessageDialog(this, "Sửa thông tin nhân viên thất bại!");
+		        JOptionPane.showMessageDialog(this, "Vui lòng chọn một hàng trong bảng để sửa thông tin.");
 		    }
 		}
+
 		if (o.equals(btnNhapLai)) {
-		    // Xóa nội dung của các JTextField
 			clearFields();
 		}
-		if (o.equals(comboBoxCV)) {
-			String selectedChucVu = (String) comboBoxCV.getSelectedItem();
-	        filterByChucVu(selectedChucVu);
-	    }
-		if(o.equals(comboBoxTT)) {
-			String selectedTrangThai = (String) comboBoxTT.getSelectedItem();
-		    filterByTrangThai(selectedTrangThai);
+		if (o.equals(comboBoxCV) || o.equals(comboBoxTT)) {
+		    String selectedChucVu = (String) comboBoxCV.getSelectedItem();
+		    String selectedTrangThai = (String) comboBoxTT.getSelectedItem();
+		    filterByChucVuTrangThai(selectedChucVu, selectedTrangThai);
 		}
-
-		if (o.equals(btnTaiKhoan)) {
-		    int selectedRow = tableModel.getSelectedRow();
-		    if (selectedRow != -1) { // Kiểm tra xem có hàng nào được chọn không
-		        String maNV = (String) tableModel.getValueAt(selectedRow, 0); // Lấy giá trị mã nhân viên từ cột 0
-		        String chucVu = (String) tableModel.getValueAt(selectedRow, 6);
-		        if (layeredPane.getComponentsInLayer(JLayeredPane.PALETTE_LAYER).length == 0) {
-		            isGuiTKDisplayed = false;
-		        }
-		        if (!isGuiTKDisplayed) {
-		            guiTK = new Gui_TaiKhoan(maNV);
-		            guiTK.setOpaque(true);
-		            Dimension sizeGuiTK = guiTK.getPreferredSize(); // Lấy kích thước ưu tiên của guiTK
-		            Dimension sizeGuiLayeredPane = layeredPane.getPreferredSize(); //
-
-		            if (sizeGuiLayeredPane != null && sizeGuiLayeredPane.getWidth() > 0 && sizeGuiLayeredPane.getHeight() > 0) {
-		                int x = (int) ((sizeGuiLayeredPane.getWidth() - sizeGuiTK.width) / 2);
-		                int y = (int) ((sizeGuiLayeredPane.getHeight() - sizeGuiTK.height) / 2);
-
-		                guiTK.setBounds(x, y, sizeGuiTK.width, sizeGuiTK.height);
-		            } else {
-		                guiTK.setBounds(0, 0, sizeGuiTK.width, sizeGuiTK.height);
-		            }
-		            guiTK.addMouseListener(new MouseAdapter() {
-		            });
-		            guiTK.addMouseMotionListener(new MouseAdapter() {
-		            });
-		            layeredPane.add(guiTK, JLayeredPane.PALETTE_LAYER);
-
-		            isGuiTKDisplayed = true;
-		        }
-		    } else {
-		        JOptionPane.showMessageDialog(this, "Vui lòng chọn một hàng từ bảng để xem tài khoản.");
-		    }
-		}
-
-
+	}	
+	private String autoCreateMaNV() {
+		// TODO Auto-generated method stub
+		return null;
 	}
-
 	private void clearFields() {
 		txtMa.setText("");
 	    txtHoTen.setText("");
@@ -653,7 +613,8 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 		    ngaySinhDate.setDate(null);
 		    ngaySinhDate.setDate(null);
 	    }
-	    ImageIcon userIcon = new ImageIcon("images/user1.png");
+	    ImageIcon userIcon = new ImageIcon("images/avatar-default.png");
+	    isImageAdded = false;
 	    img = userIcon.getImage();
 	    resizedImg = img.getScaledInstance(120,120, java.awt.Image.SCALE_SMOOTH);
 	    userIcon = new ImageIcon(resizedImg);
@@ -661,11 +622,12 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 	}
 	private boolean validData() {
 	    boolean isValid = true;
-//	    if (txtMa.getText().isEmpty()) {
-//	        isValid = false;
-//	        JOptionPane.showMessageDialog(this, "Vui lòng nhập mã nhân viên.");
-//	        txtMa.requestFocus();
-//	    } else 
+	    //sửa kiểm tra ảnh
+	    if (!isImageAdded) {
+	        isValid = false;
+	        JOptionPane.showMessageDialog(this, "Vui lòng thêm ảnh nhân viên.");
+	        return isValid;
+	    }
 	    if (txtHoTen.getText().isEmpty()) {
 	        isValid = false;
 	        JOptionPane.showMessageDialog(this, "Vui lòng nhập họ và tên nhân viên.");
@@ -685,82 +647,85 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 	    }
 	    return isValid;
 	}
-	public void filterByChucVu(String chucVu) {
+/*    comboBoxCV = new JComboBox<>(new String[]{"","Nhân Viên", "Quản Lý","Tất Cả"});
+    comboBoxTT = new JComboBox<>(new String[]{"","Làm việc", "Không làm việc","Tất Cả"});  */
+	
+	//fix
+	public void filterByChucVuTrangThai(String chucVu, String trangThai) {
 	    DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
 	    TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
 	    tableModel.setRowSorter(rowSorter);
-	    
+
 	    RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
 	        @Override
 	        public boolean include(Entry<?, ?> entry) {
 	            String cv = (String) entry.getValue(6); // Chức vụ ở cột 6 trong bảng
-	            return cv.equalsIgnoreCase(chucVu);
+	            String tt = (String) entry.getValue(9); // Trạng thái ở cột 9 trong bảng
+	            
+	            if (chucVu.equalsIgnoreCase("Nhân viên") && trangThai.equalsIgnoreCase("Tất Cả")) {
+	                return cv.equalsIgnoreCase(chucVu);
+	            } else if (chucVu.equalsIgnoreCase("Quản lý") && trangThai.equalsIgnoreCase("Tất Cả")) {
+	                return cv.equalsIgnoreCase(chucVu);
+	            } else if (chucVu.equalsIgnoreCase("Tất Cả") && trangThai.equalsIgnoreCase("Tất Cả")) {
+	                return true;
+	            } else if (!chucVu.equalsIgnoreCase("Tất Cả") && !trangThai.isEmpty() ){
+	                return cv.equalsIgnoreCase(chucVu) && tt.equalsIgnoreCase(trangThai);
+	            } else if (!chucVu.equalsIgnoreCase("Tất Cả") && trangThai.equalsIgnoreCase("Tất Cả")) {
+	                return cv.equalsIgnoreCase(chucVu);
+	            } else if (chucVu.equalsIgnoreCase("Tất Cả") && !trangThai.equalsIgnoreCase("Tất Cả")) {
+	                return tt.equalsIgnoreCase(trangThai);
+	            }else 
+	            	return true;
 	        }
 	    };
-	    if (chucVu.equalsIgnoreCase("Quản Lý") || chucVu.equalsIgnoreCase("Nhân Viên")) {
-	        rowSorter.setRowFilter(filter);
-	    } else {
-	        rowSorter.setRowFilter(null); 
-	    }
+	    rowSorter.setRowFilter(filter);
 	}
 
-	public void filterByTrangThai(String trangThai) {
-	    DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
-	    TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
-	    tableModel.setRowSorter(rowSorter);
-	    
-	    RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
-	        @Override
-	        public boolean include(Entry<?, ?> entry) {
-	            String tt = (String) entry.getValue(9); // Trạng thái ở cột 9 trong bảng
-	            return tt.equalsIgnoreCase(trangThai);
-	        }
-	    };
-	    if (trangThai.equalsIgnoreCase("Làm việc") || trangThai.equalsIgnoreCase("Không làm việc")) {
-	        rowSorter.setRowFilter(filter);
-	    } else {
-	        rowSorter.setRowFilter(null); 
-	    }
-	}
-	private void updateRowNhanVien(NhanVien nhanVien) {
-	    int rowCount = dataModel.getRowCount();
-	    for (int i = 0; i < rowCount; i++) {
-	        if (dataModel.getValueAt(i, 0).toString().equals(nhanVien.getMaNV())) {
-	            dataModel.setValueAt(nhanVien.getHoTen(), i, 1);
-	            dataModel.setValueAt(nhanVien.getGioiTinh(), i, 2);
-	            dataModel.setValueAt(nhanVien.getSoDienThoai(), i, 3);
-	            dataModel.setValueAt(nhanVien.getNgaySinh(), i, 4);
-	            dataModel.setValueAt(nhanVien.getNgayVaoLam(), i, 5);
-	            dataModel.setValueAt(nhanVien.getChucVu(), i, 6);
-	            dataModel.setValueAt(nhanVien.getSoCCCD(), i, 7);
-	            dataModel.setValueAt(nhanVien.getDiaChi(), i, 8);
-	            dataModel.setValueAt(nhanVien.getTrangThai(), i, 9);
-	            break;
-	        }
-	    }
-	}
+
+
 
 	private void themAnh() {
-	    JFileChooser chooser = new JFileChooser();
+		JFileChooser chooser = new JFileChooser();
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-	            "JPG, PNG, GIF Images", "jpg", "jpeg", "png", "gif");
+	        "JPG, PNG, GIF Images", "jpg", "jpeg", "png", "gif");
 	    chooser.setFileFilter(filter);
 	    int returnVal = chooser.showOpenDialog(this);
 	    if (returnVal == JFileChooser.APPROVE_OPTION) {
-	        File file = chooser.getSelectedFile();
-	        ImageIcon imageIcon = new ImageIcon(new ImageIcon(file.getAbsolutePath()).getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT));
+	        fileAnh = chooser.getSelectedFile();
+	    }
+	    if (fileAnh != null) {
+		    ImageIcon imageIcon = new ImageIcon(new ImageIcon(fileAnh.getAbsolutePath()).getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT));
 	        lblHinhAnh.setIcon(imageIcon);
-	        
-	        anhByte = new byte[(int) (file.length())];
-	        
-	        try(FileInputStream fie = new FileInputStream(file)) {
-	        	fie.read(anhByte);
-	        }catch (Exception e) {
-	        	e.printStackTrace();
-			}
+	        isImageAdded = true;
+	    }
+	}
+	
+	private String getPathAnh() {
+		// Tạo đường dẫn cho thư mục lưu trữ ảnh
+        String destDirPath = "images/imagesAvatarNV";
+        String destFilePath = "";
+        File destDir = new File(destDirPath);
+        if (!destDir.exists()) {
+            destDir.mkdirs(); // Tạo thư mục nếu chưa tồn tại
+        }
 
-	   }
-	    
+        // Tạo đường dẫn đích cho tệp
+        String newFileName = txtMa.getText() + ".jpg";
+        File destFile = new File(destDir, newFileName);
+        
+        try {
+            // Sao chép tệp đến đích
+        	if (fileAnh == null) {
+        		return null;
+        	}else {
+                Files.copy(fileAnh.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);            
+        	}
+
+            destFilePath = destFile.getPath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return destFilePath;
 	}
 	
 	private void addRowNhanVien(NhanVien nhanVien) {
@@ -775,7 +740,6 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 					nhanVien.getSoCCCD(),
 					nhanVien.getDiaChi(),
 					nhanVien.getTrangThai(),
-					nhanVien.getAnh(),
 					});
 	}
 	public void loadDataTable() {
@@ -785,66 +749,5 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 			addRowNhanVien(nhanVien);
 		}
 	}
-//	
-//	@Override
-//	public void mouseClicked(MouseEvent e) {
-//		
-//	}
-//	@Override
-//	public void mousePressed(MouseEvent e) {
-//		// TODO Auto-generated method stub
-//		int row = tableModel.getSelectedRow();
-//		if(row >= 0) {
-//			Byte nhanVien = (new Dao_NhanVien()).findNhanVienByMaNV(tableModel.getValueAt(row, 0).toString());
-//	        if (nhanVien.getAnh() == null) {
-//	        }
-//	        
-//	        try {
-//	        	if (nhanVien.getAnh() != null) {
-//	        		BufferedImage anh = ImageIO.read(new ByteArrayInputStream(nhanVien.getAnh()));
-//	        		if (anh == null) {
-//	        		}
-//	        		ImageIcon imageIcon = new ImageIcon(anh.getScaledInstance(150, 150, Image.SCALE_DEFAULT));
-//	        		lblHinhAnh.setIcon(imageIcon);
-//	        	}
-//			} catch (IOException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-////	        txtMa.setText(tableModel.getValueAt(row, 0).toString());
-////	        txtHoTen.setText(tableModel.getValueAt(row, 1).toString());
-////	        String gioiTinh = tableModel.getValueAt(row, 2).toString();
-////	        if (gioiTinh.equals("Nam")) {
-////	            radNam.setSelected(true);
-////	        } else {
-////	            radNu.setSelected(true);
-////	        }
-////	        txtSDT.setText(tableModel.getValueAt(row, 3).toString());
-////	        LocalDate ngaySinh = (LocalDate) tableModel.getValueAt(row, 4);
-////	        ngaySinhDate.setDate(java.sql.Date.valueOf(ngaySinh));
-////	        LocalDate ngayVaoLam = (LocalDate) tableModel.getValueAt(row, 5);
-////	        ngayLamDate.setDate(java.sql.Date.valueOf(ngayVaoLam));
-////	        comboBoxChucVu.setSelectedItem(tableModel.getValueAt(row, 6).toString());
-////	        txtCC.setText(tableModel.getValueAt(row, 7).toString());
-////	        txtDC.setText(tableModel.getValueAt(row, 8).toString());
-////	        comboBoxTrangThai.setSelectedItem(tableModel.getValueAt(row, 9).toString());
-//		}
-//	}
-//	@Override
-//	public void mouseReleased(MouseEvent e) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//	@Override
-//	public void mouseEntered(MouseEvent e) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//	@Override
-//	public void mouseExited(MouseEvent e) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-
 
 }

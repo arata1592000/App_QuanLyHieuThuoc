@@ -268,8 +268,25 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
         
         pButton.setBackground(Color.WHITE);
         btnThemThuoc.setText("Thêm thuốc");
+        btnThemThuoc.setForeground(Color.BLACK);
+		btnThemThuoc.setFont(new Font("Arial", Font.BOLD, 16));
+		btnThemThuoc.setBackground(new Color(40,156,164));
+		btnThemThuoc.setOpaque(true);
+		btnThemThuoc.setContentAreaFilled(true);
+        btnThemThuoc.setBorderPainted(false);
+        btnThemThuoc.setFocusPainted(false);     
+        btnThemThuoc.setForeground(Color.WHITE);
         btnXoaThuoc.setText("Xóa thuốc");
-        btnSuaThuoc.setText("Sửa thuốc");
+        btnXoaThuoc.setForeground(Color.BLACK);
+		btnXoaThuoc.setFont(new Font("Arial", Font.BOLD, 16));
+		btnXoaThuoc.setBackground(new Color(40,156,164));
+		btnXoaThuoc.setOpaque(true);
+		btnXoaThuoc.setContentAreaFilled(true);
+        btnXoaThuoc.setBorderPainted(false);
+        btnXoaThuoc.setFocusPainted(false);
+        btnXoaThuoc.setForeground(Color.WHITE);
+        
+//        btnSuaThuoc.setText("Sửa thuốc");
 
 		pSouth.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.55)));
 		pSouth.setBackground(Color.WHITE);
@@ -289,12 +306,12 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 
 		btnThemThuoc.addActionListener(this);
 		btnXoaThuoc.addActionListener(this);
-		btnSuaThuoc.addActionListener(this);
+//		btnSuaThuoc.addActionListener(this);
 
 		pInput.add(pFormLeft);
 		pButton.add(btnThemThuoc);
 		pButton.add(btnXoaThuoc);
-		pButton.add(btnSuaThuoc);
+//		pButton.add(btnSuaThuoc);
 		pAction.add(lbl12);
 		pAction.add(txt1);
 		pAction.add(lbl13);

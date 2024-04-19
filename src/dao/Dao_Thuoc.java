@@ -37,8 +37,10 @@ public class Dao_Thuoc {
 						rs.getString(8),
 						rs.getString(9),
 						rs.getInt(10)
-						
 					);
+				if (rs.getString(11) != null) {
+					thuoc.setKhuyenMai((new Dao_KhuyenMai()).findKhuyenMaiByID(rs.getString(11)));	
+				}
 				listThuoc.add(thuoc);
 			}
 		}  catch (SQLException e) {

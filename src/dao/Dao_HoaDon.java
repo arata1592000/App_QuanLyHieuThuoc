@@ -93,12 +93,10 @@ public class Dao_HoaDon {
 		try {
 	        connect = ConnectDB.getConnection();
 	        List<ChiTietHoaDon> listCTHD = hd.getChiTietHoaDon();
-	        int hang = 0;
 	        for (ChiTietHoaDon cthd : listCTHD) {
-	        	hang++;
 	        	stmt = connect.prepareStatement("INSERT INTO ChiTietHoaDon VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
 				stmt.setString(1, hd.getMaHD());
-				stmt.setInt(2, hang);
+				stmt.setString(2, cthd.getMaThuoc());
 				stmt.setString(3, cthd.getTenThuoc());
 				stmt.setInt(4, cthd.getSoLuong());
 				stmt.setString(5, cthd.getDonViTinh());
@@ -136,7 +134,8 @@ public class Dao_HoaDon {
 			stmt.setString(1, maHD);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				ChiTietHoaDon cthd = new ChiTietHoaDon(rs.getString(3),
+				ChiTietHoaDon cthd = new ChiTietHoaDon(rs.getString(2),
+						rs.getString(3),
 						rs.getInt(4),
 						rs.getString(5),
 						rs.getFloat(6),

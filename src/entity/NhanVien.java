@@ -15,25 +15,10 @@ public class NhanVien {
 	private String soCCCD;
 	private String diaChi;
 	private String trangThai;
-	private byte[] anh;
+//	private byte[] anh;
+	private String anh;
 	public NhanVien(String maNV, String hoTen, String gioiTinh, String soDienThoai, LocalDate ngaySinh,
-			LocalDate ngayVaoLam, String chucVu, String soCCCD, String diaChi, String trangThai) {
-		super();
-		this.maNV = maNV;
-		this.hoTen = hoTen;
-		this.gioiTinh = gioiTinh;
-		this.soDienThoai = soDienThoai;
-		this.ngaySinh = ngaySinh;
-		this.ngayVaoLam = ngayVaoLam;
-		this.chucVu = chucVu;
-		this.soCCCD = soCCCD;
-		this.diaChi = diaChi;
-		this.trangThai = trangThai;
-		this.anh = null;
-	}
-	
-	public NhanVien(String maNV, String hoTen, String gioiTinh, String soDienThoai, LocalDate ngaySinh,
-			LocalDate ngayVaoLam, String chucVu, String soCCCD, String diaChi, String trangThai, byte[] anh) {
+			LocalDate ngayVaoLam, String chucVu, String soCCCD, String diaChi, String trangThai, String anh) {
 		super();
 		this.maNV = maNV;
 		this.hoTen = hoTen;
@@ -47,6 +32,21 @@ public class NhanVien {
 		this.trangThai = trangThai;
 		this.anh = anh;
 	}
+	
+//	public NhanVien(String maNV, String hoTen, String gioiTinh, String soDienThoai, LocalDate ngaySinh,
+//			LocalDate ngayVaoLam, String chucVu, String soCCCD, String diaChi, String trangThai) {
+//		super();
+//		this.maNV = maNV;
+//		this.hoTen = hoTen;
+//		this.gioiTinh = gioiTinh;
+//		this.soDienThoai = soDienThoai;
+//		this.ngaySinh = ngaySinh;
+//		this.ngayVaoLam = ngayVaoLam;
+//		this.chucVu = chucVu;
+//		this.soCCCD = soCCCD;
+//		this.diaChi = diaChi;
+//		this.trangThai = trangThai;
+//	}
 
 	public String getMaNV() {
 		return maNV;
@@ -108,17 +108,17 @@ public class NhanVien {
 	public void setTrangThai(String trangThai) {
 		this.trangThai = trangThai;
 	}
-	public byte[] getAnh() {
+	public String getAnh() {
 		return anh;
 	}
-	public void setAnh(byte[] anh) {
+	public void setAnh(String anh) {
 		this.anh = anh;
 	}
 	@Override
 	public String toString() {
 		return "NhanVien [maNV=" + maNV + ", hoTen=" + hoTen + ", gioiTinh=" + gioiTinh + ", soDienThoai=" + soDienThoai
 				+ ", ngaySinh=" + ngaySinh + ", ngayVaoLam=" + ngayVaoLam + ", chucVu=" + chucVu + ", soCCCD=" + soCCCD
-				+ ", diaChi=" + diaChi + ", trangThai=" + trangThai + ", anh=" + Arrays.toString(anh) + "]";
+				+ ", diaChi=" + diaChi + ", trangThai=" + trangThai + ", anh=" + anh;
 	}
 	public NhanVien(String maNV) {
 		this.maNV = maNV;

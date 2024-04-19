@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 
 import dao.Dao_NhanVien;
 import entity.NhanVien;
+import utils.ImageUtils;
 
 
 public class Gui_TrangChu extends JPanel{
@@ -84,45 +85,14 @@ public class Gui_TrangChu extends JPanel{
 	    gbc.weighty = 1.0;
 	    gbc.fill = GridBagConstraints.CENTER;
 
-	    BufferedImage anh = null;
-	    try {
-	        anh = ImageIO.read(new ByteArrayInputStream((new Dao_NhanVien()).getAnhByMaNV(nv.getMaNV())));
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        JOptionPane.showMessageDialog(null, "Có lỗi, không tải được ảnh nhân viên!");
-	    }
-
-	    int widthAvatar = (int) (widthComp * 0.4);
-	    int heightAvatar = (int) (heightComp * 0.8);
-
-	    // Tính toán kích thước hình ellipse
-	    int diameter = Math.min(widthAvatar, heightAvatar);
-
-	    // Tính toán vị trí Y của hình ellipse
-	    int yEllipse = (heightAvatar - diameter) / 2;
-
-	    // Tạo BufferedImage mới để chứa hình ellipse
-	    BufferedImage roundedImage = new BufferedImage(widthAvatar, heightAvatar, BufferedImage.TYPE_INT_ARGB);
-	    Graphics2D g2d = roundedImage.createGraphics();
-
-	    // Tạo hình ellipse
-	    Ellipse2D.Float ellipse = new Ellipse2D.Float(0, yEllipse, diameter, diameter);
-
-	    // Thiết lập các thông số vẽ
-	    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	    g2d.setClip(ellipse);
-
-	    // Vẽ hình ảnh đã được scaled lên hình ellipse
-	    g2d.drawImage(anh.getScaledInstance(widthAvatar, heightAvatar, Image.SCALE_SMOOTH), 0, 0, null);
-
-	    // Giải phóng đối tượng Graphics2D
-	    g2d.dispose();
-	    anh = null;
-	    System.gc();
+	    ImageIcon imageIcon = new ImageIcon(nv.getAnh()); // Tạo ImageIcon từ đường dẫn ảnh
+	    Image image = imageIcon.getImage(); // Lấy Image từ ImageIcon
+	    Image scaledImage = image.getScaledInstance((int)(widthComp*0.4), (int)(widthComp*0.4), Image.SCALE_DEFAULT); // Thay đổi kích thước ảnh
+	    ImageIcon scaledImageIcon = new ImageIcon(scaledImage); // Tạo ImageIcon từ ảnh đã thay đổi kích thước
 	    
-	    ImageIcon imageIcon = new ImageIcon(roundedImage);
+	    ImageIcon roundedIcon = ImageUtils.roundImageIcon(scaledImageIcon, (int)(widthComp*0.4), (int)(widthComp*0.4)); // Bo tròn hình ảnh
 	    
-	    lblAnh.setIcon(imageIcon);
+	    lblAnh.setIcon(roundedIcon);
 	    lblAnh.setAlignmentX(CENTER_ALIGNMENT);
 	    lblAnh.setAlignmentY(CENTER_ALIGNMENT);
 

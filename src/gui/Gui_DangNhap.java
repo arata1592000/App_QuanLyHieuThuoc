@@ -7,12 +7,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.time.LocalDate;
+
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingUtilities;
@@ -20,6 +26,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
+import dao.Dao_NhanVien;
 import dao.Dao_TaiKhoan;
 import entity.NhanVien;
 import entity.TaiKhoan;
@@ -36,12 +43,17 @@ public class Gui_DangNhap extends JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-//        initComponents();
-        if ((new Dao_TaiKhoan()).readFromTaiKhoanSQL() == null) {
+        setAutoCreateAccount();
+    }
+	
+	private void setAutoCreateAccount() {
+		if ((new Dao_TaiKhoan()).readFromTaiKhoanSQL() == null) {
         	try {
-				boolean flag = (new Dao_TaiKhoan()).addTaiKhoan(new TaiKhoan("NV241000", (new AES()).encrypt("1111", "NV241000")));
-				if (flag == true) {
-					JOptionPane.showMessageDialog(null, "Hệ thống kiểm tra thấy không có bất kỳ tài khoản nào trong cơ sở dữ liệu.\n Tự động tạo tên tài khoản: NV241000\n Tự động tạo mật khẩu: 1111");
+				if ((new Dao_NhanVien()).createNhanVienADMIN()) {
+					JOptionPane.showMessageDialog(null, "Hệ thống kiểm tra thấy không có bất kỳ tài khoản nào trong cơ sở dữ liệu.\n Tự động tạo tên tài khoản: NV000000\n Tự động tạo mật khẩu: 1111");
+				} else {
+					JOptionPane.showMessageDialog(null, "Hệ thống kiểm tra thấy không có bất kỳ tài khoản nào trong cơ sở dữ liệu.\n Lỗi hệ thống: \"Không thể tạo tài khoản ADMIN\"");
+
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -49,13 +61,13 @@ public class Gui_DangNhap extends JFrame {
 			}
         	
         }
-    }
+	}
                        
     private void initComponents() {
 
         lblTittle = new JLabel();
         txtDangNhap = new JTextField();
-        txtMatKhau = new JTextField();
+        txtMatKhau = new JPasswordField();
         btnDangNhap = new JButton();
         btnQuenMK = new JButton();
         jLabel1 = new JLabel();
@@ -156,6 +168,55 @@ public class Gui_DangNhap extends JFrame {
 
         pack();
         
+        txtDangNhap.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				int keyCode = e.getKeyCode();	
+				if (keyCode == KeyEvent.VK_ENTER) {
+					btnDangNhap.doClick();
+				}
+			}
+		});
+        
+        txtMatKhau.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				int keyCode = e.getKeyCode();	
+				if (keyCode == KeyEvent.VK_ENTER) {
+					btnDangNhap.doClick();
+				}
+			}
+		});
+        
+        
         btnDangNhap.addActionListener(new ActionListener() {
 			
 			@Override
@@ -198,23 +259,11 @@ public class Gui_DangNhap extends JFrame {
     	if (txtMatKhau.getText().equals("")) {
     			txtMatKhau.setText("Nhập mật khẩu");}
     }        
-    
-    
-    
-    
-    public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-		    public void run() {
-		        // Thực hiện các hoạt động giao diện người dùng ở đây
-		        // Ví dụ: tạo và hiển thị một JFrame mới
-		    	new Gui_DangNhap();
-		    }
-		});	}
     private JButton btnDangNhap;
     private JButton btnQuenMK;
     private JLabel jLabel1;
     private JLabel jLabel2;
     private JLabel lblTittle;
     private JTextField txtDangNhap;
-    private JTextField txtMatKhau;                 
+    private JPasswordField txtMatKhau;                 
 }
