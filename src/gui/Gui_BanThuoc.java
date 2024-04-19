@@ -539,9 +539,12 @@ public class Gui_BanThuoc extends JPanel{
 		            		JOptionPane.showMessageDialog(null, "Số lượng bạn nhập đã vượt qua số lượng tồn kho của loại thuốc này!");
 		            		dataModel.setValueAt("", row, 2);
 		            	}else {
+		            		Thuoc thuoc = (new Dao_Thuoc()).findThuocByMaThuoc(dataModel.getValueAt(row, 0).toString());
 		            		int quantity = Integer.parseInt((String) dataModel.getValueAt(row, 2));
 			                float price = Float.valueOf(dataModel.getValueAt(row, 4).toString());
-			                float totalPrice = quantity * price;
+			                float discountMoney = quantity * price * thuoc.getKhuyenMai().getTyLeKM()/100;
+			                float totalPrice = quantity * price - discountMoney;
+			                tableModel.setValueAt(discountMoney, row, 5);
 			                tableModel.setValueAt(totalPrice, row, 6);
 			                updateInforOrder();
 			                if (row == tableModel.getRowCount()-2) {

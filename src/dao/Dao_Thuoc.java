@@ -142,6 +142,9 @@ public class Dao_Thuoc {
 	                    rs.getString(9),
 	                    rs.getInt(10)
 	            );
+	            if (rs.getString(11) != null) {
+					thuoc.setKhuyenMai((new Dao_KhuyenMai()).findKhuyenMaiByID(rs.getString(11)));	
+				}
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
