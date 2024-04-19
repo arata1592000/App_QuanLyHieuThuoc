@@ -400,4 +400,33 @@ public class Dao_Thuoc {
 	    }
 	    return thuoc;
 	}
+	
+	public boolean checkAndUpdateDiscount() {
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    int n = -1;
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("UPDATE Thuoc \r\n"
+	        		+ "SET maKMSP = NULL \r\n"
+	        		+ "FROM Thuoc \r\n"
+	        		+ "LEFT JOIN KhuyenMai ON Thuoc.maKMSP = KhuyenMai.maKM \r\n"
+	        		+ "WHERE KhuyenMai.ngayKetThuc < GETDATE();");
+	       
+	        n = stmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return n>-1;
+	}
 }

@@ -34,6 +34,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
+import dao.Dao_Thuoc;
 import database.ConnectDB;
 import entity.NhanVien;
 
@@ -85,7 +86,9 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
 		this.setVisible(true);
 		pContent.add(new Gui_TrangChu(nv, pContent.getWidth(), pContent.getHeight()));
-
+		if (!(new Dao_Thuoc()).checkAndUpdateDiscount()) {
+			JOptionPane.showMessageDialog(null, "Có lỗi xảy ra khi cập nhật khuyến mãi cho thuốc");
+		}
 	}
 	
 	public void initCompoent() {
