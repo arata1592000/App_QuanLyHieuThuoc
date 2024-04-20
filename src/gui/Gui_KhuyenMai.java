@@ -98,6 +98,7 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
 		this.setLayout(new BorderLayout());
 		initCompoent();
 		loadDataTable();
+		System.out.println(" áddddddddddddddddddddddddddddddddddddddddddddddddddđ");
 		
 	}
 	public void initCompoent() {
