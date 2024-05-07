@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -222,7 +223,8 @@ public class Gui_DangNhap extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				TaiKhoan tk = new TaiKhoan(txtDangNhap.getText(), txtMatKhau.getText());
+				String tenDangNhap = txtDangNhap.getText();
+				TaiKhoan tk = new TaiKhoan(tenDangNhap, txtMatKhau.getText());
 				try {
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
@@ -230,7 +232,7 @@ public class Gui_DangNhap extends JFrame {
 				}
 				NhanVien nv = (new Dao_TaiKhoan()).authenticateTaiKhoanForNhanVien(tk);
 				if (nv != null) {
-			    	JOptionPane.showMessageDialog(null, "Đăng nhập thành công!");
+			    	JOptionPane.showMessageDialog(null, "Đăng nhập thành công!");			    	
 			    	new Gui_Chinh(nv);
 			    	dispose();
 				} else {
@@ -239,7 +241,11 @@ public class Gui_DangNhap extends JFrame {
 				}
 			}
 		});
+
     }                     
+    public String getDangNhap() {
+        return txtDangNhap.getText();
+    }
 
     private void txtDangNhapFocusGained(FocusEvent evt) {                                        
 	if (txtDangNhap.getText().equals("Nhập tên đăng nhập")){

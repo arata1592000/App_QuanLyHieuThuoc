@@ -29,7 +29,6 @@ public class Dao_TaiKhoan {
 	            String tenTaiKhoan = rs.getString("tenTaiKhoan");
 	            String matKhau = rs.getString("matKhau");
 
-	            // Tạo đối tượng TaiKhoan và thêm vào danh sách
 	            TaiKhoan taiKhoan = new TaiKhoan(tenTaiKhoan, matKhau);
 	            listTaiKhoan.add(taiKhoan);
 	        }
@@ -44,9 +43,6 @@ public class Dao_TaiKhoan {
 	        } catch (SQLException e) {
 	            e.printStackTrace();
 	        }
-	    }
-	    if (listTaiKhoan.size() == 0) {
-	    	return null;
 	    }
 	    return listTaiKhoan;
 	}
@@ -73,33 +69,29 @@ public class Dao_TaiKhoan {
         }
         return rows > 0;
     }
-	public boolean changePassword(String tenTaiKhoan, String matKhauHienTai, String matKhauMoi, Component parentComponent) throws Exception {
+	public boolean changePassword(String tenTaiKhoan, String matKhauCu, String matKhauMoi) throws Exception {
 	    Connection connect = null;
 	    PreparedStatement stmt = null;
-	    int rows = 0;
+	    boolean success = false;
 	    try {
 	        connect = ConnectDB.getConnection();
-
-	        // Kiểm tra mật khẩu hiện tại
-	        String encryptedMatKhauHienTai = (new AES()).encrypt(matKhauHienTai, tenTaiKhoan);
-	        String sqlCheck = "SELECT * FROM TaiKhoan WHERE tenTaiKhoan = ? AND matKhau = ?";
-	        PreparedStatement checkStmt = connect.prepareStatement(sqlCheck);
-	        checkStmt.setString(1, tenTaiKhoan);
-	        checkStmt.setString(2, encryptedMatKhauHienTai);
-	        ResultSet rs = checkStmt.executeQuery();
-	        if (!rs.next()) {
-	            // Nếu không tìm thấy kết quả, tức là mật khẩu hiện tại không đúng
-	            JOptionPane.showMessageDialog(parentComponent, "Mật khẩu hiện tại không đúng");
-	            return false;
+	        String sqlSelect = "SELECT * FROM TaiKhoan WHERE tenTaiKhoan = ? AND matKhau = ?";
+	        stmt = connect.prepareStatement(sqlSelect);
+	        stmt.setString(1, tenTaiKhoan);
+	        String mkEncrypt = (new AES()).encrypt(matKhauCu, tenTaiKhoan);
+	        stmt.setString(2, mkEncrypt);
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) { 
+	            String sqlUpdate = "UPDATE TaiKhoan SET matKhau = ? WHERE tenTaiKhoan = ?";
+	            stmt = connect.prepareStatement(sqlUpdate);
+	            String mkMoiEncrypt = (new AES()).encrypt(matKhauMoi, tenTaiKhoan);
+	            stmt.setString(1, mkMoiEncrypt);
+	            stmt.setString(2, tenTaiKhoan);
+	            int rowsUpdated = stmt.executeUpdate();
+	            if (rowsUpdated > 0) {
+	                success = true; 
+	            }
 	        }
-
-	        // Nếu mật khẩu hiện tại đúng, tiến hành cập nhật mật khẩu mới
-	        String sqlUpdate = "UPDATE TaiKhoan SET matKhau = ? WHERE tenTaiKhoan = ?";
-	        stmt = connect.prepareStatement(sqlUpdate);
-	        String encryptedMatKhauMoi = (new AES()).encrypt(matKhauMoi, tenTaiKhoan);
-	        stmt.setString(1, encryptedMatKhauMoi);
-	        stmt.setString(2, tenTaiKhoan);
-	        rows = stmt.executeUpdate();
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    } finally {
@@ -110,9 +102,12 @@ public class Dao_TaiKhoan {
 	            e.printStackTrace();
 	        }
 	    }
-	    return rows > 0;
+	    return success;
 	}
-	
+
+
+
+
 	public NhanVien authenticateTaiKhoanForNhanVien(TaiKhoan tk) {
 		Connection connect = null;
 	    PreparedStatement stmt = null;
@@ -125,6 +120,7 @@ public class Dao_TaiKhoan {
 	        String mkEncrypt = null;
 	        try {
 				mkEncrypt = (new AES()).encrypt(tk.getMatKhau(), tk.getTenTaiKhoan());
+				System.out.println(mkEncrypt);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -146,5 +142,4 @@ public class Dao_TaiKhoan {
 	    }
 	    return nv;
 	}
-
 }

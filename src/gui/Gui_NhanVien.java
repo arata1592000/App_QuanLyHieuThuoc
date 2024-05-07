@@ -178,6 +178,7 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
         lblHinhAnh = new JLabel( resizedImageIcon, JLabel.CENTER);
         pImage.add(lblHinhAnh);
         btnThemAnh = new JButton("Thêm Ảnh");
+        btnThemAnh.setBounds(250, 300, 1, 1);
         pImage.add(btnThemAnh);
         btnThemAnh.setForeground(Color.WHITE);
         btnThemAnh.setFont(new Font("Arial", Font.BOLD, 15));
