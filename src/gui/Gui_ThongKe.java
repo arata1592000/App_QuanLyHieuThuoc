@@ -460,7 +460,7 @@ public class Gui_ThongKe extends JPanel{
 		}
 		
 		for (int i = 0; i < dataModel.getRowCount(); i++) {
-		    row = sheet.createRow(i);
+		    row = sheet.createRow(i+1);
 		    for (int j = 0; j < 5; j++) {
 		        Cell cell = row.createCell(j, CellType.STRING);
 		        cell.setCellValue(dataModel.getValueAt(i, j).toString());
