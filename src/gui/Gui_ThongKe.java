@@ -459,7 +459,7 @@ public class Gui_ThongKe extends JPanel{
 		    		.toString());
 		}
 		
-		for (int i = 1; i < dataModel.getRowCount(); i++) {
+		for (int i = 0; i < dataModel.getRowCount(); i++) {
 		    row = sheet.createRow(i);
 		    for (int j = 0; j < 5; j++) {
 		        Cell cell = row.createCell(j, CellType.STRING);
@@ -484,7 +484,5 @@ public class Gui_ThongKe extends JPanel{
 				ex.printStackTrace();
 			}
 		}
-
-		JOptionPane.showMessageDialog(null, "Xuất file báo cáo excel thành công!");
     }
 }
