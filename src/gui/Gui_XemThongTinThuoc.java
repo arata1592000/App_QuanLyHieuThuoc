@@ -162,7 +162,6 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
         pContent.setBounds(0,0, widthComp, heightComp);
 		pContent.setBackground(Color.WHITE);
 
-        
 		pCenter.setLayout(new BorderLayout());
 		pCenter.setPreferredSize(new Dimension((int)(widthComp*0.95), (int)(heightComp*0.4)));
 		

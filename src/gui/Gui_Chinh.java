@@ -76,7 +76,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	    this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		initCompoent();
-//		phimTat();
+		phimTat();
 		try {
             ConnectDB.getConnection();
         } catch (Exception e) {
@@ -183,13 +183,6 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		this.add(pMain, BorderLayout.CENTER);
 		
 		
-		this.addComponentListener(new ComponentAdapter() {
-	        @Override
-	        public void componentResized(ComponentEvent e) {
-	        	
-	            revalidate(); // Cần gọi revalidate() để đảm bảo cập nhật layout
-	        }
-	    });
 	}
 	
 	private JButton createButtonMenu(String titleButton, ImageIcon image) {
