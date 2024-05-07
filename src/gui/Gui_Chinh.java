@@ -249,7 +249,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				btnTaiKhoan.setBackground(new Color(224,255,255));
 				pContent.removeAll();
 				System.gc();
-				pContent.add(new Gui_TaiKhoan(pContent.getWidth(), pContent.getHeight()));
+				pContent.add(new Gui_TaiKhoan(nv, pContent.getWidth(), pContent.getHeight()));
 				lbl1.setText("TÀI KHOẢN");
 			}
 			actButtonBack = btnTaiKhoan;

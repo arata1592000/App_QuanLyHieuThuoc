@@ -50,8 +50,10 @@ public class Gui_TaiKhoan extends JPanel implements ActionListener{
 	private JLabel lblDoiPass1;
 	private JPasswordField txtDoiPass1;
 	private String tenTaiKhoan;
+	private NhanVien nv;
 
-	public Gui_TaiKhoan(int width, int height) {
+	public Gui_TaiKhoan(NhanVien nv, int width, int height) {
+		this.nv = nv;
 		widthComp = width;
 		heightComp = height;
 		initCompoent();
@@ -66,7 +68,8 @@ public class Gui_TaiKhoan extends JPanel implements ActionListener{
         lblTen = new JLabel("Tên tài khoản");
 		lblTen.setFont(new Font("Arial", Font.BOLD, 15));
         txtTen = new JTextField(15);
-//        txtTen.setEnabled(false);
+        txtTen.setEnabled(false);
+        txtTen.setText(nv.getMaNV());
         lblPass = new JLabel("Mật khẩu hiện tại");
 		lblPass.setFont(new Font("Arial", Font.BOLD, 15));
         txtPass = new JPasswordField(15);
@@ -145,11 +148,7 @@ public class Gui_TaiKhoan extends JPanel implements ActionListener{
                 }
             }
         });
-        setTenTaiKhoan(tenTaiKhoan);
         
-	}
-	public void setTenTaiKhoan(String tenTaiKhoan) {
-	        txtTen.setText(tenTaiKhoan);
 	}
     @Override
     public void actionPerformed(ActionEvent e) {
