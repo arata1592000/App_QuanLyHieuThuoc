@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Flow;
@@ -125,6 +127,7 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
         cbbLoai.addItem("Khuyến mãi trên sản phẩm");
         cbbLoai.addItem("Khuyến mãi trên hóa đơn");
         
+        
         pMain.setPreferredSize(new Dimension((int) (widthComp*0.9), (int) (heightComp*0.3)));
         pMain.setLayout(new GridBagLayout());
         Border border = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Thêm thông tin khuyến mãi", TitledBorder.CENTER, TitledBorder.TOP);
@@ -219,7 +222,7 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
 		JPanel pMain = new JPanel();
 		pMain.setPreferredSize(new Dimension((int) (widthComp*0.43), (int) (heightComp*0.55)));
 		pMain.setBackground(Color.WHITE);
-	    String[] columnNames = {"Mã thuốc", "Tên thuốc", "Đơn giá", "Giảm giá"};
+	    String[] columnNames = {"Mã thuốc", "Tên thuốc", "Đơn giá"};
 	    modelRight = new DefaultTableModel(columnNames, 0);
 	    tableRight = new JTable(modelRight);
 	    scrollPane = new JScrollPane(tableRight);
@@ -257,6 +260,7 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
 			int select =cbbLoai.getSelectedIndex();
 			if (select == 1) {
 				txtAddTien.setEnabled(true);
+				txtAddTien.setEditable(true);
 				pTableLeft.setVisible(false);
 				pCenter.setVisible(false);
 				pTableRight.setVisible(false);
@@ -270,23 +274,36 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
 		}
 		if(o.equals(btnHuy))
 			{
-			JLayeredPane layeredPane = (JLayeredPane) getParent(); 
-			Gui_KhuyenMai pMain = (Gui_KhuyenMai) layeredPane.getParent();
-			pMain.loadDataTable();
-            layeredPane.remove(Gui_ThemKhuyenMai.this);
-            layeredPane.validate();
-            layeredPane.repaint();
+			 int confirmed = JOptionPane.showConfirmDialog(null, 
+	                    "Bạn chắc chắn không? Nội dung bạn đã nhập sẽ bị mất.", 
+	                    "Xác nhận đóng", JOptionPane.YES_NO_OPTION);
+	                
+	                // Nếu người dùng chọn "Đồng ý"
+	                if (confirmed == JOptionPane.YES_OPTION) {
+	                	JLayeredPane layeredPane = (JLayeredPane) getParent(); 
+	        			Gui_KhuyenMai pMain = (Gui_KhuyenMai) layeredPane.getParent();
+	        			pMain.loadDataTable();
+	                    layeredPane.remove(Gui_ThemKhuyenMai.this);
+	                    layeredPane.validate();
+	                    layeredPane.repaint();
+	                    
+	                }
+			
 			}
 		if(o.equals(btnThem))
 		{
+			if(validData())
+			{
 			String ma = txtMaKM.getText().trim();
 			float tyle = Float.parseFloat(txtTyLeKM.getText().trim());
 			LocalDate ngayBD = txtNgayBD.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 	        LocalDate ngayKT = txtNgayKT.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 	        String loai =(String) cbbLoai.getSelectedItem();
 	        KhuyenMai khuyenMai = new KhuyenMai(ma,ngayBD,ngayKT,tyle,loai);
-	        if (!txtAddTien.getText().equals("")) {
+	        if (loai.equals("Khuyến mãi trên hóa đơn")) {
 	        	khuyenMai.setGiaTriHD(Float.valueOf(txtAddTien.getText()));
+	        }else {
+	        	khuyenMai.setGiaTriHD(0);
 	        }
 	        Dao_KhuyenMai daoKM = new Dao_KhuyenMai();
 	        boolean success = daoKM.addKM(khuyenMai);
@@ -298,6 +315,11 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
 	        } else {
 	            JOptionPane.showMessageDialog(this, "Thêm khuyến mãi thất bại!");
 	        }
+		}
+			else
+			{
+				
+			}
 		}
 		if(o.equals(btnRight))
 		{
@@ -332,6 +354,80 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
             	}
 		}
 	}
+	private boolean validData() {
+		boolean flag = true;
+		LocalDate ngayBD = txtNgayBD.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate ngayKT = txtNgayKT.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        String loai =(String) cbbLoai.getSelectedItem();
+		if(txtMaKM.getText().isEmpty())
+    	{
+    		JOptionPane.showMessageDialog(this, "Mã khuyến mãi không được rỗng");
+    		txtMaKM.requestFocus();
+            flag = false;
+    	}
+		else if(txtTyLeKM.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tỷ lệ khuyến mãi");
+            txtTyLeKM.requestFocus();
+            flag = false;
+        } 
+		
+    	
+    	// Lấy giá trị từ text field và chuyển đổi thành số thực
+		else if(!kiemTraSoThucDuong(txtTyLeKM.getText()))
+        {
+        	JOptionPane.showMessageDialog(this, "Tỷ lệ giảm giá phải là một số thực dương ");
+        	flag = false;
+        }
+        
+
+        // Kiểm tra ngày kết thúc phải lớn hơn ngày bắt đầu
+		else if (ngayKT.isEqual(ngayBD) ||ngayKT.isBefore(ngayBD)) {
+            JOptionPane.showMessageDialog(this, "Ngày kết thúc phải sau ngày bắt đầu");
+            flag = false;
+        }
+		else if (ngayKT.isBefore(LocalDate.now())) {
+            JOptionPane.showMessageDialog(this, "Ngày kết thúc phải lớn hơn ngày hiện tại");
+            flag = false;
+        }
+        
+        else if (loai.equals("Khuyến mãi trên hóa đơn")) {
+        	String giaTriHoaDon = txtAddTien.getText();
+            if (!kiemTraSoThucDuong(giaTriHoaDon)) {
+                JOptionPane.showMessageDialog(this, "Giá trị hóa đơn phải là một số thực dương");
+                flag = false;
+            }
+        }
+
+       
+        
+       
+    
+		return flag;
+	}
+
+	 private boolean kiemTraNgayHopLe(String ngay) {
+	        try {
+	            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	            LocalDate.parse(ngay, formatter);
+	            return true;
+	        } catch (DateTimeParseException e) {
+	        	
+	            return false;
+	        }
+	    }
+	    //Kiểm tra số nguyên dương
+	    private boolean kiemTraSoThucDuong(String str) {
+	        if (str == null || str.isEmpty()) {
+	            return false; // Hoặc true tùy thuộc vào yêu cầu của ứng dụng
+	        }
+	        try {
+	            float number = Float.valueOf(str);
+	            return number >= 0; // Số không âm là số dương hoặc số không
+	        } catch (NumberFormatException e) {
+	            return false;
+	        }
+	    }
+
 	private void loadDataTableLeft()
 	{
 		List<Thuoc> listThuoc  = new ArrayList<Thuoc>();
@@ -363,4 +459,5 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
 		}
 		return listMaThuocNoDiscount;
 	}
+	
 }
