@@ -6,15 +6,25 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="libs/jdatepicker-1.3.4.jar"/>
+	<classpathentry kind="lib" path="libs/jbcrypt-0.4.jar"/>
 	<classpathentry kind="lib" path="libs/jcalendar-1.2.2.jar"/>
 	<classpathentry kind="lib" path="libs/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="libs/jdatepicker-1.3.4.jar"/>
+	<classpathentry kind="lib" path="libs/jfreechart-1.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/sqljdbc42.jar"/>
-	<classpathentry kind="lib" path="libs/jfreechart-1.0.1/lib/gnujaxp.jar"/>
 	<classpathentry kind="lib" path="libs/jfreechart-1.0.1/lib/jcommon-1.0.0.jar"/>
 	<classpathentry kind="lib" path="libs/jfreechart-1.0.1/lib/jfreechart-1.0.1.jar"/>
 	<classpathentry kind="lib" path="libs/jfreechart-1.0.1/lib/junit.jar"/>
 	<classpathentry kind="lib" path="libs/jfreechart-1.0.1/lib/servlet.jar"/>
-	<classpathentry kind="lib" path="libs/jbcrypt-0.4.jar"/>
+	<classpathentry kind="lib" path="libs/poi-bin-5.2.3/poi-5.2.3.jar"/>
+	<classpathentry kind="lib" path="libs/poi-bin-5.2.3/poi-ooxml-5.2.3.jar"/>
+	<classpathentry kind="lib" path="libs/poi-bin-5.2.3/lib/commons-io-2.11.0.jar"/>
+	<classpathentry kind="lib" path="libs/poi-bin-5.2.3/ooxml-lib/xmlbeans-5.1.1.jar"/>
+	<classpathentry kind="lib" path="libs/poi-bin-5.2.3/lib/commons-collections4-4.4.jar"/>
+	<classpathentry kind="lib" path="libs/poi-bin-5.2.3/lib/log4j-api-2.18.0.jar"/>
+	<classpathentry kind="lib" path="libs/poi-bin-5.2.3/log4j-core-2.18.0.jar"/>
+	<classpathentry kind="lib" path="libs/poi-bin-5.2.3/ooxml-lib/commons-compress-1.21.jar"/>
+	<classpathentry kind="lib" path="libs/poi-bin-5.2.3/poi-ooxml-full-5.2.3.jar"/>
+	<classpathentry kind="lib" path="libs/poi-bin-5.2.3/poi-ooxml-lite-5.2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

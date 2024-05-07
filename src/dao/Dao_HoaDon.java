@@ -279,4 +279,33 @@ public class Dao_HoaDon {
 		}
         return maHD;
     }
+	
+	public List<Integer> getListYearOfOrder(){
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    List<Integer> listNam = new ArrayList<>();
+	    try {
+	        connect = ConnectDB.getConnection();
+            Statement stm = connect.createStatement();
+            ResultSet rs = stm.executeQuery("SELECT DISTINCT YEAR(ngayLap) AS nam\r\n"
+            		+ "FROM HoaDon\r\n"
+            		+ "ORDER BY nam DESC;");
+            while(rs.next()) {
+                listNam.add(rs.getInt(1));
+            }
+	    }  catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	            	ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+		}
+        return listNam;
+	}
 }

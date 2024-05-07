@@ -460,7 +460,7 @@ public class Gui_BanThuoc extends JPanel{
 		    @Override
 		    public void keyReleased(KeyEvent e) {
                 String text = txtThem.getText();
-                if (text.length() >= 1) {
+                if (text.length() == 7) {
                     showSuggestions(text);
                     suggestionMenu.validate();
                     suggestionMenu.repaint();

@@ -11,6 +11,7 @@ public class test {
 		        // Thực hiện các hoạt động giao diện người dùng ở đây
 		        // Ví dụ: tạo và hiển thị một JFrame mới
 		        new Gui_DangNhap();
+		        
 		    }
 		});	
 	}
