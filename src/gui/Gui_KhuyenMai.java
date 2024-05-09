@@ -101,6 +101,7 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener,DocumentList
 	private JPanel pInfor;
 	private JLabel lblTT;
 	private JPopupMenu suggestionMenu;
+	private JButton btnTim;
 
 	public Gui_KhuyenMai(int width, int height) {
 		
@@ -134,6 +135,7 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener,DocumentList
         pButton = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20));
 		btnThem = new JButton("Thêm khuyến mãi");
 	    btnSua = new JButton("Sửa khuyến mãi");
+	    btnTim = new JButton("Tìm khuyến mãi");
 		pTable = new JPanel();
         JLabel lblDSKM = new JLabel("Danh sách khuyến mãi");
         String headers[] = {"Mã khuyến mãi", "Ngày bắt đầu", "Ngày kết thúc","Tỷ lệ khuyến mãi", "Loại khuyến mãi","Trạng Thái"};
@@ -168,6 +170,9 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener,DocumentList
 	    btnSua.setForeground(Color.WHITE);
 		btnSua.setFont(new Font("Arial", Font.BOLD, 16));
 		btnSua.setBackground(new Color (40,156,164));
+		btnTim.setForeground(Color.WHITE);
+		btnTim.setFont(new Font("Arial", Font.BOLD, 16));
+		btnTim.setBackground(new Color (40,156,164));
 		
         pTable.setPreferredSize(new Dimension((int)(widthComp*0.93),(int) (heightComp*0.45)));
 		lblDSKM.setFont(new Font("Times New Roman", Font.BOLD, 30));
@@ -180,6 +185,7 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener,DocumentList
         pNorth.add(lblTitle,FlowLayout.LEFT);
         pButton.add(btnThem);
 		pButton.add(btnSua);
+		pButton.add(btnTim);
 		pCenter.add(pInfor,BorderLayout.CENTER);
 		pCenter.add(pButton,BorderLayout.SOUTH);
 		pTable.add(lblDSKM); 
@@ -193,48 +199,55 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener,DocumentList
 		
 		btnThem.addActionListener(this);
 		btnSua.addActionListener(this);
+		btnTim.addActionListener(this);
 		cbbLoaiKM.addActionListener(this);	
 		radHD.addActionListener(this);
 		radKHD.addActionListener(this);
 		radTatCa.addActionListener(this);
-		txtTyLe.getDocument().addDocumentListener(new DocumentListener() {
-		    @Override
-		    public void insertUpdate(DocumentEvent e) {
-		        filterByTyLeKM(txtTyLe.getText().trim());
-		    }
-
-		    @Override
-		    public void removeUpdate(DocumentEvent e) {
-		    	filterByTyLeKM(txtTyLe.getText().trim());
-		    }
-
-		    @Override
-		    public void changedUpdate(DocumentEvent e) {
-		        filterByTyLeKM(txtTyLe.getText().trim());
-		    }
-		});
+//		txtTyLe.getDocument().addDocumentListener(new DocumentListener() {
+//		    @Override
+//		    public void insertUpdate(DocumentEvent e) {
+//		        filterByTyLeKM(txtTyLe.getText().trim());
+//		    }
+//
+//		    @Override
+//		    public void removeUpdate(DocumentEvent e) {
+//		    	filterByTyLeKM(txtTyLe.getText().trim());
+//		    }
+//
+//		    @Override
+//		    public void changedUpdate(DocumentEvent e) {
+//		        filterByTyLeKM(txtTyLe.getText().trim());
+//		    }
+//		});
 		
-		txtMa.getDocument().addDocumentListener(new DocumentListener() {
-		    @Override
-		    public void insertUpdate(DocumentEvent e) {
-		        filterByMaKM(txtMa.getText().trim());
-		    }
-
-		    @Override
-		    public void removeUpdate(DocumentEvent e) {
-		        filterByMaKM(txtMa.getText().trim());
-		    }
-
-		    @Override
-		    public void changedUpdate(DocumentEvent e) {
-		        filterByMaKM(txtMa.getText().trim());
-		    }
-		});
+//		txtMa.getDocument().addDocumentListener(new DocumentListener() {
+//		    @Override
+//		    public void insertUpdate(DocumentEvent e) {
+//		        filterByMaKM(txtMa.getText().trim());
+//		    }
+//
+//		    @Override
+//		    public void removeUpdate(DocumentEvent e) {
+//		        filterByMaKM(txtMa.getText().trim());
+//		    }
+//
+//		    @Override
+//		    public void changedUpdate(DocumentEvent e) {
+//		        filterByMaKM(txtMa.getText().trim());
+//		    }
+//		});
 	}
 		
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
+		if (o.equals(btnTim)) {
+        	//lấy lại dữ liệu cữ
+        	loadDataTable();
+            // Lấy giá trị từ các ô nhập liệu
+        	timKiemKhuyenMai();
+        }
 		if(o.equals(btnThem))
 		{
 			if(layeredPane.getComponentsInLayer(JLayeredPane.PALETTE_LAYER).length == 0){
@@ -298,20 +311,20 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener,DocumentList
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn hàng cần xem chi tiết!");
             }
 		}
-		if(o.equals(cbbLoaiKM)||o.equals(radGroup))
-		{
-			String selectedLoaiKM = (String) cbbLoaiKM.getSelectedItem();
-			String selectedTrangThai  = "";
-			if (radHD.isSelected()) {
-		        selectedTrangThai = "Hoạt động";
-		    } else if (radKHD.isSelected()) {
-		        selectedTrangThai = "Không hoạt động";
-		    } else if (radTatCa.isSelected()) {
-		        selectedTrangThai = "Tất cả";
-		    }
-		    filterByTrangThaiLoai(selectedTrangThai, selectedLoaiKM);
-		    
-		}
+//		if(o.equals(cbbLoaiKM)||o.equals(radGroup))
+//		{
+//			String selectedLoaiKM = (String) cbbLoaiKM.getSelectedItem();
+//			String selectedTrangThai  = "";
+//			if (radHD.isSelected()) {
+//		        selectedTrangThai = "Hoạt động";
+//		    } else if (radKHD.isSelected()) {
+//		        selectedTrangThai = "Không hoạt động";
+//		    } else if (radTatCa.isSelected()) {
+//		        selectedTrangThai = "Tất cả";
+//		    }
+//		    filterByTrangThaiLoai(selectedTrangThai, selectedLoaiKM);
+//		    
+//		}
 		
 //		if(o.equals(radHD)) {
 //			filterByTrangThai("Hoạt động");
@@ -539,33 +552,60 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener,DocumentList
 	        }
 	    }
 	}
-//	public void filterChung(String MaKM , String tyleKM,String loai, String trangThai)
-//	{
-//		DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
-//	    TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
-//	    tableModel.setRowSorter(rowSorter);
-//	    
-//	    RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
-//	        @Override
-//	        public boolean include(Entry<?, ?> entry) {
-//	            boolean loaiMatch = loai.equalsIgnoreCase("Tất cả") || ((String) entry.getValue(4)).equalsIgnoreCase(loai);
-//	            boolean trangThaiMatch = trangThai.equalsIgnoreCase("Tất cả") || ((String) entry.getValue(5)).equalsIgnoreCase(trangThai);
-//	            boolean MaKMMatch = MaKM.isEmpty() || ((String) entry.getValue(0)).toLowerCase().contains(MaKM.toLowerCase());
-//	            boolean tyleKMMatch = tyleKM.isEmpty();
-//	            if (!tyleKMMatch) {
-//	                try {
-//	                    Float tyLeKMFloat = Float.valueOf(tyleKM);
-//	                    Float value = (Float) entry.getValue(3);
-//	                    tyleKMMatch = Math.abs(value - tyLeKMFloat) < 0.001;
-//	                } catch (NumberFormatException ex) {
-//	                    JOptionPane.showMessageDialog(null, "Vui lòng nhập vào một số hợp lệ cho tỷ lệ khuyến mãi.");
-//	                }
-//	            }
-//	            return loaiMatch && trangThaiMatch && MaKMMatch && tyleKMMatch;
-//	        }
-//	    };
-//	    rowSorter.setRowFilter(filter);
-//	}
+
+	 private void timKiemKhuyenMai() {
+	        // Lấy giá trị từ các ô nhập liệu
+	        
+	        String maKM = txtMa.getText();
+	        String tyleKMText = txtTyLe.getText();
+	        Float tyleKM = null;
+	        if (tyleKMText != null && !tyleKMText.isEmpty()) {
+	            try {
+	                tyleKM = Float.valueOf(tyleKMText);
+	            } catch (NumberFormatException e) {
+	                // Xử lý lỗi nếu không thể chuyển đổi thành Float
+	            }
+	        }
+
+
+	        // Xác định giá trị của trạng thái từ các radio button
+	        
+	        String trangThai = "";
+	        if (radHD.isSelected()) {
+	            trangThai = "Hoạt Động";
+	        } else if (radKHD.isSelected()) {
+	            trangThai = "Không Hoạt Động";
+	        }
+	            
+	        // Lọc dữ liệu từ bảng dựa trên các điều kiện đã xác định
+	        DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
+	        int rowCount = model.getRowCount();
+
+	        for (int i = rowCount - 1; i >= 0; i--) {
+	            String maKM1 = (String) model.getValueAt(i, 0);
+	            Float TyLeKM = (Float) model.getValueAt(i, 3);
+	            String loaiChuongTrinh = (String) model.getValueAt(i, 4);
+	            LocalDate ngayBatDau = (LocalDate) model.getValueAt(i, 1);
+	            LocalDate ngayKetThuc = (LocalDate) model.getValueAt(i, 2);
+	            String trangThai1 = (String) model.getValueAt(i, 5);
+	            //System.out.println(trangThai1);
+
+	            // Áp dụng các điều kiện lọc
+	            boolean tyleKMMatch = (tyleKM==null) || TyLeKM.equals(tyleKM);
+	            boolean maKMMatch = maKM.isEmpty() || maKM1.contains(maKM);
+	            boolean loaiChuongTrinhMatch = cbbLoaiKM.getSelectedItem().equals("Tất cả") || loaiChuongTrinh.equals(cbbLoaiKM.getSelectedItem());
+	            boolean trangThaiMatch = (radTatCa.isSelected() || trangThai1.equals(trangThai));
+
+	           
+
+	            
+	            // Kiểm tra xem hàng có đáp ứng điều kiện lọc không, nếu không thì loại bỏ hàng đó khỏi bảng
+	            if (!(tyleKMMatch && maKMMatch && loaiChuongTrinhMatch && trangThaiMatch)) {
+	                model.removeRow(i);
+	            }
+	        }
+	    }
+	 
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub

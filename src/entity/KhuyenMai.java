@@ -74,9 +74,9 @@ public class KhuyenMai {
 	public String getTrangThai()
 	{
 		if(ngayKetThuc.isAfter(ngayBatDau))
-			return "Hoạt động";
+			return "Hoạt Động";
 		else
-			return "Không hoạt động";
+			return "Không Hoạt Động";
 	}
 	public KhuyenMai() {
 		super();
