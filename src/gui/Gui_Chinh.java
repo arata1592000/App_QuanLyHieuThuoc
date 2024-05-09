@@ -64,6 +64,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	private JLabel lbl3;
 	private NhanVien nv;
 	private JButton btnTaiKhoan;
+	private JButton btnKetCa;
 	
 	public Gui_Chinh(NhanVien nv) {
 		this.setTitle("Hệ thống quản lý hiệu thuốc Ân Cần");
@@ -128,6 +129,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		btnHuongDan = this.createButtonMenu("Hướng Dẫn (F8)", new ImageIcon("images/help.png"));
 		btnTaiKhoan = this.createButtonMenu("Đổi mật khẩu (F9)", new ImageIcon("images/change-password.png"));
 		btnDangXuat = this.createButtonMenu("Đăng Xuất", new ImageIcon("images/singout.png"));
+		btnKetCa = this.createButtonMenu("Kết Ca", new ImageIcon(""));
 		pMain.setBackground(new Color(40,156,164));
 		pMain.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         pMain.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), heightFrame));
@@ -151,6 +153,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		btnThongKe.addActionListener(this);
 		btnHuongDan.addActionListener(this);
 		btnDangXuat.addActionListener(this);
+		btnKetCa.addActionListener(this);
 		
 		btnTrangChu.setBackground(new Color(224,255,255));
 		actButtonBack = btnTrangChu;
@@ -170,6 +173,8 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		pMenu.add(btnKhachHang);
         pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
 		pMenu.add(btnThongKe);
+        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(btnKetCa);
         pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
 		pMenu.add(btnHuongDan);
         pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
@@ -277,7 +282,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 			}
 			actButtonBack = btnKhuyenMai;
 		}else if (act.equals(btnThongKe)) {
-			if (!actButtonBack.equals(btnSanPham)) {
+			if (!actButtonBack.equals(btnThongKe)) {
 				actButtonBack.setBackground(new Color(224,220,220));
 				btnThongKe.setBackground(new Color(224,255,255));
 				pContent.removeAll();
@@ -286,6 +291,16 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				lbl1.setText("THỐNG KÊ");
 			}
 			actButtonBack = btnThongKe;
+		}else if(act.equals(btnKetCa)) {
+			if (!actButtonBack.equals(btnKetCa)) {
+				actButtonBack.setBackground(new Color(224,220,220));
+				btnKetCa.setBackground(new Color(224,255,255));
+				pContent.removeAll();
+				System.gc();
+				pContent.add(new Gui_KetCa(pContent.getWidth(), pContent.getHeight()));
+				lbl1.setText("THỐNG KÊ KẾT CA");
+			}
+			actButtonBack = btnKetCa;
 		}else if (act.equals(btnHuongDan)) {
 			if (!actButtonBack.equals(btnHuongDan)) {
 				actButtonBack.setBackground(new Color(224,220,220));
