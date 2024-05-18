@@ -310,8 +310,14 @@ public class Gui_ThemKhuyenMai extends JPanel implements ActionListener {
 
 	        if (success) {
 	        	(new Dao_KhuyenMai()).setListThuocDiscount(ma, getListMaThuocDiscount(), getListMaThuocNoDiscount());
-	        	btnHuy.doClick();
+	        	
 	            JOptionPane.showMessageDialog(this, "Thêm khuyến mãi thành công!");
+	            JLayeredPane layeredPane = (JLayeredPane) getParent(); 
+    			Gui_KhuyenMai pMain = (Gui_KhuyenMai) layeredPane.getParent();
+    			pMain.loadDataTable();
+                layeredPane.remove(Gui_ThemKhuyenMai.this);
+                layeredPane.validate();
+                layeredPane.repaint();
 	        } else {
 	            JOptionPane.showMessageDialog(this, "Thêm khuyến mãi thất bại!");
 	        }
