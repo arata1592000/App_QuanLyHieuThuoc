@@ -29,7 +29,7 @@ public class Dao_HoaDon {
 		try {
 			
 	        connect = ConnectDB.getConnection();
-			stmt = connect.prepareStatement("INSERT INTO HoaDon VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			stmt = connect.prepareStatement("INSERT INTO HoaDon VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			stmt.setString(1, hd.getMaHD());
 			stmt.setTimestamp(2, Timestamp.valueOf(hd.getNgayLap().atStartOfDay()));
 			stmt.setString(3, hd.getNhanVien().getMaNV());
@@ -38,7 +38,11 @@ public class Dao_HoaDon {
 			stmt.setString(6, hd.getLoaiHD());
 			stmt.setString(7, hd.getKhuyenMai().getMaKM());
 			stmt.setFloat(8, hd.getThue());
-			stmt.setString(9, hd.getGhiChu());
+			stmt.setFloat(9, hd.getThanhTien());
+			stmt.setString(10, hd.getPhuongThucTT());
+			stmt.setFloat(11, hd.getTienKhachDua());
+			stmt.setFloat(12, hd.getTienThua());
+			stmt.setString(13, hd.getGhiChu());
 			n = stmt.executeUpdate();
 			if (addChiTietHoaDon(hd)) {
 				return n>0;
@@ -94,15 +98,17 @@ public class Dao_HoaDon {
 	        connect = ConnectDB.getConnection();
 	        List<ChiTietHoaDon> listCTHD = hd.getChiTietHoaDon();
 	        for (ChiTietHoaDon cthd : listCTHD) {
-	        	stmt = connect.prepareStatement("INSERT INTO ChiTietHoaDon VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+	        	stmt = connect.prepareStatement("INSERT INTO ChiTietHoaDon VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				stmt.setString(1, hd.getMaHD());
 				stmt.setString(2, cthd.getMaThuoc());
 				stmt.setString(3, cthd.getTenThuoc());
 				stmt.setInt(4, cthd.getSoLuong());
 				stmt.setString(5, cthd.getDonViTinh());
 				stmt.setFloat(6, cthd.getGia());
-				stmt.setFloat(7, cthd.getKhuyenMai());
-				stmt.setFloat(8, cthd.getTongTienSanPham());
+				stmt.setString(7, cthd.getThanhPhan());
+				stmt.setTimestamp(8, Timestamp.valueOf(cthd.getNgayHetHan().atStartOfDay()));
+				stmt.setFloat(9, cthd.getKhuyenMai());
+				stmt.setFloat(10, cthd.getTongTienSanPham());
 
 				n = stmt.executeUpdate();
 	        }
@@ -139,8 +145,10 @@ public class Dao_HoaDon {
 						rs.getInt(4),
 						rs.getString(5),
 						rs.getFloat(6),
-						rs.getFloat(7),
-						rs.getFloat(8)
+						rs.getString(7),
+						rs.getDate(8).toLocalDate(),
+						rs.getFloat(9),
+						rs.getFloat(10)
 						);
 				listCTHD.add(cthd);
 			}
@@ -171,13 +179,17 @@ public class Dao_HoaDon {
 			while (rs.next()) {
 				NhanVien nv = (new Dao_NhanVien()).findNhanVienByMaNV(rs.getString(3));
 				KhachHang kh = (new Dao_KhachHang()).findKhachHangByMaKH(rs.getString(4));
-				KhuyenMai km = new KhuyenMai();
+				KhuyenMai km = (new Dao_KhuyenMai()).findKhuyenMaiByID(rs.getString(7));
 				HoaDon hd = new HoaDon(rs.getString(1),
 						rs.getDate(2).toLocalDate(),
 						rs.getFloat(5),
 						rs.getString(6),
 						rs.getFloat(8),
-						rs.getString(9)
+						rs.getFloat(9),
+						rs.getString(10),
+						rs.getFloat(11),
+						rs.getFloat(12),
+						rs.getString(13)
 					);
 				hd.setNhanVien(nv);
 				hd.setKhachHang(kh);
@@ -213,14 +225,18 @@ public class Dao_HoaDon {
 	        if (rs.next()) {
 	        	NhanVien nv = (new Dao_NhanVien()).findNhanVienByMaNV(rs.getString(3));
 	        	KhachHang kh = (new Dao_KhachHang()).findKhachHangByMaKH(rs.getString(4));
-	            KhuyenMai km = new KhuyenMai();
+				KhuyenMai km = (new Dao_KhuyenMai()).findKhuyenMaiByID(rs.getString(7));
 	            List<ChiTietHoaDon> listCTHD = readChiTietHoaDonFromSQLByMaHD(maHD);
 	        	hd = new HoaDon(rs.getString(1),
 	                    rs.getDate(2).toLocalDate(),
 	                    rs.getFloat(5),
 	                    rs.getString(6),
 	                    rs.getFloat(8),
-	                    rs.getString(9)
+	                    rs.getFloat(9),
+						rs.getString(10),
+						rs.getFloat(11),
+						rs.getFloat(12),
+						rs.getString(13)
 	            );
 	        	hd.setNhanVien(nv);
 	        	hd.setKhachHang(kh);
