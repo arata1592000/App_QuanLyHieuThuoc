@@ -189,5 +189,46 @@ public class Dao_KhuyenMai {
 	    }
 	    return km;
 	}
-	
+	public KhuyenMai findKhuyenMaiHDByGiaTriKM(float tongTien) {
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    KhuyenMai km = null;
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("SELECT * \r\n"
+	        		+ "FROM KhuyenMai \r\n"
+	        		+ "WHERE \r\n"
+	        		+ "	giaTriKhuyenMai <= ? AND\r\n"
+	        		+ "	loaiKM = N'Khuyến mãi trên hóa đơn' AND\r\n"
+	        		+ "	ngayKetThuc > GETDATE()\r\n"
+	        		+ "ORDER BY	\r\n"
+	        		+ "	giaTriKhuyenMai DESC,\r\n"
+	        		+ "	tyleKM DESC\r\n");
+	        stmt.setFloat(1, tongTien);
+
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            km = new KhuyenMai(
+	                rs.getString(1),
+	                rs.getDate(2).toLocalDate(),
+	                rs.getDate(3).toLocalDate(),
+	                rs.getFloat(4),
+	                rs.getString(5)
+	           
+	            );
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return km;
+	}
 }

@@ -12,6 +12,10 @@ public class HoaDon {
 	private String loaiHD;
 	private KhuyenMai khuyenMai;
 	private float thue;
+	private float thanhTien;
+	private String phuongThucTT;
+	private float tienKhachDua;
+	private float tienThua;
 	private String ghiChu;
 	private List<ChiTietHoaDon> chiTietHoaDon;
 	public String getMaHD() {
@@ -71,16 +75,44 @@ public class HoaDon {
 	public List<ChiTietHoaDon> getChiTietHoaDon() {
 		return chiTietHoaDon;
 	}
+	public float getThanhTien() {
+		return thanhTien;
+	}
+	public void setThanhTien(float thanhTien) {
+		this.thanhTien = thanhTien;
+	}
+	public String getPhuongThucTT() {
+		return phuongThucTT;
+	}
+	public void setPhuongThucTT(String phuongThucTT) {
+		this.phuongThucTT = phuongThucTT;
+	}
+	public float getTienKhachDua() {
+		return tienKhachDua;
+	}
+	public void setTienKhachDua(float tienKhachDua) {
+		this.tienKhachDua = tienKhachDua;
+	}
+	public float getTienThua() {
+		return tienThua;
+	}
+	public void setTienThua(float tienThua) {
+		this.tienThua = tienThua;
+	}
 	public void setChiTietHoaDon(List<ChiTietHoaDon> chiTietHoaDon) {
 		this.chiTietHoaDon = chiTietHoaDon;
 	}
-	public HoaDon(String maHD, LocalDate ngayLap, float tongTien, String loaiHD, float thue, String ghiChu) {
+	public HoaDon(String maHD, LocalDate ngayLap, float tongTien, String loaiHD, float thue, float thanhTien, String phuongThucTT, float tienKhachDua, float tienThua, String ghiChu) {
 		super();
 		this.maHD = maHD;
 		this.ngayLap = ngayLap;
 		this.tongTien = tongTien;
 		this.loaiHD = loaiHD;
 		this.thue = thue;
+		this.thanhTien = thanhTien;
+		this.phuongThucTT = phuongThucTT;
+		this.tienKhachDua = tienKhachDua;
+		this.tienThua = tienThua;
 		this.ghiChu = ghiChu;
 	}
 	public HoaDon() {

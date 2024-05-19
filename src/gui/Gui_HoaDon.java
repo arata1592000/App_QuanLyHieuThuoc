@@ -107,12 +107,12 @@ public class Gui_HoaDon extends JPanel {
 		pTable.setBackground(Color.WHITE);
 		lbl2.setText("Danh sách hóa đơn");
 		lbl2.setFont(new Font("Arial", Font.ITALIC, 30));
-		String headers[] = {"Mã hóa đơn", "Ngày lập", "Tên NV", "Tên KH", "Tổng thanh toán", "Xem chi tiết", "Loại HĐ", "Ghi chú"};
+		String headers[] = {"Mã hóa đơn", "Ngày lập", "Tên NV", "Tên KH", "Xem chi tiết", "Loại HĐ", "Ghi chú"};
 		dataModel = new DefaultTableModel(headers, 0) {
 			@Override
             public boolean isCellEditable(int row, int column) {
                 // Đặt tất cả các ô không thể chỉnh sửa
-                return column==5;
+                return column==4;
             }
 		};
 		tableModel = new JTable(dataModel);
@@ -125,8 +125,7 @@ public class Gui_HoaDon extends JPanel {
 		tableModel.getColumnModel().getColumn(3).setPreferredWidth(5);
 		tableModel.getColumnModel().getColumn(4).setPreferredWidth(5);
 		tableModel.getColumnModel().getColumn(5).setPreferredWidth(5);
-		tableModel.getColumnModel().getColumn(6).setPreferredWidth(5);
-		tableModel.getColumnModel().getColumn(7).setPreferredWidth(300);
+		tableModel.getColumnModel().getColumn(6).setPreferredWidth(300);
 
 
 
@@ -156,7 +155,6 @@ public class Gui_HoaDon extends JPanel {
 				hd.getNgayLap(),
 				hd.getNhanVien().getHoTen(),
 				hd.getKhachHang().getHoTen(),
-				hd.getTongTien(),
 				"Xem",
 				hd.getLoaiHD(),
 				hd.getGhiChu()

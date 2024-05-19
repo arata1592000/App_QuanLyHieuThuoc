@@ -1,11 +1,15 @@
 package entity;
 
+import java.time.LocalDate;
+
 public class ChiTietHoaDon {
 	private String maThuoc;
 	private String tenThuoc;
 	private int soLuong;
 	private String donViTinh;
 	private float gia;
+	private String thanhPhan;
+	private LocalDate ngayHetHan;
 	private float khuyenMai;
 	private float tongTienSanPham;
 	
@@ -40,6 +44,18 @@ public class ChiTietHoaDon {
 	public void setGia(float gia) {
 		this.gia = gia;
 	}
+	public String getThanhPhan() {
+		return thanhPhan;
+	}
+	public void setThanhPhan(String thanhPhan) {
+		this.thanhPhan = thanhPhan;
+	}
+	public LocalDate getNgayHetHan() {
+		return ngayHetHan;
+	}
+	public void setNgayHetHan(LocalDate ngayHetHan) {
+		this.ngayHetHan = ngayHetHan;
+	}
 	public float getKhuyenMai() {
 		return khuyenMai;
 	}
@@ -52,7 +68,7 @@ public class ChiTietHoaDon {
 	public void setTongTienSanPham(float tongTienSanPham) {
 		this.tongTienSanPham = tongTienSanPham;
 	}
-	public ChiTietHoaDon(String maThuoc, String tenThuoc, int soLuong, String donViTinh, float gia, float khuyenMai,
+	public ChiTietHoaDon(String maThuoc, String tenThuoc, int soLuong, String donViTinh, float gia, String thanhPhan, LocalDate ngayHetHan, float khuyenMai,
 			float tongTienSanPham) {
 		super();
 		this.maThuoc = maThuoc;
@@ -60,6 +76,8 @@ public class ChiTietHoaDon {
 		this.soLuong = soLuong;
 		this.donViTinh = donViTinh;
 		this.gia = gia;
+		this.thanhPhan = thanhPhan;
+		this.ngayHetHan = ngayHetHan;
 		this.khuyenMai = khuyenMai;
 		this.tongTienSanPham = tongTienSanPham;
 	}

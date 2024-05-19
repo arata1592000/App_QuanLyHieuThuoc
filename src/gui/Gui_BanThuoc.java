@@ -33,6 +33,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -46,6 +47,8 @@ import javax.swing.SingleSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -53,6 +56,7 @@ import javax.swing.table.TableModel;
 
 import dao.Dao_HoaDon;
 import dao.Dao_KhachHang;
+import dao.Dao_KhuyenMai;
 import dao.Dao_NhanVien;
 import dao.Dao_Thuoc;
 import entity.ChiTietHoaDon;
@@ -63,7 +67,9 @@ import entity.NhanVien;
 import entity.Thuoc;
 import utils.ButtonDeleteEditor;
 import utils.ButtonDeleteRenderer;
+import utils.CurrencyFormatter;
 import utils.CustomMenuItemThuoc;
+import utils.PrintOrder;
 
 public class Gui_BanThuoc extends JPanel{
 	private int widthComp, heightComp;
@@ -94,7 +100,7 @@ public class Gui_BanThuoc extends JPanel{
 	private JTextField txtThanhTien;
 	private JLabel lbl11;
 	private JLabel lbl12;
-	private JTextField txtPhuongThucThanhToan;
+	private JComboBox<String> cbbPhuongThucThanhToan;
 	private JTextField txtTienKhachDua;
 	private JLabel lbl13;
 	private JTextField txtTienThua;
@@ -104,6 +110,7 @@ public class Gui_BanThuoc extends JPanel{
 	private JPopupMenu suggestionMenu;
 	private int indexPopupMenu;
 	private NhanVien nv;
+	private JLabel lblTBMaKM;
 	
 	public Gui_BanThuoc(NhanVien nv, int widthComp, int heightComp) {
 		this.widthComp = widthComp;
@@ -118,12 +125,12 @@ public class Gui_BanThuoc extends JPanel{
 		pTable = new JPanel();
 		txtThem = new JTextField();
         suggestionMenu = new JPopupMenu();
-		String headers[] = {"Mã thuốc", "Tên thuốc", "Số lượng", "Đơn vị tính", "Giá bán", "KM", "Tổng tiền", "Xóa"};
+		String headers[] = {"Mã thuốc", "Tên thuốc", "Số lượng", "Đơn vị tính", "Giá bán", "Thành phần", "Ngày hết hạn", "KM", "Tổng tiền", "Xóa"};
 		dataModel = new DefaultTableModel(headers, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
                 // Đặt tất cả các ô không thể chỉnh sửa
-                return column==2 || column==7;
+                return column==2 || column==9;
             }
         };
 		Object[] newRow = {"", ""};
@@ -138,35 +145,7 @@ public class Gui_BanThuoc extends JPanel{
 		tableModel.setRowHeight(tableModel.getRowCount()-1, 1);
 		JScrollPane pane = new JScrollPane(tableModel);
 		pane.setPreferredSize(new Dimension((int)(widthComp*0.70),(int)(heightComp*0.8)));
-		tableModel.addComponentListener(new ComponentListener() {
-			
-			
-			@Override
-			public void componentResized(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				updateInforOrder();
-
-			}
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void componentShown(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				updateInforOrder();
-
-			}
-
-			@Override
-			public void componentHidden(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+		
 		pInfor = new JPanel();
 		pInforCustomer = new JPanel();
 		lbl1 = new JLabel();
@@ -189,7 +168,7 @@ public class Gui_BanThuoc extends JPanel{
 		lbl10 = new JLabel();
 		txtThanhTien = new JTextField(10);
 		lbl11 = new JLabel();
-		txtPhuongThucThanhToan = new JTextField(10);
+        cbbPhuongThucThanhToan = new JComboBox<>(new String[]{"Tiền mặt","ATM"});
 		lbl12 = new JLabel();
 		txtTienKhachDua = new JTextField(10);
 		lbl13 = new JLabel();
@@ -303,11 +282,21 @@ public class Gui_BanThuoc extends JPanel{
         pInforOrder.add(lbl9, constraintsOrder);
         constraintsOrder.gridx = 1;
         txtMaKM.setFont(new Font("Arial", Font.PLAIN, 14));
+        txtMaKM.setEditable(false);
+        txtMaKM.setBorder(null);
         pInforOrder.add(txtMaKM, constraintsOrder);
+        lblTBMaKM = new JLabel("(*)");
+        lblTBMaKM.setForeground(Color.RED);
+        lblTBMaKM.setFont(new Font("Arial", Font.ITALIC, 9));
+        
+        constraintsOrder.gridx = 1;
+        constraintsOrder.gridy = 6;
+        pInforOrder.add(lblTBMaKM, constraintsOrder);
+
         lbl10.setText("Thành tiền:");      //Field Thành tiền
         lbl10.setFont(new Font("Arial", Font.PLAIN, 14));;
         constraintsOrder.gridx = 0;
-        constraintsOrder.gridy = 6;
+        constraintsOrder.gridy = 7;
         pInforOrder.add(lbl10, constraintsOrder);
         constraintsOrder.gridx = 1;
         txtThanhTien.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -318,15 +307,18 @@ public class Gui_BanThuoc extends JPanel{
         lbl11.setText("Phương thức:");//Field Phương thức thanh toán
         lbl11.setFont(new Font("Arial", Font.PLAIN, 14));;
         constraintsOrder.gridx = 0;
-        constraintsOrder.gridy = 7;
+        constraintsOrder.gridy = 8;
         pInforOrder.add(lbl11, constraintsOrder);
         constraintsOrder.gridx = 1;
-        txtPhuongThucThanhToan.setFont(new Font("Arial", Font.PLAIN, 14));
-        pInforOrder.add(txtPhuongThucThanhToan, constraintsOrder);
+        cbbPhuongThucThanhToan.setFont(new Font("Arial", Font.PLAIN, 14));
+        cbbPhuongThucThanhToan.setPreferredSize(new Dimension(
+        		(int) txtThanhTien.getPreferredSize().getWidth(), 
+        		(int) (txtThanhTien.getPreferredSize().getHeight()+5)));
+        pInforOrder.add(cbbPhuongThucThanhToan, constraintsOrder);
         lbl12.setText("Tiền khách đưa:");       //Field Tiền khách đưa
         lbl12.setFont(new Font("Arial", Font.PLAIN, 14));;
         constraintsOrder.gridx = 0;
-        constraintsOrder.gridy = 8;
+        constraintsOrder.gridy = 9;
         pInforOrder.add(lbl12, constraintsOrder);
         constraintsOrder.gridx = 1;
         txtTienKhachDua.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -334,7 +326,7 @@ public class Gui_BanThuoc extends JPanel{
         lbl13.setText("Tiền thừa:");       //Field Tiền thừa
         lbl13.setFont(new Font("Arial", Font.PLAIN, 14));;
         constraintsOrder.gridx = 0;
-        constraintsOrder.gridy = 9;
+        constraintsOrder.gridy = 10;
         pInforOrder.add(lbl13, constraintsOrder);
         constraintsOrder.gridx = 1;
         txtTienThua.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -381,7 +373,35 @@ public class Gui_BanThuoc extends JPanel{
 			}
 		});
 		
+		tableModel.addComponentListener(new ComponentListener() {
+			
+			@Override
+			public void componentResized(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				updateInforOrder();
 
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				updateInforOrder();
+
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		suggestionMenu.addKeyListener(new KeyListener() {
 			
 			@Override
@@ -469,19 +489,53 @@ public class Gui_BanThuoc extends JPanel{
                 }
             }
 		});
+		
+		txtTienKhachDua.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateInforOrder();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateInforOrder();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateInforOrder();
+            }
+
+            private void handleTextChange() {
+                // Logic xử lý sự kiện khi nội dung của txtTienKhachDua thay đổi
+                String text = txtTienKhachDua.getText();
+                System.out.println("Text changed: " + text);
+            }
+        });
 		btnThanhToan.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				try {
-					KhachHang kh = (new Dao_KhachHang()).findKhachHangBySDT(txtSDT.getText());
-					if (kh == null) {
-						kh = new KhachHang((new Dao_KhachHang()).autoCreateMaKH(),
-								txtHoTen.getText(),
-								txtSDT.getText());
-						(new Dao_KhachHang()).addKhachHang(kh);
+					KhachHang kh;
+					if (txtSDT.getText().equals("")) {
+						kh = (new Dao_KhachHang()).findKhachHangBySDT("Ẩn danh");
+						if (kh == null) {
+							kh = new KhachHang((new Dao_KhachHang()).autoCreateMaKH(),
+									"Ẩn danh",
+									"Ẩn danh");
+							(new Dao_KhachHang()).addKhachHang(kh);
+						}					}else {
+						kh = (new Dao_KhachHang()).findKhachHangBySDT(txtSDT.getText());
+						if (kh == null) {
+							kh = new KhachHang((new Dao_KhachHang()).autoCreateMaKH(),
+									txtHoTen.getText(),
+									txtSDT.getText());
+							(new Dao_KhachHang()).addKhachHang(kh);
+						}
 					}
+					
 					List<ChiTietHoaDon> listCTHD= new ArrayList();
 					List<String> listMaThuoc = new ArrayList();
 					List<Integer> listSoLuong = new ArrayList<Integer>();
@@ -491,8 +545,10 @@ public class Gui_BanThuoc extends JPanel{
 								Integer.parseInt(dataModel.getValueAt(row, 2).toString()),
 								(String)dataModel.getValueAt(row, 3),
 								Float.valueOf(dataModel.getValueAt(row, 4).toString()),
-								Float.valueOf(dataModel.getValueAt(row, 5).toString()),
-								Float.valueOf(dataModel.getValueAt(row, 6).toString())
+								dataModel.getValueAt(row, 5).toString(),
+								LocalDate.parse(dataModel.getValueAt(row, 6).toString(), DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+								Float.valueOf(dataModel.getValueAt(row, 7).toString()),
+								Float.valueOf(dataModel.getValueAt(row, 8).toString())
 								);						
 						listCTHD.add(cthd);
 						listMaThuoc.add(dataModel.getValueAt(row, 0).toString());
@@ -500,19 +556,24 @@ public class Gui_BanThuoc extends JPanel{
 					}
 					HoaDon hd = new HoaDon(txtMaHD.getText(),
 							LocalDate.parse(txtNgayLap.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-							Float.parseFloat(txtTongTien.getText()),
+							(float) CurrencyFormatter.parseVND(txtTongTien.getText()),
 							"Bán hàng",
 							(float)0.3,
+							(float) CurrencyFormatter.parseVND(txtThanhTien.getText()),
+							cbbPhuongThucThanhToan.getSelectedItem().toString(),
+							Float.valueOf(txtTienKhachDua.getText()),
+							(float) CurrencyFormatter.parseVND(txtTienThua.getText()),
 							""
 							);
+					KhuyenMai km = (new Dao_KhuyenMai()).findKhuyenMaiByID(txtMaKM.getText());
 					hd.setNhanVien(nv);
 					hd.setKhachHang(kh);
 					hd.setChiTietHoaDon(listCTHD);
-					hd.setKhuyenMai(new KhuyenMai());
+					hd.setKhuyenMai(km);
 					if ((new Dao_HoaDon().addHoaDon(hd))) {
 						(new Dao_Thuoc()).setCountByMaThuoc(listMaThuoc, listSoLuong);
 			            JOptionPane.showMessageDialog(null, "Thanh toán thành công");
-			            
+			            (new PrintOrder()).PrintOrder(hd);
 
 					}else {
 			            JOptionPane.showMessageDialog(null, "Không thanh toán thành công.");
@@ -544,8 +605,8 @@ public class Gui_BanThuoc extends JPanel{
 			                float price = Float.valueOf(dataModel.getValueAt(row, 4).toString());
 			                float discountMoney = quantity * price * thuoc.getKhuyenMai().getTyLeKM()/100;
 			                float totalPrice = quantity * price - discountMoney;
-			                tableModel.setValueAt(discountMoney, row, 5);
-			                tableModel.setValueAt(totalPrice, row, 6);
+			                tableModel.setValueAt(discountMoney, row, 7);
+			                tableModel.setValueAt(totalPrice, row, 8);
 			                updateInforOrder();
 			                if (row == tableModel.getRowCount()-2) {
 			                	SwingUtilities.invokeLater(new Runnable() {
@@ -573,13 +634,48 @@ public class Gui_BanThuoc extends JPanel{
 	}
 	
 	public void updateInforOrder() {
-		txtTongTien.setText(getTongTienHD()+"");
+		float tongTienHD = 0;
+		KhuyenMai km = null;
+		float tienKM = 0;
+		float thanhTien = 0;
+		float tienKhachDua = 0;
+		float tienThua = 0;
+		
+		tongTienHD =  getTongTienHD();
+		txtTongTien.setText(CurrencyFormatter.formatVNDWithDecimals(tongTienHD));
+		
+		km = (new Dao_KhuyenMai()).findKhuyenMaiHDByGiaTriKM(tongTienHD);
+		if (km != null) {
+			txtMaKM.setText(km.getMaKM());
+			lblTBMaKM.setText("Khách hàng được giảm " + km.getTyLeKM() + "%");
+			lblTBMaKM.setForeground(Color.BLACK);
+			tienKM = tongTienHD * km.getTyLeKM()/100;
+		}else {
+			txtMaKM.setText("");
+			lblTBMaKM.setText("(*)");
+			lblTBMaKM.setForeground(Color.RED);
+			tienKM = 0;
+		}
+		
+		thanhTien = (float) (tongTienHD + tongTienHD*0.03 - tienKM);
+		txtThanhTien.setText(CurrencyFormatter.formatVNDWithDecimals(thanhTien));
+		if (!txtTienKhachDua.getText().equals("")) {
+			tienKhachDua = Float.valueOf(txtTienKhachDua.getText());
+			if (thanhTien%1000!=0) {
+				thanhTien = (int)(thanhTien/1000)*1000 + 1000;
+			}
+			tienThua = tienKhachDua - thanhTien;
+			
+			txtTienThua.setText(CurrencyFormatter.formatVND(tienThua));
+		}
+		
 	}
+	
 	
 	public float getTongTienHD() {
 		float tongTienHD = 0;
 		for (int i = 0 ; i < tableModel.getRowCount()-1 ; i++) {
-			tongTienHD+=Float.valueOf(dataModel.getValueAt(i, 6).toString());
+			tongTienHD+=Float.valueOf(dataModel.getValueAt(i, 8).toString());
 		}
 		return tongTienHD;
 	}
@@ -590,6 +686,12 @@ public class Gui_BanThuoc extends JPanel{
             JOptionPane.showMessageDialog(null, "Không có loại thuốc này.");
             return;
 		}
+		
+		if (!checkExistThuocInList(thuoc)) {
+			JOptionPane.showMessageDialog(null, "Loại thuốc này đã có trong danh sách.");
+            return;
+		}
+		
 		tableModel.setRowHeight(tableModel.getRowCount()-1, 30);
 		
 		dataModel.setValueAt(thuoc.getMaThuoc(), tableModel.getRowCount()-1, 0);
@@ -597,8 +699,10 @@ public class Gui_BanThuoc extends JPanel{
 		dataModel.setValueAt("", tableModel.getRowCount()-1, 2);
 		dataModel.setValueAt(thuoc.getDonViTinh(), tableModel.getRowCount()-1, 3);
 		dataModel.setValueAt(thuoc.getGia(), tableModel.getRowCount()-1, 4);
-		dataModel.setValueAt("0", tableModel.getRowCount()-1, 5);
-		dataModel.setValueAt("0", tableModel.getRowCount()-1, 6);
+		dataModel.setValueAt(thuoc.getThanhPhan(), tableModel.getRowCount()-1, 5);
+		dataModel.setValueAt(thuoc.getNgayHetHan().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), tableModel.getRowCount()-1, 6);
+		dataModel.setValueAt("0", tableModel.getRowCount()-1, 7);
+		dataModel.setValueAt("0", tableModel.getRowCount()-1, 8);
 		
 		tableModel.editCellAt(tableModel.getRowCount()-1, 2);
 		Component editor = tableModel.getEditorComponent();
@@ -659,6 +763,13 @@ public class Gui_BanThuoc extends JPanel{
 	        addRowTable();
 	    }
 	}
-
+	
+	private boolean checkExistThuocInList(Thuoc thuoc) {
+		for (int i = 0; i < dataModel.getRowCount()-1 ; i++) {
+			if (thuoc.getMaThuoc().equals(dataModel.getValueAt(i, 0)))
+				return false;
+		}
+		return true;
+	}
 
 }

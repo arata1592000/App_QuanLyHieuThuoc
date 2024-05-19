@@ -51,9 +51,12 @@ public class Gui_ChiTietHoaDon extends JPanel{
 	private int widthComp;
 	private String maHD;
 	private HoaDon hd;
+	private JLabel lbl7;
+	private JLabel lbl8;
+	private JLabel lbl9;
 	
 	public Gui_ChiTietHoaDon(String maHD) {
-		this.widthComp = 500;
+		this.widthComp = 700;
 		this.maHD = maHD;
 		hd = (new Dao_HoaDon()).findHoaDonByMaHD(maHD);
 		this.setLayout(new BorderLayout());
@@ -78,6 +81,10 @@ public class Gui_ChiTietHoaDon extends JPanel{
 		lbl3 = new JLabel();
 		lbl4 = new JLabel();
 		lbl5 = new JLabel();
+		lbl6 = new JLabel();
+		lbl7 = new JLabel();
+		lbl8 = new JLabel();
+		lbl9 = new JLabel();
 		btnDong = new JButton();
 		
 		pHeader.setBackground(new Color(168, 164, 164));
@@ -96,22 +103,34 @@ public class Gui_ChiTietHoaDon extends JPanel{
         pContent.setPreferredSize(new Dimension(this.widthComp, (int) (pTitleContent.getPreferredSize().getHeight() + pTableContent.getPreferredSize().getHeight())));
         pFooter.setLayout(new BorderLayout());
         pFooter.setBorder(new EmptyBorder(10, 10, 10, 10));
-        pFooter.setPreferredSize(new Dimension(this.widthComp,100));
-        pLeftFooter.setLayout(new GridLayout(3,1,5,5));
+        pLeftFooter.setLayout(new GridLayout(7,1,5,5));
         lbl3.setFont(new Font("Arial", Font.PLAIN, 14));
     	lbl3.setMaximumSize(new Dimension(100, 45));
         lbl4.setFont(new Font("Arial", Font.PLAIN, 14));
         lbl5.setFont(new Font("Arial", Font.PLAIN, 14));
+        lbl6.setFont(new Font("Arial", Font.PLAIN, 14));
+        lbl7.setFont(new Font("Arial", Font.PLAIN, 14));
+        lbl8.setFont(new Font("Arial", Font.PLAIN, 14));
+        lbl9.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        
         if (hd.getLoaiHD().equals("Bán hàng")) {
+            pFooter.setPreferredSize(new Dimension(this.widthComp,220));
             lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã mua:</div></html>");
         	lbl3.setText("VAT: " + hd.getThue());
-            lbl4.setText("KM:");
+            lbl4.setText("KM: " + hd.getKhuyenMai().getMaKM());
             lbl5.setText("Tổng tiền: " + hd.getTongTien());
+            lbl6.setText("Thành tiền: " + hd.getThanhTien());
+            lbl7.setText("Phương thức thanh toán: " + hd.getPhuongThucTT());
+            lbl8.setText("Khách trả: " + hd.getTienKhachDua());
+            lbl9.setText("Tiền thừa: " + hd.getTienThua());
         }else if (hd.getLoaiHD().equals("Trả thuốc")) {
+            pFooter.setPreferredSize(new Dimension(this.widthComp,100));
             lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã trả:</div></html>");
         	lbl3.setText(hd.getGhiChu() );
         	lbl4.setText("Được hoàn trả " + hd.getTongTien() + "đ");
         }else if (hd.getLoaiHD().equals("Đổi thuốc")) {
+            pFooter.setPreferredSize(new Dimension(this.widthComp,100));
             lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã đổi:</div></html>");
         	lbl3.setText(hd.getGhiChu());
 
@@ -127,6 +146,10 @@ public class Gui_ChiTietHoaDon extends JPanel{
         pLeftFooter.add(lbl3);
         pLeftFooter.add(lbl4);
         pLeftFooter.add(lbl5);
+        pLeftFooter.add(lbl6);
+        pLeftFooter.add(lbl7);
+        pLeftFooter.add(lbl8);
+        pLeftFooter.add(lbl9);
         pRightFooter.add(btnDong);
         pFooter.add(pLeftFooter, BorderLayout.WEST);
         pFooter.add(pRightFooter, BorderLayout.EAST);
@@ -178,6 +201,8 @@ public class Gui_ChiTietHoaDon extends JPanel{
 		headerTable.add("Tên");
         headerTable.add("SL");
         headerTable.add("Giá");
+        headerTable.add("Thànhh phần");
+        headerTable.add("Ngày hết hạn");
         headerTable.add("KM");
         headerTable.add("Tổng");
 		for (ChiTietHoaDon cthd : hd.getChiTietHoaDon()) {
@@ -186,6 +211,8 @@ public class Gui_ChiTietHoaDon extends JPanel{
 			rowTable.add(cthd.getTenThuoc());
 			rowTable.add(cthd.getSoLuong() + " " + cthd.getDonViTinh());
 			rowTable.add(cthd.getGia());
+			rowTable.add(cthd.getThanhPhan());
+			rowTable.add(cthd.getNgayHetHan());
 			rowTable.add(cthd.getKhuyenMai());
 			rowTable.add(cthd.getTongTienSanPham());
 			dataTable.add(rowTable);
