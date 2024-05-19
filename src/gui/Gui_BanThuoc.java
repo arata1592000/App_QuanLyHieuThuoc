@@ -110,7 +110,7 @@ public class Gui_BanThuoc extends JPanel{
 	private JPopupMenu suggestionMenu;
 	private int indexPopupMenu;
 	private NhanVien nv;
-	private JLabel lblTBMaKM;
+	private JLabel lblTBMaKM;	
 	
 	public Gui_BanThuoc(NhanVien nv, int widthComp, int heightComp) {
 		this.widthComp = widthComp;
@@ -537,7 +537,7 @@ public class Gui_BanThuoc extends JPanel{
 					}
 					
 					List<ChiTietHoaDon> listCTHD= new ArrayList();
-					List<String> listMaThuoc = new ArrayList();
+					List<Thuoc> listThuoc = new ArrayList();
 					List<Integer> listSoLuong = new ArrayList<Integer>();
 					for (int row = 0 ; row < tableModel.getRowCount()-1 ; row++) {
 						ChiTietHoaDon cthd = new ChiTietHoaDon(dataModel.getValueAt(row, 0).toString(),
@@ -551,7 +551,7 @@ public class Gui_BanThuoc extends JPanel{
 								Float.valueOf(dataModel.getValueAt(row, 8).toString())
 								);						
 						listCTHD.add(cthd);
-						listMaThuoc.add(dataModel.getValueAt(row, 0).toString());
+						listThuoc.add((new Dao_Thuoc()).findThuocByMaThuoc(dataModel.getValueAt(row, 0).toString()));
 						listSoLuong.add(Integer.parseInt(dataModel.getValueAt(row, 2).toString()));
 					}
 					HoaDon hd = new HoaDon(txtMaHD.getText(),
@@ -571,7 +571,7 @@ public class Gui_BanThuoc extends JPanel{
 					hd.setChiTietHoaDon(listCTHD);
 					hd.setKhuyenMai(km);
 					if ((new Dao_HoaDon().addHoaDon(hd))) {
-						(new Dao_Thuoc()).setCountByMaThuoc(listMaThuoc, listSoLuong);
+						(new Dao_Thuoc()).setCountByMaThuoc(listThuoc, listSoLuong);
 			            JOptionPane.showMessageDialog(null, "Thanh toán thành công");
 			            (new PrintOrder()).PrintOrder(hd);
 

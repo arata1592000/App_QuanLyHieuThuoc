@@ -103,9 +103,8 @@ public class Gui_ChiTietHoaDon extends JPanel{
         pContent.setPreferredSize(new Dimension(this.widthComp, (int) (pTitleContent.getPreferredSize().getHeight() + pTableContent.getPreferredSize().getHeight())));
         pFooter.setLayout(new BorderLayout());
         pFooter.setBorder(new EmptyBorder(10, 10, 10, 10));
-        pLeftFooter.setLayout(new GridLayout(7,1,5,5));
+
         lbl3.setFont(new Font("Arial", Font.PLAIN, 14));
-    	lbl3.setMaximumSize(new Dimension(100, 45));
         lbl4.setFont(new Font("Arial", Font.PLAIN, 14));
         lbl5.setFont(new Font("Arial", Font.PLAIN, 14));
         lbl6.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -116,6 +115,8 @@ public class Gui_ChiTietHoaDon extends JPanel{
         
         if (hd.getLoaiHD().equals("Bán hàng")) {
             pFooter.setPreferredSize(new Dimension(this.widthComp,220));
+            pLeftFooter.setLayout(new GridLayout(7,1,5,5));
+            pLeftFooter.setPreferredSize(new Dimension((int) (this.widthComp/3*2), 220));
             lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã mua:</div></html>");
         	lbl3.setText("VAT: " + hd.getThue());
             lbl4.setText("KM: " + hd.getKhuyenMai().getMaKM());
@@ -126,14 +127,15 @@ public class Gui_ChiTietHoaDon extends JPanel{
             lbl9.setText("Tiền thừa: " + hd.getTienThua());
         }else if (hd.getLoaiHD().equals("Trả thuốc")) {
             pFooter.setPreferredSize(new Dimension(this.widthComp,100));
+            pLeftFooter.setLayout(new FlowLayout(FlowLayout.LEFT));
+            pLeftFooter.setPreferredSize(new Dimension((int) (this.widthComp/3*2), 220));
             lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã trả:</div></html>");
-        	lbl3.setText(hd.getGhiChu() );
-        	lbl4.setText("Được hoàn trả " + hd.getTongTien() + "đ");
+        	lbl3.setText("Được hoàn trả " + hd.getTongTien() + "đ");
+            lbl3.setFont(new Font("Arial", Font.BOLD, 16));
         }else if (hd.getLoaiHD().equals("Đổi thuốc")) {
             pFooter.setPreferredSize(new Dimension(this.widthComp,100));
+            pLeftFooter.setPreferredSize(new Dimension((int) (this.widthComp/3*2), 220));
             lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã đổi:</div></html>");
-        	lbl3.setText(hd.getGhiChu());
-
         }
         btnDong.setText("Đóng");
         

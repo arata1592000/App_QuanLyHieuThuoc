@@ -288,16 +288,16 @@ public class Dao_Thuoc {
 	    return listThuoc;
 	}
 	
-	public boolean setCountByMaThuoc(List<String> listMaThuoc, List<Integer> listSoLuong) {
+	public boolean setCountByMaThuoc(List<Thuoc> listThuoc, List<Integer> listSoLuong) {
 		Connection connect = null;
 	    PreparedStatement stmt = null;
 	    int n = 0;
 	    try {
-	    	for (int i = 0 ; i < listMaThuoc.size(); i++) {
+	    	for (int i = 0 ; i < listThuoc.size(); i++) {
 	    		connect = ConnectDB.getConnection();
 		        stmt = connect.prepareStatement("UPDATE Thuoc SET soLuong = soLuong - ? WHERE maThuoc=?");
 		        stmt.setInt(1, listSoLuong.get(i)); // Thiết lập giá trị cho tham số maThuoc
-		        stmt.setString(2, listMaThuoc.get(i));
+		        stmt.setString(2, listThuoc.get(i).getMaThuoc());
 		        
 		        n = stmt.executeUpdate();
 	    	}
@@ -360,11 +360,12 @@ public class Dao_Thuoc {
 	    Thuoc thuoc = null;
 	    try {
 	        connect = ConnectDB.getConnection();
-	        stmt = connect.prepareStatement("SELECT * \r\n"
-	        		+ "FROM Thuoc \r\n"
-	        		+ "WHERE tenThuoc = ? \r\n"
-	        		+ "  AND donViTinh = ? \r\n"
-	        		+ "  AND soLuong > ?;");
+	        stmt = connect.prepareStatement("SELECT *\r\n"
+	        		+ "FROM Thuoc\r\n"
+	        		+ "WHERE tenThuoc = ?\r\n"
+	        		+ "AND donViTinh = ? \r\n"
+	        		+ "AND soLuong >= ?\r\n"
+	        		+ "AND GETDATE() < ngayHetHan");
 	        stmt.setString(1, tenThuoc); // Thiết lập giá trị cho tham số maThuoc
 	        stmt.setString(2, donViTinh);
 	        stmt.setInt(3, soLuong);

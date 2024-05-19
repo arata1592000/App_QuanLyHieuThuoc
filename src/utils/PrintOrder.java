@@ -87,7 +87,7 @@ public class PrintOrder {
             document.add(separator);
 
 //            Content
-            Paragraph orderTitle = new Paragraph("HÓA ĐƠN BÁN HÀNG", subHeadingFont);
+            Paragraph orderTitle = new Paragraph("HÓA ĐƠN THANH TOÁN", subHeadingFont);
             orderTitle.setAlignment(TextAlign.CENTER.ordinal());
             document.add(orderTitle);
             document.add(separator);
@@ -103,7 +103,6 @@ public class PrintOrder {
             }
             document.add(separator);
 
-//          ReturnOrder detail  
             PdfPTable table = new PdfPTable(9);
             table.setSpacingBefore(20);
             table.setWidthPercentage(100);
@@ -125,21 +124,28 @@ public class PrintOrder {
 
             document.add(table);
 
-//            Order footer    
-            document.add(new Paragraph("Tổng tiền: " + CurrencyFormatter.formatVNDWithDecimals(hd.getTongTien()), font));
-            document.add(new Paragraph("VAT: " + hd.getThue() + "%", font));
-            KhuyenMai km = hd.getKhuyenMai();
-            if (km == null) {
-                document.add(new Paragraph("Không có", font));
-            } else {
-                document.add(new Paragraph("Mã khuyến mãi trên hóa đơn: " + hd.getKhuyenMai().getMaKM() + "(Khách hàng được giảm " + hd.getKhuyenMai().getTyLeKM() + "% cho hóa đơn)", font));
-            }
-            document.add(new Paragraph("Thành tiền: " + CurrencyFormatter.formatVNDWithDecimals(hd.getThanhTien()), subHeadingFont));
-            document.add(separator);
+            if (hd.getLoaiHD().equals("Bán hàng")) {
+            	document.add(new Paragraph("Tổng tiền: " + CurrencyFormatter.formatVNDWithDecimals(hd.getTongTien()), font));
+                document.add(new Paragraph("VAT: " + hd.getThue() + "%", font));
+                KhuyenMai km = hd.getKhuyenMai();
+                if (km == null) {
+                    document.add(new Paragraph("Không có", font));
+                } else {
+                    document.add(new Paragraph("Mã khuyến mãi trên hóa đơn: " + hd.getKhuyenMai().getMaKM() + "(Khách hàng được giảm " + hd.getKhuyenMai().getTyLeKM() + "% cho hóa đơn)", font));
+                }
+                document.add(new Paragraph("Thành tiền: " + CurrencyFormatter.formatVNDWithDecimals(hd.getThanhTien()), subHeadingFont));
+                document.add(separator);
 
-            document.add(new Paragraph("Phương thức thanh toán " + hd.getPhuongThucTT(), font));
-            document.add(new Paragraph("Tiền khách đưa: " + CurrencyFormatter.formatVNDWithDecimals(hd.getTienKhachDua()), font));
-            document.add(new Paragraph("Tiền thừa: " + CurrencyFormatter.formatVNDWithDecimals(hd.getTienThua()), font));
+                document.add(new Paragraph("Phương thức thanh toán " + hd.getPhuongThucTT(), font));
+                document.add(new Paragraph("Tiền khách đưa: " + CurrencyFormatter.formatVNDWithDecimals(hd.getTienKhachDua()), font));
+                document.add(new Paragraph("Tiền thừa: " + CurrencyFormatter.formatVNDWithDecimals(hd.getTienThua()), font));
+            } else if (hd.getLoaiHD().equals("Đổi thuốc")) {
+            	document.add(new Paragraph(hd.getGhiChu(), font));
+            } else if (hd.getLoaiHD().equals("Trả thuốc")) {
+                document.add(new Paragraph("Khách hàng được hoàn trả: " + CurrencyFormatter.formatVNDWithDecimals(hd.getThanhTien()), subHeadingFont));
+            	document.add(new Paragraph(hd.getGhiChu(), font));
+            }
+            
 
 //            Footer
             document.add(separator);
