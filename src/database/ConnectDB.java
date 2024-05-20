@@ -7,8 +7,8 @@ import java.sql.SQLException;
 public class ConnectDB {
     // Các thông tin kết nối đến cơ sở dữ liệu
     private static final String URL = "jdbc:sqlserver://localhost:1433;databasename=QLBT";
-    private static final String USERNAME = "hao123";
-    private static final String PASSWORD = "hao123";
+    private static final String USERNAME = "hao1234";
+    private static final String PASSWORD = "hao1234";
 
     // Phương thức để mở kết nối đến cơ sở dữ liệu
     public static Connection getConnection() {

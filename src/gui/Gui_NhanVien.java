@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -371,9 +372,7 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 		btnTaiKhoan.setFocusPainted(false);
 		row1.add(btnAdd);
 		row1.add(btnSua);
-//		row1.add(btnLuu);
 		row1.add(btnNhapLai);
-//		row1.add(btnTaiKhoan);
 		
 		btnAdd.addActionListener(this);
 		btnSua.addActionListener(this);
@@ -498,9 +497,6 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
         
         
 	}
-	
-
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -622,37 +618,72 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 	    userIcon = new ImageIcon(resizedImg);
 	    lblHinhAnh.setIcon(userIcon);	
 	}
-	private boolean validData() {
-	    boolean isValid = true;
-	    //sửa kiểm tra ảnh
-	    if (!isImageAdded) {
-	        isValid = false;
-	        JOptionPane.showMessageDialog(this, "Vui lòng thêm ảnh nhân viên.");
-	        return isValid;
-	    }
-	    if (txtHoTen.getText().isEmpty()) {
-	        isValid = false;
-	        JOptionPane.showMessageDialog(this, "Vui lòng nhập họ và tên nhân viên.");
-	        txtHoTen.requestFocus();
-	    } else if (!radNam.isSelected() && !radNu.isSelected()) {
-	        isValid = false;
-	        JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính của nhân viên.");
-	    } else if(txtSDT.getText().isEmpty()) {
-	    	isValid = false;
-	        JOptionPane.showMessageDialog(this, "Vui lòng nhập số điện thoại.");
-	    } else if(txtCC.getText().isEmpty()) {
-	    	isValid = false;
-	        JOptionPane.showMessageDialog(this, "Vui lòng nhập căn cước công dân.");
-	    } else if(txtDC.getText().isEmpty()) {
-	    	isValid = false;
-	        JOptionPane.showMessageDialog(this, "Vui lòng nhập địa chỉ.");
-	    }
-	    return isValid;
+	private boolean validData() {	
+		String hoTen = txtHoTen.getText().trim();
+		String soDienThoai = txtSDT.getText().trim();
+		LocalDate ngaySinh = ngaySinhDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate ngayVaoLam = ngayLamDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		String soCCCD = txtCC.getText().trim();
+		String diaChi = txtDC.getText().trim();
+
+		if (hoTen.isEmpty() || soDienThoai.isEmpty() || ngaySinh == null || ngayVaoLam == null || soCCCD.isEmpty() || diaChi.isEmpty()) {
+		    JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin nhân viên!");
+		    return false;
+		}
+		if (!hoTen.matches("^[A-Z][a-zA-Z ]{0,29}$")) {
+		    JOptionPane.showMessageDialog(this, "Họ tên phải viết hoa chữ cái đầu tiên của mỗi từ và tối đa 30 ký tự!");
+		    return false;
+		}
+		if (!soDienThoai.matches("0[38975]\\d{8}")) {
+		    JOptionPane.showMessageDialog(this, "Số điện thoại phải gồm 10 chữ số, bắt đầu bằng 0, ký tự thứ hai là 1 trong các số: 3, 8, 9, 7, 5!");
+		    return false;
+		}
+		if (!diaChi.matches("[A-Z][a-zA-Z0-9\\-/, ]{0,49}")) {
+		    JOptionPane.showMessageDialog(this, "Địa chỉ phải viết hoa chữ cái đầu tiên, được dùng kí tự -/, và tối đa 50 ký tự!");
+		    return false;
+		}
+
+		// Kiểm tra số CCCD: 12 chữ số theo quy định
+		if (!soCCCD.matches("\\d{3}[0123]\\d{2}\\d{6}")) {
+		    JOptionPane.showMessageDialog(this, "Số CCCD phải gồm 12 chữ số và tuân theo định dạng quy định!");
+		    return false;
+		}
+
+		// Kiểm tra chi tiết số CCCD
+		int namSinh = ngaySinh.getYear();
+		int maGioiTinh = Character.getNumericValue(soCCCD.charAt(3));
+		int maNamSinh = Integer.parseInt(soCCCD.substring(4, 6));
+
+		// Xác định thế kỷ sinh
+		if ((namSinh >= 1900 && namSinh < 2000 && (maGioiTinh != 0 && maGioiTinh != 1)) ||
+		    (namSinh >= 2000 && namSinh < 2100 && (maGioiTinh != 2 && maGioiTinh != 3))) {
+		    JOptionPane.showMessageDialog(this, "Mã giới tính trong số CCCD không hợp lệ với năm sinh của công dân!");
+		    return false;
+		}
+
+		// Kiểm tra mã năm sinh
+		int lastTwoDigitsOfYear = namSinh % 100;
+		if (lastTwoDigitsOfYear != maNamSinh) {
+		    JOptionPane.showMessageDialog(this, "Mã năm sinh trong số CCCD không khớp với năm sinh của công dân!");
+		    return false;
+		}
+
+		// Kiểm tra tuổi của phải đủ 18 tuổi
+		LocalDate ngayHienTai = LocalDate.now();
+		int tuoi = Period.between(ngaySinh, ngayHienTai).getYears();
+		if (tuoi < 18) {
+		    JOptionPane.showMessageDialog(this, "Tuổi của người dùng phải đủ 18 tuổi!");
+		    return false;
+		}
+
+		// Kiểm tra ngày vào làm phải nhỏ hơn ngày hiện tại
+		if (ngayVaoLam.isAfter(ngayHienTai)) {
+		    JOptionPane.showMessageDialog(this, "Ngày vào làm phải nhỏ hơn ngày hiện tại!");
+		    return false;
+		}
+		return true;
 	}
-/*    comboBoxCV = new JComboBox<>(new String[]{"","Nhân Viên", "Quản Lý","Tất Cả"});
-    comboBoxTT = new JComboBox<>(new String[]{"","Làm việc", "Không làm việc","Tất Cả"});  */
-	
-	//fix
+
 	public void filterByChucVuTrangThai(String chucVu, String trangThai) {
 	    DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
 	    TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);

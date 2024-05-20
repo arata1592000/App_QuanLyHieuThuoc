@@ -11,8 +11,11 @@ public class test {
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 
+			private NhanVien nv;
+
 			public void run() {
 		        new Gui_DangNhap();   
+//		        new Gui_Chinh(nv);
 		    }
 		});	
 	}

@@ -65,6 +65,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	private NhanVien nv;
 	private JButton btnTaiKhoan;
 	private JButton btnKetCa;
+	private JButton btnQuanLyKetCa;
 	
 	public Gui_Chinh(NhanVien nv) {
 		this.setTitle("Hệ thống quản lý hiệu thuốc Ân Cần");
@@ -130,6 +131,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		btnTaiKhoan = this.createButtonMenu("Đổi mật khẩu (F9)", new ImageIcon("images/change-password.png"));
 		btnDangXuat = this.createButtonMenu("Đăng Xuất", new ImageIcon("images/singout.png"));
 		btnKetCa = this.createButtonMenu("Kết Ca", new ImageIcon(""));
+		btnQuanLyKetCa = this.createButtonMenu("QL Kết Ca", new ImageIcon(""));
 		pMain.setBackground(new Color(40,156,164));
 		pMain.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         pMain.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), heightFrame));
@@ -154,6 +156,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		btnHuongDan.addActionListener(this);
 		btnDangXuat.addActionListener(this);
 		btnKetCa.addActionListener(this);
+		btnQuanLyKetCa.addActionListener(this);
 		
 		btnTrangChu.setBackground(new Color(224,255,255));
 		actButtonBack = btnTrangChu;
@@ -161,27 +164,29 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		pAvatar.add(lbl2);
 		pAvatar.add(lbl3);
 		pMenu.add(btnTrangChu);
-        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
 		pMenu.add(btnSanPham);
-        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
 		pMenu.add(btnHoaDon);
-        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
 		pMenu.add(btnNhanVien);
-        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
 		pMenu.add(btnKhuyenMai);
-        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
 		pMenu.add(btnKhachHang);
-        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
 		pMenu.add(btnThongKe);
-        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
         pMenu.add(btnKetCa);
-        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
+        pMenu.add(btnQuanLyKetCa);
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
 		pMenu.add(btnHuongDan);
-        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
 		pMenu.add(btnTaiKhoan);
-        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
 		pMenu.add(btnDangXuat);
-        pMenu.add(Box.createRigidArea(new Dimension(0, 50))); // Khoảng cách đầu tiên
+        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
         pLeft.add(pAvatar);
 		pLeft.add(pMenu);
 		pHeader.add(lbl1, BorderLayout.WEST);
@@ -301,6 +306,16 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				lbl1.setText("THỐNG KÊ KẾT CA");
 			}
 			actButtonBack = btnKetCa;
+		}else if (act.equals(btnQuanLyKetCa)) {
+			if (!actButtonBack.equals(btnQuanLyKetCa)) {
+				actButtonBack.setBackground(new Color(224,220,220));
+				btnQuanLyKetCa.setBackground(new Color(224,255,255));
+				pContent.removeAll();
+				System.gc();
+				pContent.add(new Gui_QuanLyKetCa(pContent.getWidth(), pContent.getHeight()));
+				lbl1.setText("Quản Lý Kết Ca");
+			}
+			actButtonBack = btnHuongDan;
 		}else if (act.equals(btnHuongDan)) {
 			if (!actButtonBack.equals(btnHuongDan)) {
 				actButtonBack.setBackground(new Color(224,220,220));
