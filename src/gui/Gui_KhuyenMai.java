@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -14,6 +15,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -32,8 +35,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -42,6 +47,8 @@ import javax.swing.RowFilter;
 import javax.swing.RowFilter.Entry;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -49,10 +56,13 @@ import com.toedter.calendar.JDateChooser;
 
 import dao.Dao_KhuyenMai;
 import dao.Dao_NhanVien;
+import dao.Dao_Thuoc;
 import entity.KhuyenMai;
 import entity.NhanVien;
+import entity.Thuoc;
 
-public class Gui_KhuyenMai extends JPanel implements ActionListener{
+
+public class Gui_KhuyenMai extends JPanel implements ActionListener,DocumentListener{
 	private int widthComp;
 	private int heightComp;
 	private JPanel pNorth;
@@ -77,7 +87,7 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
 	private JLayeredPane layeredPane;
 	private JPanel pContent;
 	private Gui_ThemKhuyenMai guiThemKM;
-	
+	private int indexPopupMenu;
 	private boolean isGuiCTHDDisplayed = false;
 	private KhuyenMai khuyenMai;
 	private Gui_SuaKhuyenMai guiSuaKM;
@@ -90,6 +100,8 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
 	private JLabel lblTitle;
 	private JPanel pInfor;
 	private JLabel lblTT;
+	private JPopupMenu suggestionMenu;
+	private JButton btnTim;
 
 	public Gui_KhuyenMai(int width, int height) {
 		
@@ -101,6 +113,7 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
 		
 	}
 	public void initCompoent() {
+		suggestionMenu = new JPopupMenu();
 		layeredPane = new JLayeredPane();
 		pContent = new JPanel();
 		pNorth = new JPanel();
@@ -122,6 +135,7 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
         pButton = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20));
 		btnThem = new JButton("Thêm khuyến mãi");
 	    btnSua = new JButton("Sửa khuyến mãi");
+	    btnTim = new JButton("Tìm khuyến mãi");
 		pTable = new JPanel();
         JLabel lblDSKM = new JLabel("Danh sách khuyến mãi");
         String headers[] = {"Mã khuyến mãi", "Ngày bắt đầu", "Ngày kết thúc","Tỷ lệ khuyến mãi", "Loại khuyến mãi","Trạng Thái"};
@@ -156,6 +170,9 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
 	    btnSua.setForeground(Color.WHITE);
 		btnSua.setFont(new Font("Arial", Font.BOLD, 16));
 		btnSua.setBackground(new Color (40,156,164));
+		btnTim.setForeground(Color.WHITE);
+		btnTim.setFont(new Font("Arial", Font.BOLD, 16));
+		btnTim.setBackground(new Color (40,156,164));
 		
         pTable.setPreferredSize(new Dimension((int)(widthComp*0.93),(int) (heightComp*0.45)));
 		lblDSKM.setFont(new Font("Times New Roman", Font.BOLD, 30));
@@ -168,6 +185,7 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
         pNorth.add(lblTitle,FlowLayout.LEFT);
         pButton.add(btnThem);
 		pButton.add(btnSua);
+		pButton.add(btnTim);
 		pCenter.add(pInfor,BorderLayout.CENTER);
 		pCenter.add(pButton,BorderLayout.SOUTH);
 		pTable.add(lblDSKM); 
@@ -181,15 +199,55 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
 		
 		btnThem.addActionListener(this);
 		btnSua.addActionListener(this);
+		btnTim.addActionListener(this);
 		cbbLoaiKM.addActionListener(this);	
 		radHD.addActionListener(this);
 		radKHD.addActionListener(this);
 		radTatCa.addActionListener(this);
-
+//		txtTyLe.getDocument().addDocumentListener(new DocumentListener() {
+//		    @Override
+//		    public void insertUpdate(DocumentEvent e) {
+//		        filterByTyLeKM(txtTyLe.getText().trim());
+//		    }
+//
+//		    @Override
+//		    public void removeUpdate(DocumentEvent e) {
+//		    	filterByTyLeKM(txtTyLe.getText().trim());
+//		    }
+//
+//		    @Override
+//		    public void changedUpdate(DocumentEvent e) {
+//		        filterByTyLeKM(txtTyLe.getText().trim());
+//		    }
+//		});
+		
+//		txtMa.getDocument().addDocumentListener(new DocumentListener() {
+//		    @Override
+//		    public void insertUpdate(DocumentEvent e) {
+//		        filterByMaKM(txtMa.getText().trim());
+//		    }
+//
+//		    @Override
+//		    public void removeUpdate(DocumentEvent e) {
+//		        filterByMaKM(txtMa.getText().trim());
+//		    }
+//
+//		    @Override
+//		    public void changedUpdate(DocumentEvent e) {
+//		        filterByMaKM(txtMa.getText().trim());
+//		    }
+//		});
 	}
+		
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
+		if (o.equals(btnTim)) {
+        	//lấy lại dữ liệu cữ
+        	loadDataTable();
+            // Lấy giá trị từ các ô nhập liệu
+        	timKiemKhuyenMai();
+        }
 		if(o.equals(btnThem))
 		{
 			if(layeredPane.getComponentsInLayer(JLayeredPane.PALETTE_LAYER).length == 0){
@@ -253,18 +311,28 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn hàng cần xem chi tiết!");
             }
 		}
-		if(o.equals(cbbLoaiKM))
-		{
-			String selectedLoaiKM = (String) cbbLoaiKM.getSelectedItem();
-		    filterByLoaiKM(selectedLoaiKM);
-		}
-		if(o.equals(radHD)) {
-			filterByTrangThai("Hoạt động");
-		}else if (o.equals(radKHD)) {
-			filterByTrangThai("Không hoạt động");
-		}else if (o.equals(radTatCa)) {
-			filterByTrangThai("Tất cả");
-		}
+//		if(o.equals(cbbLoaiKM)||o.equals(radGroup))
+//		{
+//			String selectedLoaiKM = (String) cbbLoaiKM.getSelectedItem();
+//			String selectedTrangThai  = "";
+//			if (radHD.isSelected()) {
+//		        selectedTrangThai = "Hoạt động";
+//		    } else if (radKHD.isSelected()) {
+//		        selectedTrangThai = "Không hoạt động";
+//		    } else if (radTatCa.isSelected()) {
+//		        selectedTrangThai = "Tất cả";
+//		    }
+//		    filterByTrangThaiLoai(selectedTrangThai, selectedLoaiKM);
+//		    
+//		}
+		
+//		if(o.equals(radHD)) {
+//			filterByTrangThai("Hoạt động");
+//		}else if (o.equals(radKHD)) {
+//			filterByTrangThai("Không hoạt động");
+//		}else if (o.equals(radTatCa)) {
+//			filterByTrangThai("Tất cả");
+//		}
 	}
 	
 	private void setPanelInput() {
@@ -281,20 +349,20 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(txtMa,constraintsCustomer);
         
-        constraintsCustomer.gridx = 1;
-        constraintsCustomer.gridy = 1;
+        constraintsCustomer.gridx = 3;
+        constraintsCustomer.gridy = 0;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(lblTyLe, constraintsCustomer);
         txtTyLe= new JTextField(10);
-        constraintsCustomer.gridx = 2;
-        constraintsCustomer.gridy = 1;
+        constraintsCustomer.gridx = 4;
+        constraintsCustomer.gridy = 0;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(txtTyLe,constraintsCustomer);
         
         
         radTatCa.setSelected(true);
         constraintsCustomer.gridx = 1;
-        constraintsCustomer.gridy = 2; 
+        constraintsCustomer.gridy = 1; 
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(lblTT, constraintsCustomer);
         
@@ -305,42 +373,42 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
         pGroup.add(radHD);
         pGroup.add(radKHD);
         constraintsCustomer.gridx = 2;
-        constraintsCustomer.gridy = 2;
+        constraintsCustomer.gridy = 1;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(pGroup, constraintsCustomer);
         
-        constraintsCustomer.gridx = 3;
-        constraintsCustomer.gridy = 0;
-        constraintsCustomer.anchor = GridBagConstraints.WEST;
-        pInfor.add(lblNBD,constraintsCustomer);
-        ngayBatDauDate = new JDateChooser();
-        ngayBatDauDate.setPreferredSize(new Dimension(170,25));
-        constraintsCustomer.gridx = 4;
-        constraintsCustomer.gridy = 0;
-        constraintsCustomer.anchor = GridBagConstraints.WEST;
-        pInfor.add(ngayBatDauDate,constraintsCustomer);
+//        constraintsCustomer.gridx = 3;
+//        constraintsCustomer.gridy = 0;
+//        constraintsCustomer.anchor = GridBagConstraints.WEST;
+//        pInfor.add(lblNBD,constraintsCustomer);
+//        ngayBatDauDate = new JDateChooser();
+//        ngayBatDauDate.setPreferredSize(new Dimension(170,25));
+//        constraintsCustomer.gridx = 4;
+//        constraintsCustomer.gridy = 0;
+//        constraintsCustomer.anchor = GridBagConstraints.WEST;
+//        pInfor.add(ngayBatDauDate,constraintsCustomer);
+//        
+//
+//        constraintsCustomer.gridx = 3;
+//        constraintsCustomer.gridy = 1; 
+//        constraintsCustomer.anchor = GridBagConstraints.WEST;
+//        pInfor.add(lblNKT,constraintsCustomer);
+//        ngayKetThucDate  = new JDateChooser();
+//        ngayKetThucDate.setPreferredSize(new Dimension(170,25));
+//        constraintsCustomer.gridx = 4;
+//        constraintsCustomer.gridy = 1;
+//        constraintsCustomer.anchor = GridBagConstraints.WEST;
+//        pInfor.add(ngayKetThucDate,constraintsCustomer);
         
 
+
         constraintsCustomer.gridx = 3;
-        constraintsCustomer.gridy = 1; 
-        constraintsCustomer.anchor = GridBagConstraints.WEST;
-        pInfor.add(lblNKT,constraintsCustomer);
-        ngayKetThucDate  = new JDateChooser();
-        ngayKetThucDate.setPreferredSize(new Dimension(170,25));
-        constraintsCustomer.gridx = 4;
         constraintsCustomer.gridy = 1;
-        constraintsCustomer.anchor = GridBagConstraints.WEST;
-        pInfor.add(ngayKetThucDate,constraintsCustomer);
-        
-
-
-        constraintsCustomer.gridx = 3;
-        constraintsCustomer.gridy = 2;
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(lblLoaiKM,constraintsCustomer);
         cbbLoaiKM.setPreferredSize(new Dimension(200,25));
         constraintsCustomer.gridx = 4;
-        constraintsCustomer.gridy = 2; 
+        constraintsCustomer.gridy = 1; 
         constraintsCustomer.anchor = GridBagConstraints.WEST;
         pInfor.add(cbbLoaiKM, constraintsCustomer);
 	}
@@ -365,7 +433,51 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
 		}
 	}
 	
-	public void filterByLoaiKM(String loai) {
+//	public void filterByLoaiKM(String loai) {
+//	    DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
+//	    TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
+//	    tableModel.setRowSorter(rowSorter);
+//	    
+//	    RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+//	        @Override
+//	        public boolean include(Entry<?, ?> entry) {
+//	            String tt = (String) entry.getValue(4); // Trạng thái ở cột 6 trong bảng
+//	            return tt.equalsIgnoreCase(loai);
+//	        }
+//	    };
+//	    if (loai.equalsIgnoreCase("Khuyến mãi trên hóa đơn") || loai.equalsIgnoreCase("Khuyến mãi trên sản phẩm")) {
+//	        rowSorter.setRowFilter(filter);
+//	    } else if (loai.equalsIgnoreCase("Tất cả")){
+//	        rowSorter.setRowFilter(null); 
+//	    } else {
+//	    	JOptionPane.showMessageDialog(this, "Có lỗi xảy ra!");
+//	    }
+//	}
+//	public void filterByTrangThai(String trangThai) {
+//	    DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
+//	    TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
+//	    tableModel.setRowSorter(rowSorter);
+//	    
+//	    RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+//	        @Override
+//	        public boolean include(Entry<?, ?> entry) {
+//	        
+//	        	String tt = (String) entry.getValue(5); // Trạng thái ở cột 6 trong bảng
+//	            return tt.equalsIgnoreCase(trangThai);
+//	   
+//	        }
+//	    };
+//	    if (trangThai.equalsIgnoreCase("Hoạt động") 
+//	    	||trangThai.equalsIgnoreCase("Không hoạt động")) {
+//	        rowSorter.setRowFilter(filter);
+//	    } else if (trangThai.equalsIgnoreCase("Tất cả")){
+//	        rowSorter.setRowFilter(null); 
+//	    } else {
+//	    	JOptionPane.showMessageDialog(this, "Có lỗi xảy ra!");
+//	    }
+//	}
+	
+	public void filterByTrangThaiLoai(String trangThai,String loai) {
 	    DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
 	    TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
 	    tableModel.setRowSorter(rowSorter);
@@ -373,19 +485,35 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
 	    RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
 	        @Override
 	        public boolean include(Entry<?, ?> entry) {
-	            String tt = (String) entry.getValue(4); // Trạng thái ở cột 6 trong bảng
-	            return tt.equalsIgnoreCase(loai);
+	            String tt = (String) entry.getValue(5);
+	            String l = (String) entry.getValue(4);
+	            
+	            if (trangThai.equalsIgnoreCase("Hoạt Động") && loai.equalsIgnoreCase("Tất Cả")) {
+	                return tt.equalsIgnoreCase(trangThai);
+	            } else if (trangThai.equalsIgnoreCase("Không Hoạt Động") && loai.equalsIgnoreCase("Tất Cả")) {
+	                return tt.equalsIgnoreCase(trangThai);
+	            } else if (trangThai.equalsIgnoreCase("Tất Cả") && loai.equalsIgnoreCase("Tất Cả")) {
+	                return true;
+	            }else if (trangThai.equalsIgnoreCase("Hoạt Động") && loai.equalsIgnoreCase("Khuyến mãi trên hóa đơn")) {
+		                return tt.equalsIgnoreCase(trangThai) && l.equalsIgnoreCase(loai);
+		            } else if (trangThai.equalsIgnoreCase("Không Hoạt Động") && loai.equalsIgnoreCase("Khuyến mãi trên hóa đơn")) {
+		                return tt.equalsIgnoreCase(trangThai)&& l.equalsIgnoreCase(loai);
+		            } else if (trangThai.equalsIgnoreCase("Tất Cả") && loai.equalsIgnoreCase("Khuyến mãi trên hóa đơn")) {
+		                return l.equalsIgnoreCase(loai);
+		            }else if (trangThai.equalsIgnoreCase("Hoạt Động") && loai.equalsIgnoreCase("Khuyến mãi trên sản phẩm")) {
+		                return tt.equalsIgnoreCase(trangThai)&& l.equalsIgnoreCase(loai);
+		            } else if (trangThai.equalsIgnoreCase("Không Hoạt Động") && loai.equalsIgnoreCase("Khuyến mãi trên sản phẩm")) {
+		                return tt.equalsIgnoreCase(trangThai)&& l.equalsIgnoreCase(loai);
+		            } else if (trangThai.equalsIgnoreCase("Tất Cả") && loai.equalsIgnoreCase("Khuyến mãi trên sản phẩm")) {
+		                return l.equalsIgnoreCase(loai);
+	            }else 
+	            	return true;
 	        }
 	    };
-	    if (loai.equalsIgnoreCase("Khuyến mãi trên hóa đơn") || loai.equalsIgnoreCase("Khuyến mãi trên sản phẩm")) {
-	        rowSorter.setRowFilter(filter);
-	    } else if (loai.equalsIgnoreCase("Tất cả")){
-	        rowSorter.setRowFilter(null); 
-	    } else {
-	    	JOptionPane.showMessageDialog(this, "Có lỗi xảy ra!");
-	    }
+	    rowSorter.setRowFilter(filter);
 	}
-	public void filterByTrangThai(String trangThai) {
+	
+	public void filterByMaKM(String MaKM) {
 	    DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
 	    TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
 	    tableModel.setRowSorter(rowSorter);
@@ -393,18 +521,105 @@ public class Gui_KhuyenMai extends JPanel implements ActionListener{
 	    RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
 	        @Override
 	        public boolean include(Entry<?, ?> entry) {
-	            String tt = (String) entry.getValue(5); // Trạng thái ở cột 6 trong bảng
-	            return tt.equalsIgnoreCase(trangThai);
+	            String tt = (String) entry.getValue(0); // Trạng thái ở cột 6 trong bảng
+	            return tt.toLowerCase().contains(MaKM.toLowerCase());
 	        }
 	    };
-	    if (trangThai.equalsIgnoreCase("Hoạt động") 
-	    	||trangThai.equalsIgnoreCase("Không hoạt động")) {
-	        rowSorter.setRowFilter(filter);
-	    } else if (trangThai.equalsIgnoreCase("Tất cả")){
-	        rowSorter.setRowFilter(null); 
+	    rowSorter.setRowFilter(filter);
+	}
+	public void filterByTyLeKM(String tyleKM) {
+	    if (tyleKM.isEmpty()) {
+	    	tableModel.setRowSorter(null);
 	    } else {
-	    	JOptionPane.showMessageDialog(this, "Có lỗi xảy ra!");
+	        try {
+	            Float tyLeKMFloat = Float.valueOf(tyleKM);
+	            DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
+	            TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
+	            tableModel.setRowSorter(rowSorter);
+	            
+	            RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+	                @Override
+	                public boolean include(Entry<?, ?> entry) {
+	                    Float value = (Float) entry.getValue(3); // Giả sử cột chứa tỷ lệ khuyến mãi là cột thứ 2 (index 1)
+	                    //return value.equals(tyLeKMFloat) && value != null;
+	                    return Math.abs(value - tyLeKMFloat) < 0.001;
+	                }
+	            };
+	            rowSorter.setRowFilter(filter);
+	        } catch (NumberFormatException ex) {
+	            // Xử lý ngoại lệ khi giá trị nhập vào không phải là số
+	            JOptionPane.showMessageDialog(null, "Vui lòng nhập vào một số hợp lệ cho tỷ lệ khuyến mãi.");
+	        }
 	    }
 	}
 
+	 private void timKiemKhuyenMai() {
+	        // Lấy giá trị từ các ô nhập liệu
+	        
+	        String maKM = txtMa.getText();
+	        String tyleKMText = txtTyLe.getText();
+	        Float tyleKM = null;
+	        if (tyleKMText != null && !tyleKMText.isEmpty()) {
+	            try {
+	                tyleKM = Float.valueOf(tyleKMText);
+	            } catch (NumberFormatException e) {
+	                // Xử lý lỗi nếu không thể chuyển đổi thành Float
+	            }
+	        }
+
+
+	        // Xác định giá trị của trạng thái từ các radio button
+	        
+	        String trangThai = "";
+	        if (radHD.isSelected()) {
+	            trangThai = "Hoạt Động";
+	        } else if (radKHD.isSelected()) {
+	            trangThai = "Không Hoạt Động";
+	        }
+	            
+	        // Lọc dữ liệu từ bảng dựa trên các điều kiện đã xác định
+	        DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
+	        int rowCount = model.getRowCount();
+
+	        for (int i = rowCount - 1; i >= 0; i--) {
+	            String maKM1 = (String) model.getValueAt(i, 0);
+	            Float TyLeKM = (Float) model.getValueAt(i, 3);
+	            String loaiChuongTrinh = (String) model.getValueAt(i, 4);
+	            LocalDate ngayBatDau = (LocalDate) model.getValueAt(i, 1);
+	            LocalDate ngayKetThuc = (LocalDate) model.getValueAt(i, 2);
+	            String trangThai1 = (String) model.getValueAt(i, 5);
+	            //System.out.println(trangThai1);
+
+	            // Áp dụng các điều kiện lọc
+	            boolean tyleKMMatch = (tyleKM==null) || TyLeKM.equals(tyleKM);
+	            boolean maKMMatch = maKM.isEmpty() || maKM1.contains(maKM);
+	            boolean loaiChuongTrinhMatch = cbbLoaiKM.getSelectedItem().equals("Tất cả") || loaiChuongTrinh.equals(cbbLoaiKM.getSelectedItem());
+	            boolean trangThaiMatch = (radTatCa.isSelected() || trangThai1.equals(trangThai));
+
+	           
+
+	            
+	            // Kiểm tra xem hàng có đáp ứng điều kiện lọc không, nếu không thì loại bỏ hàng đó khỏi bảng
+	            if (!(tyleKMMatch && maKMMatch && loaiChuongTrinhMatch && trangThaiMatch)) {
+	                model.removeRow(i);
+	            }
+	        }
+	    }
+	 
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

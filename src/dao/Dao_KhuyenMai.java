@@ -14,6 +14,7 @@ import java.util.List;
 import database.ConnectDB;
 import entity.KhuyenMai;
 import entity.NhanVien;
+import entity.Thuoc;
 
 
 public class Dao_KhuyenMai {
@@ -131,13 +132,13 @@ public class Dao_KhuyenMai {
 	    int n = 0;
 	    try {
 	        connect = ConnectDB.getConnection();
-	        stmt = connect.prepareStatement("UPDATE KhuyenMai SET ngayBatDau=?,ngayKetThuc=?,tyleKM=?,loaiKM=? WHERE maKM=?");
+	        stmt = connect.prepareStatement("UPDATE KhuyenMai SET ngayBatDau=?,ngayKetThuc=?,tyleKM=?,loaiKM=?,giaTriKhuyenMai=? WHERE maKM=?");//sửa
 	        stmt.setTimestamp(1, Timestamp.valueOf(KM.getNgayBatDau().atStartOfDay()));
 	        stmt.setTimestamp(2, Timestamp.valueOf(KM.getNgayKetThuc().atStartOfDay()));
 	        stmt.setFloat(3, KM.getTyLeKM());
 	        stmt.setString(4, KM.getLoaiKM());
-	        stmt.setString(5, KM.getMaKM());
-
+	        stmt.setFloat(5, KM.getGiaTriHD());
+	        stmt.setString(6, KM.getMaKM());
 	        n = stmt.executeUpdate();
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -170,9 +171,8 @@ public class Dao_KhuyenMai {
 	                rs.getDate(2).toLocalDate(),
 	                rs.getDate(3).toLocalDate(),
 	                rs.getFloat(4),
-	             
-	                rs.getString(5)
-	           
+	                rs.getString(5),
+	                rs.getFloat(6)
 	            );
 	        }
 	    } catch (SQLException e) {
@@ -188,6 +188,81 @@ public class Dao_KhuyenMai {
 	        }
 	    }
 	    return km;
+	}
+	
+	public List<KhuyenMai> listThuocContainMaKM(String text){
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    List<KhuyenMai> listKM = new ArrayList<KhuyenMai>();
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("SELECT * FROM KhuyenMai WHERE MaKM LIKE CONCAT('%', ? , '%')");
+	        stmt.setString(1, text);
+
+	        ResultSet rs = stmt.executeQuery();
+	        while (rs.next()) {
+	        	KhuyenMai km = new KhuyenMai(
+	 	                rs.getString(1),
+	 	                rs.getDate(2).toLocalDate(),
+	 	                rs.getDate(3).toLocalDate(),
+	 	                rs.getFloat(4),
+	 	                rs.getString(5)
+	 	                
+	 	           
+	 	            );
+	        	listKM.add(km);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return listKM;
+	}
+	public List<KhuyenMai> listThuocContainTyLeKM(float text){
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    List<KhuyenMai> listKM = new ArrayList<KhuyenMai>();
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("SELECT * FROM KhuyenMai WHERE tyleKM LIKE CONCAT('%', ? , '%')");
+	        stmt.setFloat(1, text);
+
+	        ResultSet rs = stmt.executeQuery();
+	        while (rs.next()) {
+	        	KhuyenMai km = new KhuyenMai(
+	 	                rs.getString(1),
+	 	                rs.getDate(2).toLocalDate(),
+	 	                rs.getDate(3).toLocalDate(),
+	 	                rs.getFloat(4),
+	 	                rs.getString(5)
+	 	                
+	 	           
+	 	            );
+	        	listKM.add(km);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return listKM;
 	}
 	public KhuyenMai findKhuyenMaiHDByGiaTriKM(float tongTien) {
 		Connection connect = null;

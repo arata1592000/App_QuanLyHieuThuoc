@@ -21,6 +21,19 @@ public class KhuyenMai {
 		this.tyLeKM = tyLeKM;
 		this.giaTriHD = 0;
 	}
+	
+
+	public KhuyenMai(String maKM, LocalDate ngayBatDau, LocalDate ngayKetThuc, float tyLeKM, String loaiKM,
+			float giaTriHD) {
+		super();
+		this.maKM = maKM;
+		this.ngayBatDau = ngayBatDau;
+		this.ngayKetThuc = ngayKetThuc;
+		this.tyLeKM = tyLeKM;
+		this.loaiKM = loaiKM;
+		this.giaTriHD = giaTriHD;
+	}
+
 
 	public String getMaKM() {
 		return maKM;
@@ -60,17 +73,17 @@ public class KhuyenMai {
 	}
 	public String getTrangThai()
 	{
-		if(!ngayKetThuc.isAfter(LocalDate.now()))
-			return "Hoạt động";
+		if(ngayKetThuc.isAfter(ngayBatDau))
+			return "Hoạt Động";
 		else
-			return "Không hoạt động";
+			return "Không Hoạt Động";
 	}
 	public KhuyenMai() {
 		super();
 		// TODO Auto-generated constructor stub
 		this.maKM = null;
-		this.ngayBatDau = null;;
-		this.ngayKetThuc = null;;;
+		this.ngayBatDau = null;
+		this.ngayKetThuc = null;
 		this.tyLeKM = 0;
 		this.loaiKM = null;
 		this.giaTriHD = 0;
