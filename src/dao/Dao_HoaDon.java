@@ -324,4 +324,105 @@ public class Dao_HoaDon {
 		}
         return listNam;
 	}
+	
+	public float calTotalCashRevenue(String maNV) {
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    float totalCashRevenue = 0;
+		try {
+	        connect = ConnectDB.getConnection();
+			Statement stt = connect.createStatement();
+	        stmt = connect.prepareStatement("SELECT SUM(CEILING(thanhTien/1000.0)*1000) AS tongDoanhThuTM\r\n"
+	        		+ "FROM HoaDon\r\n"
+	        		+ "WHERE maNV = ? \r\n"
+	        		+ "    AND phuongThucTT = N'Tiền mặt' \r\n"
+	        		+ "    AND loaiHD = N'Bán hàng'\r\n"
+	        		+ "    AND CAST(ngayLap AS DATE) = CAST(GETDATE() AS DATE)");
+			stmt.setString(1, maNV);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				totalCashRevenue = rs.getFloat(1);
+			}
+		}  catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	            	ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+		}
+		return totalCashRevenue;
+	}
+	
+	public float calTotalCashATM(String maNV) {
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    float totalCashATM = 0;
+		try {
+	        connect = ConnectDB.getConnection();
+			Statement stt = connect.createStatement();
+	        stmt = connect.prepareStatement("SELECT SUM(CEILING(thanhTien/1000.0)*1000) AS tongDoanhThuATM\r\n"
+	        		+ "FROM HoaDon\r\n"
+	        		+ "WHERE maNV = ? \r\n"
+	        		+ "    AND phuongThucTT = N'ATM' \r\n"
+	        		+ "    AND loaiHD = N'Bán hàng'\r\n"
+	        		+ "    AND CAST(ngayLap AS DATE) = CAST(GETDATE() AS DATE)");
+			stmt.setString(1, maNV);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				totalCashATM = rs.getFloat(1);
+			}
+		}  catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	            	ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+		}
+		return totalCashATM;
+	}
+	
+	public float calTotalMoneySpent(String maNV) {
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    float totalMoneySpent = 0;
+		try {
+	        connect = ConnectDB.getConnection();
+			Statement stt = connect.createStatement();
+	        stmt = connect.prepareStatement("SELECT ROUND(SUM(tienThua),-3) AS tongTienThua\r\n"
+	        		+ "FROM HoaDon\r\n"
+	        		+ "WHERE maNV = ? \r\n"
+	        		+ "    AND loaiHD = N'Bán hàng'\r\n"
+	        		+ "    AND CAST(ngayLap AS DATE) = CAST(GETDATE() AS DATE)\r\n");
+			stmt.setString(1, maNV);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				totalMoneySpent = rs.getFloat(1);
+			}
+		}  catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	            	ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+		}
+		return totalMoneySpent;
+	}
 }

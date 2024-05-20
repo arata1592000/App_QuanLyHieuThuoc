@@ -129,7 +129,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		btnHuongDan = this.createButtonMenu("Hướng Dẫn (F8)", new ImageIcon("images/help.png"));
 		btnTaiKhoan = this.createButtonMenu("Đổi mật khẩu (F9)", new ImageIcon("images/change-password.png"));
 		btnDangXuat = this.createButtonMenu("Đăng Xuất", new ImageIcon("images/singout.png"));
-		btnKetCa = this.createButtonMenu("Kết Ca", new ImageIcon(""));
+		btnKetCa = this.createButtonMenu("Kết Ca", new ImageIcon("images/shift.png"));
 		pMain.setBackground(new Color(40,156,164));
 		pMain.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         pMain.setPreferredSize(new Dimension((int) ((int)widthFrame*0.9), heightFrame));
@@ -297,8 +297,8 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				btnKetCa.setBackground(new Color(224,255,255));
 				pContent.removeAll();
 				System.gc();
-				pContent.add(new Gui_KetCa(pContent.getWidth(), pContent.getHeight()));
-				lbl1.setText("THỐNG KÊ KẾT CA");
+				pContent.add(new Gui_KetCa(nv, pContent.getWidth(), pContent.getHeight()));
+				lbl1.setText("KẾT CA");
 			}
 			actButtonBack = btnKetCa;
 		}else if (act.equals(btnHuongDan)) {
