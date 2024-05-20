@@ -97,7 +97,7 @@ public class Gui_ChiTietHoaDon extends JPanel{
 		pTitleContent.setPreferredSize(new Dimension(this.widthComp, 50));
         lbl2.setFont(new Font("Arial", Font.PLAIN, 15));        
         setDataTable();
-        pTableContent.setPreferredSize(new Dimension(this.widthComp, (int)((dataTable.size()+1)*30)));
+        pTableContent.setPreferredSize(new Dimension(this.widthComp, (int)((dataTable.size()+1)*50)));
         pTableContent.setLayout(new GridBagLayout());
         setPTableContent();
         pContent.setPreferredSize(new Dimension(this.widthComp, (int) (pTitleContent.getPreferredSize().getHeight() + pTableContent.getPreferredSize().getHeight())));
