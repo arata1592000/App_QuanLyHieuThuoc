@@ -54,6 +54,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
 import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -139,6 +140,7 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 	private String matKhau;
 	private boolean isImageAdded;
 	private File fileAnh;
+	private Border defaultBorder;
 	
 	public Gui_NhanVien(int width, int height) {
 		widthComp = width;
@@ -323,6 +325,12 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
         constraintsCustomer.gridx = 4;
         constraintsCustomer.gridy = 4; 
         constraintsCustomer.anchor = GridBagConstraints.WEST;
+        
+        defaultBorder = txtMa.getBorder();
+        defaultBorder = txtHoTen.getBorder();
+        defaultBorder = txtCC.getBorder();
+        defaultBorder = txtDC.getBorder();
+        defaultBorder = txtSDT.getBorder();
         
         pInfor.add(comboBoxTrangThai, constraintsCustomer);
         pNorth.add(pImage,BorderLayout.WEST);
@@ -630,22 +638,31 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 		    JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin nhân viên!");
 		    return false;
 		}
-		if (!hoTen.matches("^[A-Z][a-zA-Z ]{0,29}$")) {
+		if (!hoTen.matches("^[A-Za-z\\p{L}]*( [A-Za-z\\p{L}]*){0,30}$")) {
 		    JOptionPane.showMessageDialog(this, "Họ tên phải viết hoa chữ cái đầu tiên của mỗi từ và tối đa 30 ký tự!");
+		    txtHoTen.setBorder(new LineBorder(Color.RED,2));
+		    txtHoTen.requestFocus();
 		    return false;
 		}
 		if (!soDienThoai.matches("0[38975]\\d{8}")) {
 		    JOptionPane.showMessageDialog(this, "Số điện thoại phải gồm 10 chữ số, bắt đầu bằng 0, ký tự thứ hai là 1 trong các số: 3, 8, 9, 7, 5!");
+		    txtSDT.setBorder(new LineBorder(Color.RED,2));
+		    txtSDT.requestFocus();
 		    return false;
 		}
-		if (!diaChi.matches("[A-Z][a-zA-Z0-9\\-/, ]{0,49}")) {
+//		if (!diaChi.matches("[A-Z][a-zA-Z0-9\\-/, ]{0,49}")) {
+		if (!diaChi.matches("^[A-Za-z0-9\\p{L}\\-/]*( [A-Za-z0-9\\p{L}\\-/]*){0,30}$")) {
 		    JOptionPane.showMessageDialog(this, "Địa chỉ phải viết hoa chữ cái đầu tiên, được dùng kí tự -/, và tối đa 50 ký tự!");
+		    txtDC.setBorder(new LineBorder(Color.RED,2));
+		    txtDC.requestFocus();
 		    return false;
 		}
 
 		// Kiểm tra số CCCD: 12 chữ số theo quy định
 		if (!soCCCD.matches("\\d{3}[0123]\\d{2}\\d{6}")) {
 		    JOptionPane.showMessageDialog(this, "Số CCCD phải gồm 12 chữ số và tuân theo định dạng quy định!");
+		    txtCC.setBorder(new LineBorder(Color.RED,2));
+		    txtCC.requestFocus();
 		    return false;
 		}
 
@@ -681,6 +698,10 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 		    JOptionPane.showMessageDialog(this, "Ngày vào làm phải nhỏ hơn ngày hiện tại!");
 		    return false;
 		}
+		txtHoTen.setBorder(defaultBorder);
+		txtCC.setBorder(defaultBorder);
+		txtDC.setBorder(defaultBorder);
+		txtSDT.setBorder(defaultBorder);
 		return true;
 	}
 
@@ -713,10 +734,6 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 	    };
 	    rowSorter.setRowFilter(filter);
 	}
-
-
-
-
 	private void themAnh() {
 		JFileChooser chooser = new JFileChooser();
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -732,7 +749,6 @@ public class Gui_NhanVien extends JPanel implements ActionListener{
 	        isImageAdded = true;
 	    }
 	}
-	
 	private String getPathAnh() {
 		// Tạo đường dẫn cho thư mục lưu trữ ảnh
         String destDirPath = "images/imagesAvatarNV";

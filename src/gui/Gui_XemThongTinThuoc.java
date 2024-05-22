@@ -39,6 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -96,6 +97,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 	private JLayeredPane layeredPane;
 	private JPanel pContent;
 	private JPanel pForm;
+	private Border defaultBorder;
 	
 	public Gui_XemThongTinThuoc(int width, int height) {
 		// TODO Auto-generated constructor stub
@@ -122,10 +124,13 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		txtTenThuoc = new JTextField(15);
 		lbl4 = new JLabel();;
 		dateNgayNhapVe = new JDateChooser();
+		dateNgayNhapVe.setPreferredSize(new Dimension(150,23));
 		lbl5 = new JLabel();
 		dateNgaySanXuat = new JDateChooser();
+		dateNgaySanXuat.setPreferredSize(new Dimension(150,23));
 		lbl6 = new JLabel();
 		dateNgayHetHan = new JDateChooser();
+		dateNgayHetHan.setPreferredSize(new Dimension(150,23));
 		lbl7 = new JLabel();
 		txtNoiSanXuat = new JTextField(15);
 		lbl8 = new JLabel();
@@ -146,8 +151,10 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		txt1 = new JTextField();//
 		lbl13 = new JLabel();
 		dateTuNgay = new JDateChooser();
+		dateTuNgay.setPreferredSize(new Dimension(150,21));
 		lbl14 = new JLabel();
 		dateDenNgay = new JDateChooser();
+		dateDenNgay.setPreferredSize(new Dimension(150,21));
 		txtTim = new JTextField(20);
 		btnTim = new JButton();
 		pTable = new JPanel();
@@ -308,6 +315,14 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
         constraintsCustomer.gridy = 5;
         pFormLeft.add(txtSoLuong,constraintsCustomer);
         
+        defaultBorder = txtMaThuoc.getBorder();
+        defaultBorder = txtTenThuoc.getBorder();
+        defaultBorder = txtDonViTinh.getBorder();
+        defaultBorder = txtThanhPhan.getBorder();
+        defaultBorder = txtSoLuong.getBorder();
+        defaultBorder = txtGia.getBorder();
+        defaultBorder = txtNoiSanXuat.getBorder();
+ 
         pButton.setBackground(Color.WHITE);
         btnThemThuoc.setText("Thêm thuốc");
         btnThemThuoc.setForeground(Color.BLACK);
@@ -379,6 +394,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		pAction.add(dateTuNgay);
 		pAction.add(lbl14);
 		pAction.add(dateDenNgay);
+		pAction.add(Box.createHorizontalStrut(50));
 		pAction.add(txtTim);
 		pAction.add(btnTim);
 		pCenter.add(pInput,BorderLayout.CENTER);
@@ -496,22 +512,52 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 	        JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
 	        return false;
 	    }
-		if (!tenThuoc.matches("^[A-Z][a-zA-Z0-9 -/]*$")) {
-		    JOptionPane.showMessageDialog(this, "Viết hoa chữ cái đầu tiên");
+		if (!tenThuoc.matches("^[A-Za-z\\p{L}0-9]+( [A-Za-z\\p{L}0-9]+)*$")) {
+		    JOptionPane.showMessageDialog(this, "Tên thuốc cần viết hoa chữ cái đầu tiên");
+		    txtTenThuoc.setBorder(new LineBorder(Color.RED,2));
+		    txtTenThuoc.requestFocus();
 		    return false;
-		}
-		if (!gia.matches("\\d+")) {
-	        JOptionPane.showMessageDialog(this, "Giá thuốc phải là một số.");
+		}else if (!noiSanXuat.matches("^[A-Za-z\\p{L}]*( [A-Za-z\\p{L}]*)*$")) {
+		    JOptionPane.showMessageDialog(this, "Nơi sản xuất cần viết hoa chữ cái đầu tiên");
+		    txtNoiSanXuat.setBorder(new LineBorder(Color.RED,2));
+		    txtNoiSanXuat.requestFocus();
+		    return false;
+		}else if (!gia.matches("\\d+") || Integer.parseInt(gia) <= 0) {
+		    if (!gia.matches("\\d+")) {
+		        JOptionPane.showMessageDialog(this, "Giá thuốc phải phải nhập số");
+		    } else {
+		        JOptionPane.showMessageDialog(this, "Giá thuốc phải lớn hơn 0.");
+		    }
+		    txtGia.setBorder(new LineBorder(Color.RED, 2));
+		    txtGia.requestFocus();
+		    return false;
+	    }else if (!donViTinh.matches("^[A-Za-z\\p{L}0-9]*( [A-Za-z\\p{L}0-9]*)*$")) {
+		    JOptionPane.showMessageDialog(this, "Đơn vị tính cần viết hoa chữ cái đầu tiên");
+		    txtDonViTinh.setBorder(new LineBorder(Color.RED,2));
+		    txtDonViTinh.requestFocus();
+		    return false;
+		}else if (!thanhPhan.matches("^[A-Za-z\\p{L}0-9]*( [A-Za-z\\p{L}0-9]*)*$")) {
+		    JOptionPane.showMessageDialog(this, "Thành phần cần viết hoa chữ cái đầu tiên");
+		    txtThanhPhan.setBorder(new LineBorder(Color.RED,2));
+		    txtThanhPhan.requestFocus();
+		    return false;
+		}else if (!soLuong.matches("\\d+") || Integer.parseInt(soLuong)<=0 ) {
+			if (!soLuong.matches("\\d+")) {
+		        JOptionPane.showMessageDialog(this, "Số lượng phải nhập số");
+		    } else {
+		        JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0.");
+		    }
+	        txtSoLuong.setBorder(new LineBorder(Color.RED,2));
+	        txtSoLuong.requestFocus();
 	        return false;
 	    }
-		if (!soLuong.matches("\\d+")) {
-	        JOptionPane.showMessageDialog(this, "Giá thuốc phải là một số.");
-	        return false;
-	    }
-		if (!thanhPhan.matches("^[A-Z][a-zA-Z0-9 -/]*$")) {
-		    JOptionPane.showMessageDialog(this, "Viết hoa chữ cái đầu tiên");
-		    return false;
-		}
+		txtTenThuoc.setBorder(defaultBorder);
+		txtGia.setBorder(defaultBorder);
+		txtMaThuoc.setBorder(defaultBorder);
+		txtThanhPhan.setBorder(defaultBorder);
+		txtNoiSanXuat.setBorder(defaultBorder);
+		txtDonViTinh.setBorder(defaultBorder);
+		txtSoLuong.setBorder(defaultBorder);
 		return true;
 	}
 	public void clearFields() {
