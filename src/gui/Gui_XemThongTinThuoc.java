@@ -512,7 +512,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 	        JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
 	        return false;
 	    }
-		if (!tenThuoc.matches("^[A-Za-z\\p{L}0-9]+( [A-Za-z\\p{L}0-9]+)*$")) {
+		if (!tenThuoc.matches("^[A-Za-z\\p{L}0-9\\-/]+( [A-Za-z\\p{L}0-9\\-/]+)*$")) {
 		    JOptionPane.showMessageDialog(this, "Tên thuốc cần viết hoa chữ cái đầu tiên");
 		    txtTenThuoc.setBorder(new LineBorder(Color.RED,2));
 		    txtTenThuoc.requestFocus();
@@ -536,7 +536,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		    txtDonViTinh.setBorder(new LineBorder(Color.RED,2));
 		    txtDonViTinh.requestFocus();
 		    return false;
-		}else if (!thanhPhan.matches("^[A-Za-z\\p{L}0-9]*( [A-Za-z\\p{L}0-9]*)*$")) {
+		}else if (!thanhPhan.matches("^[A-Za-z\\p{L}0-9\\-/\\,]*( [A-Za-z\\p{L}0-9\\-/\\,]*)*$")) {
 		    JOptionPane.showMessageDialog(this, "Thành phần cần viết hoa chữ cái đầu tiên");
 		    txtThanhPhan.setBorder(new LineBorder(Color.RED,2));
 		    txtThanhPhan.requestFocus();
