@@ -209,7 +209,7 @@ public class Dao_Thuoc {
 	    List<Thuoc> listThuoc = new ArrayList<Thuoc>();
 	    try {
 	        connect = ConnectDB.getConnection();
-	        stmt = connect.prepareStatement("select * from Thuoc where maKMSP IS NULL");
+	        stmt = connect.prepareStatement("select * from Thuoc where maKMSP IS NULL AND ngayHetHan > GETDATE()");
 	        //stmt.setString(1, maThuoc); // Thiết lập giá trị cho tham số maThuoc
 
 	        ResultSet rs = stmt.executeQuery();
