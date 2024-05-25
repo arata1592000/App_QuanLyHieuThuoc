@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,7 +142,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		dateTuNgay = new JDateChooser();
 		lbl14 = new JLabel();
 		dateDenNgay = new JDateChooser();
-		txtTim = new JTextField();
+		txtTim = new JTextField("Nhập mã thuốc");   //an sua
 		btnTim = new JButton();
 		pTable = new JPanel();
 		lbl15 = new JLabel();
@@ -294,7 +296,25 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		lbl12.setText("Lọc: ");
         lbl13.setText("Lọc ngày nhập về từ:");
         lbl14.setText("Đến ngày");
-        txtTim.setText("Tìm thuốc theo mã");
+//        txtTim.setText("Tìm thuốc theo mã");       //an sua
+        txtTim.addFocusListener(new FocusListener() {//an sua
+    		
+    		@Override
+    		public void focusLost(FocusEvent e) { //an sua
+    			// TODO Auto-generated method stub
+    			if (txtTim.getText().equals("")) {//an sua
+                	txtTim.setText("Nhập mã thuốc");//an sua
+                }
+    		}
+    		
+    		@Override
+    		public void focusGained(FocusEvent e) {//an sua
+    			// TODO Auto-generated method stub
+    			if (txtTim.getText().equals("Nhập mã thuốc")) {//an sua
+                	txtTim.setText("");//an sua
+                	}
+    			}
+        	});
         btnTim.setText("Tìm");
         lbl15.setText("Danh sách thuốc");
         lbl15.setFont(new Font("Arial", Font.ITALIC, 26));
@@ -381,8 +401,8 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		dataModel.addRow(new Object[] {thuoc.getMaThuoc(),
 				thuoc.getTenThuoc(),
 				thuoc.getNgayNhapVe(),
-				thuoc.getNgaySanXuat(),
 				thuoc.getNgayHetHan(),
+				thuoc.getNgaySanXuat(), //an sua
 				thuoc.getNoiSanXuat(),
 				thuoc.getGia()+"",
 				thuoc.getDonViTinh(),
