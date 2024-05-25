@@ -10,6 +10,7 @@ public class ConnectDB {
     private static final String USERNAME = "arata";
     private static final String PASSWORD = "123456";
 
+
     // Phương thức để mở kết nối đến cơ sở dữ liệu
     public static Connection getConnection() {
         Connection connection = null;

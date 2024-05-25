@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -430,4 +431,33 @@ public class Dao_Thuoc {
 	    }
 	    return n>-1;
 	}
+	public List<Thuoc> getThuocByNgayNhapVe(LocalDate tuNgay, LocalDate denNgay) {
+        List<Thuoc> listThuoc = new ArrayList<>();
+        String query = "SELECT * FROM Thuoc WHERE ngayNhapVe BETWEEN ? AND ?";
+        try (Connection connect = ConnectDB.getConnection();
+             PreparedStatement ps = connect.prepareStatement(query)) {
+            ps.setDate(1, java.sql.Date.valueOf(tuNgay));
+            ps.setDate(2, java.sql.Date.valueOf(denNgay));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Thuoc thuoc = new Thuoc(
+                        rs.getString("maThuoc"),
+                        rs.getString("tenThuoc"),
+                        rs.getDate("ngayNhapVe").toLocalDate(),
+                        rs.getDate("ngaySanXuat").toLocalDate(),
+                        rs.getDate("ngayHetHan").toLocalDate(),
+                        rs.getString("noiSanXuat"),
+                        rs.getFloat("gia"),
+                        rs.getString("donViTinh"),
+                        rs.getString("thanhPhan"),
+                        rs.getInt("soLuong")
+                    );
+                    listThuoc.add(thuoc);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listThuoc;
+    }
 }

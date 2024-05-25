@@ -231,11 +231,13 @@ public class Gui_DangNhap extends JFrame {
 					e1.printStackTrace();
 				}
 				NhanVien nv = (new Dao_TaiKhoan()).authenticateTaiKhoanForNhanVien(tk);
-				if (nv != null) {
+				if (nv != null && nv.getTrangThai().equals("Làm Việc")) {
 			    	JOptionPane.showMessageDialog(null, "Đăng nhập thành công!");			    	
 			    	new Gui_Chinh(nv);
 			    	dispose();
-				} else {
+				}else if (!nv.getTrangThai().equals("Làm Việc")) {
+					JOptionPane.showMessageDialog(null, "Bạn đã không còn làm việc ở cửa hàng");
+				}else {
 					JOptionPane.showMessageDialog(null, "Đăng nhập thất bại!");
 
 				}

@@ -81,6 +81,7 @@ public class Thuoc {
 	public void setKhuyenMai(KhuyenMai khuyenMai) {
 		this.khuyenMai = khuyenMai;
 	}
+	
 	public String getTrangThai() {
 		String trangThai = "";
 		if (soLuong == 0) {
@@ -95,6 +96,7 @@ public class Thuoc {
 		}
 		return trangThai;
 	}
+	
 	public Thuoc() {
 		super();
 		// TODO Auto-generated constructor stub

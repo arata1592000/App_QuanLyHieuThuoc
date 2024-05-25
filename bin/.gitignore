@@ -1,4 +1,13 @@
+<<<<<<< HEAD
 /database/
 /dao/
 /gui/
 /entity/
+=======
+/Test/
+/dao/
+/database/
+/entity/
+/gui/
+/utils/
+>>>>>>> origin/phuhao/regular2

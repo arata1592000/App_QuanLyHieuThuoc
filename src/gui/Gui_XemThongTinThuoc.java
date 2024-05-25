@@ -15,6 +15,12 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -90,6 +97,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 	private JLayeredPane layeredPane;
 	private JPanel pContent;
 	private JPanel pForm;
+	private Border defaultBorder;
 	
 	public Gui_XemThongTinThuoc(int width, int height) {
 		// TODO Auto-generated constructor stub
@@ -116,10 +124,13 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		txtTenThuoc = new JTextField(15);
 		lbl4 = new JLabel();;
 		dateNgayNhapVe = new JDateChooser();
+		dateNgayNhapVe.setPreferredSize(new Dimension(150,23));
 		lbl5 = new JLabel();
 		dateNgaySanXuat = new JDateChooser();
+		dateNgaySanXuat.setPreferredSize(new Dimension(150,23));
 		lbl6 = new JLabel();
 		dateNgayHetHan = new JDateChooser();
+		dateNgayHetHan.setPreferredSize(new Dimension(150,23));
 		lbl7 = new JLabel();
 		txtNoiSanXuat = new JTextField(15);
 		lbl8 = new JLabel();
@@ -140,9 +151,15 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		txt1 = new JTextField();//
 		lbl13 = new JLabel();
 		dateTuNgay = new JDateChooser();
+		dateTuNgay.setPreferredSize(new Dimension(150,21));
 		lbl14 = new JLabel();
 		dateDenNgay = new JDateChooser();
-		txtTim = new JTextField("Nhập mã thuốc");   //an sua
+//<<<<<<< HEAD
+//		txtTim = new JTextField("Nhập mã thuốc");   //an sua
+//=======
+		dateDenNgay.setPreferredSize(new Dimension(150,21));
+		txtTim = new JTextField(20);
+//>>>>>>> origin/phuhao/regular2
 		btnTim = new JButton();
 		pTable = new JPanel();
 		lbl15 = new JLabel();
@@ -154,6 +171,41 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		tableModel.setFont(new Font("Arial", Font.PLAIN, 11));
 		tableModel.setRowHeight(25);
 		tableModel.setModel(dataModel);
+		tableModel.addMouseListener(new MouseAdapter() {
+		    @Override
+		    public void mouseClicked(MouseEvent e) {
+		        super.mouseClicked(e);
+		        int rowIndex = tableModel.getSelectedRow();
+		        if (rowIndex != -1) {
+		            String maThuoc = (String) tableModel.getValueAt(rowIndex, 0);
+		            String tenThuoc = (String) tableModel.getValueAt(rowIndex, 1);
+		            LocalDate ngayNhapVe = (LocalDate) tableModel.getValueAt(rowIndex, 2);
+		            LocalDate ngaySanXuat = (LocalDate) tableModel.getValueAt(rowIndex, 3);
+		            LocalDate ngayHetHan = (LocalDate) tableModel.getValueAt(rowIndex, 4);
+		            String noiSanXuat = (String) tableModel.getValueAt(rowIndex, 5);
+//		            float gia = (float) tableModel.getValueAt(rowIndex, 6);
+		            String giaStr = (String) tableModel.getValueAt(rowIndex, 6);
+		            float gia = Float.parseFloat(giaStr);
+		            String donViTinh = (String) tableModel.getValueAt(rowIndex, 7);
+		            String thanhPhan = (String) tableModel.getValueAt(rowIndex, 8);
+		            String sLuongStr = (String) tableModel.getValueAt(rowIndex, 10);
+		            int soLuong = Integer.parseInt(sLuongStr);
+		            
+		            
+		            txtMaThuoc.setText(maThuoc);
+		            txtTenThuoc.setText(tenThuoc);
+		            dateNgayNhapVe.setDate(Date.from(ngayNhapVe.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		            dateNgaySanXuat.setDate(Date.from(ngaySanXuat.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		            dateNgayHetHan.setDate(Date.from(ngayHetHan.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		            txtNoiSanXuat.setText(noiSanXuat);
+		            txtGia.setText(String.valueOf(gia));
+		            txtDonViTinh.setText(donViTinh);
+		            txtThanhPhan.setText(thanhPhan);
+		            txtSoLuong.setText(String.valueOf(soLuong));
+		        }
+		    }
+		});
+
 		scroll = new JScrollPane(tableModel);
         
 		layeredPane.setOpaque(true);
@@ -267,6 +319,14 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
         constraintsCustomer.gridy = 5;
         pFormLeft.add(txtSoLuong,constraintsCustomer);
         
+        defaultBorder = txtMaThuoc.getBorder();
+        defaultBorder = txtTenThuoc.getBorder();
+        defaultBorder = txtDonViTinh.getBorder();
+        defaultBorder = txtThanhPhan.getBorder();
+        defaultBorder = txtSoLuong.getBorder();
+        defaultBorder = txtGia.getBorder();
+        defaultBorder = txtNoiSanXuat.getBorder();
+ 
         pButton.setBackground(Color.WHITE);
         btnThemThuoc.setText("Thêm thuốc");
         btnThemThuoc.setForeground(Color.BLACK);
@@ -296,22 +356,41 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		lbl12.setText("Lọc: ");
         lbl13.setText("Lọc ngày nhập về từ:");
         lbl14.setText("Đến ngày");
-//        txtTim.setText("Tìm thuốc theo mã");       //an sua
-        txtTim.addFocusListener(new FocusListener() {//an sua
+//<<<<<<< HEAD
+////        txtTim.setText("Tìm thuốc theo mã");       //an sua
+//        txtTim.addFocusListener(new FocusListener() {//an sua
+//    		
+//    		@Override
+//    		public void focusLost(FocusEvent e) { //an sua
+//    			// TODO Auto-generated method stub
+//    			if (txtTim.getText().equals("")) {//an sua
+//                	txtTim.setText("Nhập mã thuốc");//an sua
+//=======
+        txtTim.setText("Tìm thuốc theo mã");
+        txtTim.setPreferredSize(new Dimension(135,25));
+        txtTim.addFocusListener(new FocusListener() {
     		
     		@Override
-    		public void focusLost(FocusEvent e) { //an sua
+    		public void focusLost(FocusEvent e) {
     			// TODO Auto-generated method stub
-    			if (txtTim.getText().equals("")) {//an sua
-                	txtTim.setText("Nhập mã thuốc");//an sua
+    			if (txtTim.getText().equals("")) {
+                	txtTim.setText("Tìm thuốc theo mã");
+//>>>>>>> origin/phuhao/regular2
                 }
     		}
     		
     		@Override
-    		public void focusGained(FocusEvent e) {//an sua
+//<<<<<<< HEAD
+//    		public void focusGained(FocusEvent e) {//an sua
+//    			// TODO Auto-generated method stub
+//    			if (txtTim.getText().equals("Nhập mã thuốc")) {//an sua
+//                	txtTim.setText("");//an sua
+//=======
+    		public void focusGained(FocusEvent e) {
     			// TODO Auto-generated method stub
-    			if (txtTim.getText().equals("Nhập mã thuốc")) {//an sua
-                	txtTim.setText("");//an sua
+    			if (txtTim.getText().equals("Tìm thuốc theo mã")) {
+                	txtTim.setText("");
+//>>>>>>> origin/phuhao/regular2
                 	}
     			}
         	});
@@ -325,8 +404,8 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 
 		btnThemThuoc.addActionListener(this);
 		btnXoaThuoc.addActionListener(this);
-//		btnSuaThuoc.addActionListener(this);
-
+		btnTim.addActionListener(this);
+		
 		pInput.add(pFormLeft);
 		pButton.add(btnThemThuoc);
 		pButton.add(btnXoaThuoc);
@@ -337,6 +416,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		pAction.add(dateTuNgay);
 		pAction.add(lbl14);
 		pAction.add(dateDenNgay);
+		pAction.add(Box.createHorizontalStrut(50));
 		pAction.add(txtTim);
 		pAction.add(btnTim);
 		pCenter.add(pInput,BorderLayout.CENTER);
@@ -353,14 +433,46 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
         
         layeredPane.add(pContent, JLayeredPane.DEFAULT_LAYER);
         this.add(layeredPane);
-	}
+        
+        dateTuNgay.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("date".equals(evt.getPropertyName())) {
+                    filterThuocByDate();
+                }
+            }
+        });
 
+        dateDenNgay.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("date".equals(evt.getPropertyName())) {
+                    filterThuocByDate();
+                }
+            }
+        });
+
+	}
+	private void filterThuocByDate() {
+        LocalDate fromDate = dateTuNgay.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate toDate = dateDenNgay.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (fromDate != null && toDate != null && !fromDate.isAfter(toDate)) {
+            dataModel.setRowCount(0);
+            List<Thuoc> filteredThuocList = (new Dao_Thuoc()).getThuocByNgayNhapVe(fromDate, toDate);
+            for (Thuoc thuoc : filteredThuocList) {
+                addRowThuoc(thuoc);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn khoảng thời gian hợp lệ.");
+        }
+    }
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Object act = e.getSource();
 		if(act.equals(btnThemThuoc)) {
-			Thuoc thuoc = new Thuoc(txtMaThuoc.getText(),
+			if(validData()) {
+				Thuoc thuoc = new Thuoc(txtMaThuoc.getText(),
 					txtTenThuoc.getText(),
 					dateNgayNhapVe.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
 					dateNgaySanXuat.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
@@ -370,33 +482,120 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 					txtDonViTinh.getText(),
 					txtThanhPhan.getText(),
 					Integer.parseInt(txtSoLuong.getText()));
-			try {
-				if ((new Dao_Thuoc()).addThuoc(thuoc)) {
+				try {
+					if ((new Dao_Thuoc()).addThuoc(thuoc)) {
+						JOptionPane.showMessageDialog(this, "Thêm thuốc thành công");
+						addRowThuoc(thuoc);
+						clearFields();
+					}
+				} catch (NumberFormatException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}	
+			}
+			}else if(act.equals(btnXoaThuoc)) {
+				int selectRow = tableModel.getSelectedRow();
+		        if (selectRow != -1) {
+		            String maThuoc = (String) tableModel.getValueAt(selectRow, 0);
+		            if ((new Dao_Thuoc()).removeThuoc(maThuoc)) {
+		                ((DefaultTableModel) tableModel.getModel()).removeRow(selectRow);
+		                JOptionPane.showMessageDialog(null, "Xóa thuốc thành công");
+		            } else {
+		                JOptionPane.showMessageDialog(null, "Hệ thống đang xảy ra lỗi");
+		            }
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hàng để xóa.");
+		        }
+		}else if(act.equals(btnTim)) {
+			String maThuoc = txtTim.getText();
+			if(!maThuoc.equals("Tìm thuốc theo mã")) {
+				Thuoc thuoc = (new Dao_Thuoc()).findThuocByMaThuoc(maThuoc);
+				if(thuoc != null) {
+					dataModel.setRowCount(0);
 					addRowThuoc(thuoc);
+				}else {
+	                JOptionPane.showMessageDialog(this, "Không tìm thấy thuốc với mã " + maThuoc);
 				}
-			} catch (NumberFormatException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}		
-		}else if(act.equals(btnXoaThuoc)) {
-	        int selectRow = tableModel.getSelectedRow();
-	        // Kiểm tra nếu có hàng được chọn
-	        if (selectRow != -1) {
-        		String maThuoc = (String) tableModel.getValueAt(selectRow, 0);
-	        	if ((new Dao_Thuoc()).removeThuoc(maThuoc)) {
-		            ((DefaultTableModel) tableModel.getModel()).removeRow(selectRow);
-	            // Xóa hàng từ  JTable
-	        	}else {
-		            JOptionPane.showMessageDialog(null, "Hệ thống đang xảy ra lỗi");
-	        	}
-	        } else {
-	            // Hiển thị thông báo nếu không có hàng nào được chọn
-	            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hàng để xóa.");
-	        }
-		}else if(act.equals(btnSuaThuoc)) {
+			}
 		}
 	}
-	
+	private boolean validData() {
+		String tenThuoc = txtTenThuoc.getText().trim();
+		String gia = txtGia.getText().trim();
+		String noiSanXuat = txtNoiSanXuat.getText().trim();
+		LocalDate ngayNhapVe = dateNgayNhapVe.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate ngayHetHan = dateNgayHetHan.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate ngaySanXuat = dateNgaySanXuat.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		String donViTinh = txtDonViTinh.getText().trim();
+		String soLuong = txtSoLuong.getText().trim();
+		String thanhPhan = txtThanhPhan.getText().trim();
+		
+		if (tenThuoc.isEmpty() || gia.isEmpty() || noiSanXuat.isEmpty() || donViTinh.isEmpty() || soLuong.isEmpty() || thanhPhan.isEmpty() || ngayNhapVe == null || ngaySanXuat == null || ngayHetHan == null) {
+	        JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
+	        return false;
+	    }
+		if (!tenThuoc.matches("^[A-Za-z\\p{L}0-9\\-/]+( [A-Za-z\\p{L}0-9\\-/]+)*$")) {
+		    JOptionPane.showMessageDialog(this, "Tên thuốc cần viết hoa chữ cái đầu tiên");
+		    txtTenThuoc.setBorder(new LineBorder(Color.RED,2));
+		    txtTenThuoc.requestFocus();
+		    return false;
+		}else if (!noiSanXuat.matches("^[A-Za-z\\p{L}]*( [A-Za-z\\p{L}]*)*$")) {
+		    JOptionPane.showMessageDialog(this, "Nơi sản xuất cần viết hoa chữ cái đầu tiên");
+		    txtNoiSanXuat.setBorder(new LineBorder(Color.RED,2));
+		    txtNoiSanXuat.requestFocus();
+		    return false;
+		}else if (!gia.matches("\\d+") || Integer.parseInt(gia) <= 0) {
+		    if (!gia.matches("\\d+")) {
+		        JOptionPane.showMessageDialog(this, "Giá thuốc phải phải nhập số");
+		    } else {
+		        JOptionPane.showMessageDialog(this, "Giá thuốc phải lớn hơn 0.");
+		    }
+		    txtGia.setBorder(new LineBorder(Color.RED, 2));
+		    txtGia.requestFocus();
+		    return false;
+	    }else if (!donViTinh.matches("^[A-Za-z\\p{L}0-9]*( [A-Za-z\\p{L}0-9]*)*$")) {
+		    JOptionPane.showMessageDialog(this, "Đơn vị tính cần viết hoa chữ cái đầu tiên");
+		    txtDonViTinh.setBorder(new LineBorder(Color.RED,2));
+		    txtDonViTinh.requestFocus();
+		    return false;
+		}else if (!thanhPhan.matches("^[A-Za-z\\p{L}0-9\\-/\\,]*( [A-Za-z\\p{L}0-9\\-/\\,]*)*$")) {
+		    JOptionPane.showMessageDialog(this, "Thành phần cần viết hoa chữ cái đầu tiên");
+		    txtThanhPhan.setBorder(new LineBorder(Color.RED,2));
+		    txtThanhPhan.requestFocus();
+		    return false;
+		}else if (!soLuong.matches("\\d+") || Integer.parseInt(soLuong)<=0 ) {
+			if (!soLuong.matches("\\d+")) {
+		        JOptionPane.showMessageDialog(this, "Số lượng phải nhập số");
+		    } else {
+		        JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0.");
+		    }
+	        txtSoLuong.setBorder(new LineBorder(Color.RED,2));
+	        txtSoLuong.requestFocus();
+	        return false;
+	    }
+		txtTenThuoc.setBorder(defaultBorder);
+		txtGia.setBorder(defaultBorder);
+		txtMaThuoc.setBorder(defaultBorder);
+		txtThanhPhan.setBorder(defaultBorder);
+		txtNoiSanXuat.setBorder(defaultBorder);
+		txtDonViTinh.setBorder(defaultBorder);
+		txtSoLuong.setBorder(defaultBorder);
+		return true;
+	}
+	public void clearFields() {
+		txtMaThuoc.setText("");
+		txtTenThuoc.setText("");
+		txtDonViTinh.setText("");
+		txtGia.setText("");
+		txtThanhPhan.setText("");
+		txtNoiSanXuat.setText("");
+		txtSoLuong.setText("");
+		if(dateNgayNhapVe.getDate() == null && dateNgaySanXuat.getDate()==null && dateNgayHetHan.getDate()==null) {
+			dateNgayNhapVe.setDate(null);
+			dateNgaySanXuat.setDate(null);
+			dateNgayHetHan.setDate(null);
+		}
+	}
 	public void addRowThuoc(Thuoc thuoc ) {
 		dataModel.addRow(new Object[] {thuoc.getMaThuoc(),
 				thuoc.getTenThuoc(),
