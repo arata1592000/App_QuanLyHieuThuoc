@@ -76,7 +76,7 @@ public class Dao_NhanVien {
 				"ADMIN",
 				"",
 				"",
-				"",
+				"Làm Việc",
 				"images/avatar-default.png");
 		if (addNhanVien(nvADMIN)) {
 			return true;
