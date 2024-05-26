@@ -121,15 +121,15 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		pMenu.setBackground(new Color(40,156,164));
 		pMenu.setLayout(new FlowLayout(FlowLayout.LEFT));
         pMenu.setPreferredSize(new Dimension((int) ((int)widthFrame*0.10), (int) ((int)heightFrame *0.8)));
-		btnTrangChu = this.createButtonMenu("Trang chủ (F1)", new ImageIcon("images/home.png"));
-		btnSanPham = this.createButtonMenu("Sản phẩm (F2)", new ImageIcon("images/medicine.png"));
-		btnHoaDon = this.createButtonMenu("Hóa đơn (F3)", new ImageIcon("images/bill.png"));
-		btnNhanVien = this.createButtonMenu("Nhân Viên (F4)", new ImageIcon("images/employee.png"));
-		btnKhuyenMai = this.createButtonMenu("Khuyến Mãi (F5)", new ImageIcon("images/discount.png"));
-		btnKhachHang = this.createButtonMenu("Khách Hàng (F6)", new ImageIcon("images/customer.png"));
-		btnThongKe = this.createButtonMenu("Thống Kê (F7)", new ImageIcon("images/statistics.png"));
-		btnHuongDan = this.createButtonMenu("Hướng Dẫn (F8)", new ImageIcon("images/help.png"));
-		btnTaiKhoan = this.createButtonMenu("Đổi mật khẩu (F9)", new ImageIcon("images/change-password.png"));
+		btnTrangChu = this.createButtonMenu("Trang chủ", new ImageIcon("images/home.png"));
+		btnSanPham = this.createButtonMenu("Sản phẩm", new ImageIcon("images/medicine.png"));
+		btnHoaDon = this.createButtonMenu("Hóa đơn", new ImageIcon("images/bill.png"));
+		btnNhanVien = this.createButtonMenu("Nhân Viên", new ImageIcon("images/employee.png"));
+		btnKhuyenMai = this.createButtonMenu("Khuyến Mãi", new ImageIcon("images/discount.png"));
+		btnKhachHang = this.createButtonMenu("Khách Hàng", new ImageIcon("images/customer.png"));
+		btnThongKe = this.createButtonMenu("Thống Kê", new ImageIcon("images/statistics.png"));
+		btnHuongDan = this.createButtonMenu("Hướng Dẫn", new ImageIcon("images/help.png"));
+		btnTaiKhoan = this.createButtonMenu("Đổi mật khẩu", new ImageIcon("images/change-password.png"));
 		btnDangXuat = this.createButtonMenu("Đăng Xuất", new ImageIcon("images/singout.png"));
 		btnKetCa = this.createButtonMenu("Kết Ca", new ImageIcon("images/shift.png"));
 		btnQuanLyKetCa = this.createButtonMenu("Quản lý kết Ca", new ImageIcon("images/management-endshift.png"));
@@ -339,7 +339,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				pContent.add(new Gui_QuanLyKetCa(pContent.getWidth(), pContent.getHeight()));
 				lbl1.setText("Quản Lý Kết Ca");
 			}
-			actButtonBack = btnHuongDan;
+			actButtonBack = btnQuanLyKetCa;
 		}else if (act.equals(btnHuongDan)) {
 			if (!actButtonBack.equals(btnHuongDan)) {
 				actButtonBack.setBackground(new Color(224,220,220));

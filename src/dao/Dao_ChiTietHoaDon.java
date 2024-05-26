@@ -5,14 +5,95 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import database.ConnectDB;
+import entity.ChiTietHoaDon;
+import entity.HoaDon;
 
 public class Dao_ChiTietHoaDon {
 	public Dao_ChiTietHoaDon() {
 		
+	}
+	
+	public List<ChiTietHoaDon> readChiTietHoaDonFromSQLByMaHD(String maHD){
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+	    List<ChiTietHoaDon> listCTHD = new ArrayList();
+		try {
+	        connect = ConnectDB.getConnection();
+			Statement stt = connect.createStatement();
+	        stmt = connect.prepareStatement("SELECT * FROM ChiTietHoaDon WHERE maHD = ?");
+			stmt.setString(1, maHD);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				ChiTietHoaDon cthd = new ChiTietHoaDon(rs.getString(2),
+						rs.getString(3),
+						rs.getInt(4),
+						rs.getString(5),
+						rs.getFloat(6),
+						rs.getString(7),
+						rs.getDate(8).toLocalDate(),
+						rs.getFloat(9),
+						rs.getFloat(10)
+						);
+				listCTHD.add(cthd);
+			}
+		}  catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	            	ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+		}
+		return listCTHD;
+	}
+	
+	public boolean addChiTietHoaDon(HoaDon hd) {
+		Connection connect = null;
+	    PreparedStatement stmt = null;
+		int n = 0;
+		try {
+	        connect = ConnectDB.getConnection();
+	        List<ChiTietHoaDon> listCTHD = hd.getChiTietHoaDon();
+	        for (ChiTietHoaDon cthd : listCTHD) {
+	        	stmt = connect.prepareStatement("INSERT INTO ChiTietHoaDon VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				stmt.setString(1, hd.getMaHD());
+				stmt.setString(2, cthd.getMaThuoc());
+				stmt.setString(3, cthd.getTenThuoc());
+				stmt.setInt(4, cthd.getSoLuong());
+				stmt.setString(5, cthd.getDonViTinh());
+				stmt.setFloat(6, cthd.getGia());
+				stmt.setString(7, cthd.getThanhPhan());
+				stmt.setTimestamp(8, Timestamp.valueOf(cthd.getNgayHetHan().atStartOfDay()));
+				stmt.setFloat(9, cthd.getKhuyenMai());
+				stmt.setFloat(10, cthd.getTongTienSanPham());
+
+				n = stmt.executeUpdate();
+	        }
+			
+		}  catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	            	ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+		return n>0;
 	}
 	
 	public List<Object[]> statisticalThuocByThang(int thang, int nam) {

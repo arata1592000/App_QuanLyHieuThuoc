@@ -6,11 +6,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import database.ConnectDB;
 import entity.BangKetCa;
 import entity.ChiTietBangKetCa;
+import entity.ChiTietHoaDon;
+import entity.HoaDon;
+import entity.KhachHang;
+import entity.KhuyenMai;
+import entity.NhanVien;
 
 
 public class Dao_BangKetCa {
@@ -67,7 +73,7 @@ public class Dao_BangKetCa {
 			stmt.setFloat(6, bangKetCa.getTienATMThuTrongCa());
 			stmt.setFloat(7, bangKetCa.getTienLayRa());
 			n = stmt.executeUpdate();
-			if (addChiTietBangKetCa(bangKetCa)) {
+			if ((new Dao_ChiTietBangKetCa()).addChiTietBangKetCa(bangKetCa)) {
 				return n>0;
 			}else {
 				removeBangKetCa(bangKetCa.getMaCa());
@@ -113,21 +119,28 @@ public class Dao_BangKetCa {
 		return n>0;
 	}
 	
-	public boolean addChiTietBangKetCa(BangKetCa bangKetCa) {
+	public List<BangKetCa> readBangKetCaFromSQL(){
 		Connection connect = null;
 	    PreparedStatement stmt = null;
-		int n = 0;
+	    List<BangKetCa> listBKC = new ArrayList();
 		try {
 	        connect = ConnectDB.getConnection();
-	        List<ChiTietBangKetCa> listCTBKC = bangKetCa.getChiTietBangKetCa();
-	        for (ChiTietBangKetCa ctbkc : listCTBKC) {
-	        	stmt = connect.prepareStatement("INSERT INTO ChiTietBangKetCa VALUES(?, ?, ?)");
-				stmt.setString(1, bangKetCa.getMaCa());
-				stmt.setFloat(2, ctbkc.getMenhGia());
-				stmt.setInt(3, ctbkc.getSoLuong());
-				n = stmt.executeUpdate();
-	        }
-			
+			Statement stt = connect.createStatement();
+			ResultSet rs = stt.executeQuery("SELECT * FROM BangKetCa");
+			while (rs.next()) {
+				NhanVien nv = (new Dao_NhanVien()).findNhanVienByMaNV(rs.getString(2));
+				BangKetCa bkc = new BangKetCa(rs.getString(1),
+						nv,
+						rs.getDate(3).toLocalDate(),
+						rs.getFloat(4),
+						rs.getFloat(5),
+						rs.getFloat(6),
+						rs.getFloat(7)
+					);
+				List<ChiTietBangKetCa> listCTBKC = (new Dao_ChiTietBangKetCa()).readChiTietBangKetCaFromSQLByMaHD(bkc.getMaCa());
+				bkc.setChiTietBangKetCa(listCTBKC);
+				listBKC.add(bkc);
+			}
 		}  catch (SQLException e) {
 	        e.printStackTrace();
 	    } finally {
@@ -140,7 +153,46 @@ public class Dao_BangKetCa {
 	        } catch (SQLException e) {
 	            e.printStackTrace();
 	        }
+		}
+		return listBKC;
+	}
+
+	public BangKetCa findBangKetCaByMaCa(String maCa) {
+	    Connection connect = null;
+	    PreparedStatement stmt = null;
+	    BangKetCa bkc = null;
+	    try {
+	        connect = ConnectDB.getConnection();
+	        stmt = connect.prepareStatement("SELECT * FROM BangKetCa WHERE maCa = ?");
+	        stmt.setString(1, maCa); // Thiết lập giá trị cho tham số maThuoc
+
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	        	NhanVien nv = (new Dao_NhanVien()).findNhanVienByMaNV(rs.getString(2));
+				bkc = new BangKetCa(rs.getString(1),
+						nv,
+						rs.getDate(3).toLocalDate(),
+						rs.getFloat(4),
+						rs.getFloat(5),
+						rs.getFloat(6),
+						rs.getFloat(7)
+					);
+				List<ChiTietBangKetCa> listCTBKC = (new Dao_ChiTietBangKetCa()).readChiTietBangKetCaFromSQLByMaHD(bkc.getMaCa());
+				bkc.setChiTietBangKetCa(listCTBKC);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng kết nối và statement để tránh lãng phí tài nguyên
+	        try {
+	            if (stmt != null) stmt.close();
+	            if (connect != null) {
+	                ConnectDB.close(connect);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
 	    }
-		return n>0;
+	    return bkc;
 	}
 }
