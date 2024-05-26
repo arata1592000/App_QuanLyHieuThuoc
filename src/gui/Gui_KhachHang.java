@@ -16,7 +16,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +30,7 @@ import java.util.Properties;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -40,8 +45,10 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import com.toedter.calendar.JDateChooser;
 
+import dao.Dao_HoaDon;
 import dao.Dao_KhachHang;
 import dao.Dao_Thuoc;
+import entity.HoaDon;
 import entity.KhachHang;
 import entity.Thuoc;
 
@@ -59,7 +66,7 @@ public class Gui_KhachHang extends JPanel{
 
 	private int widthComp;
 	private int heightComp;
-	private JTextField txtSearch;
+	private JTextField txtTim;
 	private JButton btnTim;
 	private JPanel pSearch;
 	private JPanel pFillDate;
@@ -71,7 +78,7 @@ public class Gui_KhachHang extends JPanel{
 	private JPopupMenu datePickerPopup;
 	private JDatePickerImpl datePicker;
 	private JTextField dateTextField;
-	private Component dateChooserStartDate;
+	private JDateChooser dateChooserStartDate;
 	private JLabel lbl3;
 	private JDateChooser dateChooserEndDate;
 	public Gui_KhachHang(int widthComp, int heightComp) {
@@ -84,7 +91,7 @@ public class Gui_KhachHang extends JPanel{
 	public void initCompoent() {
 		pAction = new JPanel();
 		pSearch = new JPanel();
-		txtSearch = new JTextField(20);
+		txtTim = new JTextField(20);
 		btnTim = new JButton();
 		pFillDate = new JPanel();
 		lbl1 = new JLabel();
@@ -98,9 +105,9 @@ public class Gui_KhachHang extends JPanel{
 		pFillDate.setBackground(Color.WHITE);
 		pAction.setBackground(Color.WHITE);
 		pAction.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.1)));
-		txtSearch.setPreferredSize(new Dimension(150, 25));
-		txtSearch.setFont(new Font("Arial", Font.PLAIN, 16));
-		txtSearch.setText("Nhập mã hoặc tên của khách hàng");
+		txtTim.setPreferredSize(new Dimension(150, 25));
+		txtTim.setFont(new Font("Arial", Font.PLAIN, 16));
+		txtTim.setText("Nhập mã hoặc tên của khách hàng");
 		btnTim.setText("Tìm");
 		btnTim.setForeground(Color.WHITE);
 		btnTim.setFont(new Font("Arial", Font.BOLD, 15));
@@ -135,7 +142,7 @@ public class Gui_KhachHang extends JPanel{
 		JScrollPane pane = new JScrollPane(tableModel);
 		pane.setPreferredSize(new Dimension((int)(widthComp*0.9),(int) (heightComp*0.7)));
 		
-		pSearch.add(txtSearch);
+		pSearch.add(txtTim);
 		pSearch.add(btnTim);
 		pFillDate.add(lbl1);
 		pFillDate.add(dateChooserStartDate);
@@ -143,31 +150,49 @@ public class Gui_KhachHang extends JPanel{
 		pFillDate.add(dateChooserEndDate);
 		pAction.add(pSearch);
 		pAction.add(Box.createHorizontalStrut(300));
-		pAction.add(pFillDate);
+//		pAction.add(pFillDate);
 		pTable.add(lbl3);
 		pTable.add(pane);
 		this.setLayout(new BorderLayout());
 		this.add(pAction, BorderLayout.NORTH);
 		this.add(pTable, BorderLayout.CENTER);
-		txtSearch.addFocusListener(new FocusListener() {
+		txtTim.addFocusListener(new FocusListener() {
 			
 			@Override
 			public void focusLost(FocusEvent e) {
 				// TODO Auto-generated method stub
-				if (txtSearch.getText().equals("")) {
-                	txtSearch.setText("Nhập mã hoặc tên của khách hàng");
+				if (txtTim.getText().equals("")) {
+                	txtTim.setText("Nhập mã hoặc tên của khách hàng");
                 }
 			}
 			
 			@Override
 			public void focusGained(FocusEvent e) {
 				// TODO Auto-generated method stub
-				if (txtSearch.getText().equals("Nhập mã hoặc tên của khách hàng")) {
-                	txtSearch.setText("");
+				if (txtTim.getText().equals("Nhập mã hoặc tên của khách hàng")) {
+                	txtTim.setText("");
                 }
 			}
 		});
-
+		btnTim.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String maKH = txtTim.getText();
+				if(!maKH.equals("Tìm hóa đơn theo mã")) {
+					KhachHang kh = (new Dao_KhachHang()).findKhachHangByMaKH(maKH);
+					if(kh != null) {
+						dataModel.setRowCount(0);
+						addRowKhachHang(kh);
+					}else {
+		                JOptionPane.showMessageDialog(null, "Không tìm thấy khách hàng với mã " + maKH);
+					}
+				}
+			}
+		});
+		
+		
 	}
 	
 	public void addRowKhachHang(KhachHang kh) {
