@@ -23,6 +23,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -80,8 +81,6 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 	private JButton btnThemThuoc;
 	private JButton btnSuaThuoc;
 	private JPanel pAction;
-	private JTextField txt1;
-	private JLabel lbl12;
 	private JLabel lbl13;
 	private JDateChooser dateTuNgay;
 	private JLabel lbl14;
@@ -98,6 +97,9 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 	private JPanel pContent;
 	private JPanel pForm;
 	private Border defaultBorder;
+	private JComboBox cbbLocKhuyenMai;
+	private JComboBox cbbLocHetHan;
+	private JComboBox cbbLocHetHang;
 	
 	public Gui_XemThongTinThuoc(int width, int height) {
 		// TODO Auto-generated constructor stub
@@ -147,19 +149,23 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		btnSuaThuoc = new JButton();
 		pSouth = new JPanel();
 		pAction = new JPanel();
-		lbl12 = new JLabel();
-		txt1 = new JTextField();//
+//		lbl12 = new JLabel();
+		cbbLocKhuyenMai = new JComboBox<>(new String[] {"Tất cả", "Khuyến mãi", "Không khuyến mãi"});
+		cbbLocHetHan = new JComboBox<>(new String[] {"Tất cả", "Hết hạn", "Chưa hết hạn"});;  
+		cbbLocHetHang = new JComboBox<>(new String[] {"Tất cả", "Hết thuốc", "Còn thuốc"});;  
+
 		lbl13 = new JLabel();
 		dateTuNgay = new JDateChooser();
-		dateTuNgay.setPreferredSize(new Dimension(150,21));
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, 2023); // Đặt năm
+		calendar.set(Calendar.MONTH, Calendar.JANUARY); // Đặt tháng (tháng 1 là 0)
+		calendar.set(Calendar.DAY_OF_MONTH, 1); // Đặt ngày
+
+		dateTuNgay.setDate(calendar.getTime());		dateTuNgay.setPreferredSize(new Dimension(150,21));
 		lbl14 = new JLabel();
 		dateDenNgay = new JDateChooser();
-//<<<<<<< HEAD
-//		txtTim = new JTextField("Nhập mã thuốc");   //an sua
-//=======
 		dateDenNgay.setPreferredSize(new Dimension(150,21));
 		txtTim = new JTextField(20);
-//>>>>>>> origin/phuhao/regular2
 		btnTim = new JButton();
 		pTable = new JPanel();
 		lbl15 = new JLabel();
@@ -329,7 +335,6 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
  
         pButton.setBackground(Color.WHITE);
         btnThemThuoc.setText("Thêm thuốc");
-        btnThemThuoc.setForeground(Color.BLACK);
 		btnThemThuoc.setFont(new Font("Arial", Font.BOLD, 16));
 		btnThemThuoc.setBackground(new Color(40,156,164));
 		btnThemThuoc.setOpaque(true);
@@ -338,7 +343,6 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
         btnThemThuoc.setFocusPainted(false);     
         btnThemThuoc.setForeground(Color.WHITE);
         btnXoaThuoc.setText("Xóa thuốc");
-        btnXoaThuoc.setForeground(Color.BLACK);
 		btnXoaThuoc.setFont(new Font("Arial", Font.BOLD, 16));
 		btnXoaThuoc.setBackground(new Color(40,156,164));
 		btnXoaThuoc.setOpaque(true);
@@ -353,19 +357,9 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		pSouth.setBackground(Color.WHITE);
 		pAction.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.05)));
 		pAction.setBackground(Color.WHITE);
-		lbl12.setText("Lọc: ");
         lbl13.setText("Lọc ngày nhập về từ:");
         lbl14.setText("Đến ngày");
-//<<<<<<< HEAD
-////        txtTim.setText("Tìm thuốc theo mã");       //an sua
-//        txtTim.addFocusListener(new FocusListener() {//an sua
-//    		
-//    		@Override
-//    		public void focusLost(FocusEvent e) { //an sua
-//    			// TODO Auto-generated method stub
-//    			if (txtTim.getText().equals("")) {//an sua
-//                	txtTim.setText("Nhập mã thuốc");//an sua
-//=======
+
         txtTim.setText("Tìm thuốc theo mã");
         txtTim.setPreferredSize(new Dimension(135,25));
         txtTim.addFocusListener(new FocusListener() {
@@ -375,26 +369,22 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
     			// TODO Auto-generated method stub
     			if (txtTim.getText().equals("")) {
                 	txtTim.setText("Tìm thuốc theo mã");
-//>>>>>>> origin/phuhao/regular2
+
                 }
     		}
     		
     		@Override
-//<<<<<<< HEAD
-//    		public void focusGained(FocusEvent e) {//an sua
-//    			// TODO Auto-generated method stub
-//    			if (txtTim.getText().equals("Nhập mã thuốc")) {//an sua
-//                	txtTim.setText("");//an sua
-//=======
+
     		public void focusGained(FocusEvent e) {
     			// TODO Auto-generated method stub
     			if (txtTim.getText().equals("Tìm thuốc theo mã")) {
-                	txtTim.setText("");
-//>>>>>>> origin/phuhao/regular2
-                	}
+                	txtTim.setText("");                	}
     			}
         	});
         btnTim.setText("Tìm");
+        btnTim.setForeground(Color.WHITE);
+		btnTim.setFont(new Font("Arial", Font.BOLD, 16));
+		btnTim.setBackground(new Color(40,156,164));
         lbl15.setText("Danh sách thuốc");
         lbl15.setFont(new Font("Arial", Font.ITALIC, 26));
 		pTable.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.49)));
@@ -410,8 +400,10 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		pButton.add(btnThemThuoc);
 		pButton.add(btnXoaThuoc);
 //		pButton.add(btnSuaThuoc);
-		pAction.add(lbl12);
-		pAction.add(txt1);
+//		pAction.add(lbl12);
+		pAction.add(cbbLocKhuyenMai);
+		pAction.add(cbbLocHetHan);
+		pAction.add(cbbLocHetHang);	
 		pAction.add(lbl13);
 		pAction.add(dateTuNgay);
 		pAction.add(lbl14);
@@ -434,11 +426,39 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
         layeredPane.add(pContent, JLayeredPane.DEFAULT_LAYER);
         this.add(layeredPane);
         
+        cbbLocKhuyenMai.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+                filterThuoc();
+			}
+		} );
+        
+        
+        cbbLocHetHan.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+                filterThuoc();
+			}
+		} );
+
+		cbbLocHetHang.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+                filterThuoc();
+			}
+		} );
+        
         dateTuNgay.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if ("date".equals(evt.getPropertyName())) {
-                    filterThuocByDate();
+                    filterThuoc();
                 }
             }
         });
@@ -447,18 +467,22 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if ("date".equals(evt.getPropertyName())) {
-                    filterThuocByDate();
+                    filterThuoc();
                 }
             }
         });
 
 	}
-	private void filterThuocByDate() {
+	private void filterThuoc() {
         LocalDate fromDate = dateTuNgay.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate toDate = dateDenNgay.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        String fillDiscount = cbbLocKhuyenMai.getSelectedItem().toString();
+        String fillExpired = cbbLocHetHan.getSelectedItem().toString();
+        String fillCount = cbbLocHetHang.getSelectedItem().toString();
+        System.out.println(fillCount + " " + fillDiscount + " " + fillExpired);
         if (fromDate != null && toDate != null && !fromDate.isAfter(toDate)) {
             dataModel.setRowCount(0);
-            List<Thuoc> filteredThuocList = (new Dao_Thuoc()).getThuocByNgayNhapVe(fromDate, toDate);
+            List<Thuoc> filteredThuocList = (new Dao_Thuoc()).fillteredListThuocByDiscountExpiredCountDate(fillDiscount, fillExpired, fillCount,fromDate, toDate);
             for (Thuoc thuoc : filteredThuocList) {
                 addRowThuoc(thuoc);
             }
@@ -485,7 +509,8 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 				try {
 					if ((new Dao_Thuoc()).addThuoc(thuoc)) {
 						JOptionPane.showMessageDialog(this, "Thêm thuốc thành công");
-						addRowThuoc(thuoc);
+						dataModel.setRowCount(0);
+						loadDataTable();
 						clearFields();
 					}
 				} catch (NumberFormatException e1) {
@@ -600,8 +625,8 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		dataModel.addRow(new Object[] {thuoc.getMaThuoc(),
 				thuoc.getTenThuoc(),
 				thuoc.getNgayNhapVe(),
+				thuoc.getNgaySanXuat(),
 				thuoc.getNgayHetHan(),
-				thuoc.getNgaySanXuat(), //an sua
 				thuoc.getNoiSanXuat(),
 				thuoc.getGia()+"",
 				thuoc.getDonViTinh(),

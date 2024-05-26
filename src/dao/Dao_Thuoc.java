@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import database.ConnectDB;
+import entity.KhuyenMai;
 import entity.Thuoc;
 
 public class Dao_Thuoc {
@@ -460,4 +461,76 @@ public class Dao_Thuoc {
         }
         return listThuoc;
     }
+	
+	public List<Thuoc> fillteredListThuocByDiscountExpiredCountDate(String discount, String expired, String count, LocalDate fromDate, LocalDate toDate) {
+        List<Thuoc> listThuoc = new ArrayList<>();
+        String query = "DECLARE @fillDiscount NVARCHAR(20) = ?\r\n"
+        		+ "DECLARE @fillExpired NVARCHAR(20) = ?\r\n"
+        		+ "DECLARE @fillCount NVARCHAR(20) = ?\r\n"
+        		+ "SELECT * \r\n"
+        		+ "FROM Thuoc \r\n"
+        		+ "WHERE ngayNhapVe BETWEEN ? AND ?\r\n"
+        		+ "AND (\r\n"
+        		+ "    (\r\n"
+        		+ "        @fillDiscount = N'Không khuyến mãi' AND maKMSP IS NULL \r\n"
+        		+ "    ) OR (\r\n"
+        		+ "        @fillDiscount = N'Tất cả' AND (maKMSP IS NULL OR maKMSP IS NOT NULL) \r\n"
+        		+ "    ) OR (\r\n"
+        		+ "        @fillDiscount = N'Khuyến mãi' AND maKMSP IS NOT NULL\r\n"
+        		+ "    )\r\n"
+        		+ ")\r\n"
+        		+ "AND (\r\n"
+        		+ "	(\r\n"
+        		+ "		@fillCount = N'Tất cả' AND soLuong >= 0\r\n"
+        		+ "	) OR (\r\n"
+        		+ "		@fillCount = N'Còn thuốc' AND soLuong > 0\r\n"
+        		+ "	) OR (\r\n"
+        		+ "		@fillCount = N'Hết thuốc' AND soLuong = 0\r\n"
+        		+ "	)\r\n"
+        		+ ")\r\n"
+        		+ "AND (\r\n"
+        		+ "	(\r\n"
+        		+ "		@fillExpired = N'Tất cả' AND (ngayHetHan >= GETDATE() OR ngayHetHan < GETDATE())\r\n"
+        		+ "	) OR (\r\n"
+        		+ "		@fillExpired = N'Hết hạn' AND ngayHetHan <= GETDATE()\r\n"
+        		+ "	) OR (\r\n"
+        		+ "		@fillExpired = N'Chưa hết hạn' AND ngayHetHan > GETDATE()\r\n"
+        		+ "	)\r\n"
+        		+ ")";
+        try (Connection connect = ConnectDB.getConnection();
+             PreparedStatement ps = connect.prepareStatement(query)) {
+            
+            ps.setString(1, discount);
+            ps.setString(2, expired);
+            ps.setString(3, count);
+            ps.setDate(4, java.sql.Date.valueOf(fromDate));
+            ps.setDate(5, java.sql.Date.valueOf(toDate));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Thuoc thuoc = new Thuoc(
+                        rs.getString("maThuoc"),
+                        rs.getString("tenThuoc"),
+                        rs.getDate("ngayNhapVe").toLocalDate(),
+                        rs.getDate("ngaySanXuat").toLocalDate(),
+                        rs.getDate("ngayHetHan").toLocalDate(),
+                        rs.getString("noiSanXuat"),
+                        rs.getFloat("gia"),
+                        rs.getString("donViTinh"),
+                        rs.getString("thanhPhan"),
+                        rs.getInt("soLuong")
+                    );
+                    KhuyenMai km = (new Dao_KhuyenMai()).findKhuyenMaiByID(rs.getString("maKMSP"));
+                    if (rs.getString(11) != null) {
+    					thuoc.setKhuyenMai((new Dao_KhuyenMai()).findKhuyenMaiByID(rs.getString(11)));	
+    				}                    
+                    listThuoc.add(thuoc);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listThuoc;
+    }
+
 }
