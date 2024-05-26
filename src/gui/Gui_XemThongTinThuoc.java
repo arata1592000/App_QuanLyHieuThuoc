@@ -177,41 +177,7 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 		tableModel.setFont(new Font("Arial", Font.PLAIN, 11));
 		tableModel.setRowHeight(25);
 		tableModel.setModel(dataModel);
-		tableModel.addMouseListener(new MouseAdapter() {
-		    @Override
-		    public void mouseClicked(MouseEvent e) {
-		        super.mouseClicked(e);
-		        int rowIndex = tableModel.getSelectedRow();
-		        if (rowIndex != -1) {
-		            String maThuoc = (String) tableModel.getValueAt(rowIndex, 0);
-		            String tenThuoc = (String) tableModel.getValueAt(rowIndex, 1);
-		            LocalDate ngayNhapVe = (LocalDate) tableModel.getValueAt(rowIndex, 2);
-		            LocalDate ngaySanXuat = (LocalDate) tableModel.getValueAt(rowIndex, 3);
-		            LocalDate ngayHetHan = (LocalDate) tableModel.getValueAt(rowIndex, 4);
-		            String noiSanXuat = (String) tableModel.getValueAt(rowIndex, 5);
-//		            float gia = (float) tableModel.getValueAt(rowIndex, 6);
-		            String giaStr = (String) tableModel.getValueAt(rowIndex, 6);
-		            float gia = Float.parseFloat(giaStr);
-		            String donViTinh = (String) tableModel.getValueAt(rowIndex, 7);
-		            String thanhPhan = (String) tableModel.getValueAt(rowIndex, 8);
-		            String sLuongStr = (String) tableModel.getValueAt(rowIndex, 10);
-		            int soLuong = Integer.parseInt(sLuongStr);
-		            
-		            
-		            txtMaThuoc.setText(maThuoc);
-		            txtTenThuoc.setText(tenThuoc);
-		            dateNgayNhapVe.setDate(Date.from(ngayNhapVe.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		            dateNgaySanXuat.setDate(Date.from(ngaySanXuat.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		            dateNgayHetHan.setDate(Date.from(ngayHetHan.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		            txtNoiSanXuat.setText(noiSanXuat);
-		            txtGia.setText(String.valueOf(gia));
-		            txtDonViTinh.setText(donViTinh);
-		            txtThanhPhan.setText(thanhPhan);
-		            txtSoLuong.setText(String.valueOf(soLuong));
-		        }
-		    }
-		});
-
+		
 		scroll = new JScrollPane(tableModel);
         
 		layeredPane.setOpaque(true);
@@ -362,25 +328,6 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
 
         txtTim.setText("Tìm thuốc theo mã");
         txtTim.setPreferredSize(new Dimension(135,25));
-        txtTim.addFocusListener(new FocusListener() {
-    		
-    		@Override
-    		public void focusLost(FocusEvent e) {
-    			// TODO Auto-generated method stub
-    			if (txtTim.getText().equals("")) {
-                	txtTim.setText("Tìm thuốc theo mã");
-
-                }
-    		}
-    		
-    		@Override
-
-    		public void focusGained(FocusEvent e) {
-    			// TODO Auto-generated method stub
-    			if (txtTim.getText().equals("Tìm thuốc theo mã")) {
-                	txtTim.setText("");                	}
-    			}
-        	});
         btnTim.setText("Tìm");
         btnTim.setForeground(Color.WHITE);
 		btnTim.setFont(new Font("Arial", Font.BOLD, 16));
@@ -471,6 +418,60 @@ public class Gui_XemThongTinThuoc extends JPanel implements ActionListener{
                 }
             }
         });
+        
+        txtTim.addFocusListener(new FocusListener() {
+    		
+    		@Override
+    		public void focusLost(FocusEvent e) {
+    			// TODO Auto-generated method stub
+    			if (txtTim.getText().equals("")) {
+                	txtTim.setText("Tìm thuốc theo mã");
+
+                }
+    		}
+    		
+    		@Override
+
+    		public void focusGained(FocusEvent e) {
+    			// TODO Auto-generated method stub
+    			if (txtTim.getText().equals("Tìm thuốc theo mã")) {
+                	txtTim.setText("");                	}
+    			}
+        	});
+        tableModel.addMouseListener(new MouseAdapter() {
+		    @Override
+		    public void mouseClicked(MouseEvent e) {
+		        super.mouseClicked(e);
+		        int rowIndex = tableModel.getSelectedRow();
+		        if (rowIndex != -1) {
+		            String maThuoc = (String) tableModel.getValueAt(rowIndex, 0);
+		            String tenThuoc = (String) tableModel.getValueAt(rowIndex, 1);
+		            LocalDate ngayNhapVe = (LocalDate) tableModel.getValueAt(rowIndex, 2);
+		            LocalDate ngaySanXuat = (LocalDate) tableModel.getValueAt(rowIndex, 3);
+		            LocalDate ngayHetHan = (LocalDate) tableModel.getValueAt(rowIndex, 4);
+		            String noiSanXuat = (String) tableModel.getValueAt(rowIndex, 5);
+//		            float gia = (float) tableModel.getValueAt(rowIndex, 6);
+		            String giaStr = (String) tableModel.getValueAt(rowIndex, 6);
+		            float gia = Float.parseFloat(giaStr);
+		            String donViTinh = (String) tableModel.getValueAt(rowIndex, 7);
+		            String thanhPhan = (String) tableModel.getValueAt(rowIndex, 8);
+		            String sLuongStr = (String) tableModel.getValueAt(rowIndex, 10);
+		            int soLuong = Integer.parseInt(sLuongStr);
+		            
+		            
+		            txtMaThuoc.setText(maThuoc);
+		            txtTenThuoc.setText(tenThuoc);
+		            dateNgayNhapVe.setDate(Date.from(ngayNhapVe.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		            dateNgaySanXuat.setDate(Date.from(ngaySanXuat.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		            dateNgayHetHan.setDate(Date.from(ngayHetHan.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		            txtNoiSanXuat.setText(noiSanXuat);
+		            txtGia.setText(String.valueOf(gia));
+		            txtDonViTinh.setText(donViTinh);
+		            txtThanhPhan.setText(thanhPhan);
+		            txtSoLuong.setText(String.valueOf(soLuong));
+		        }
+		    }
+		});
 
 	}
 	private void filterThuoc() {

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -349,5 +350,42 @@ public class Dao_HoaDon {
 	        }
 		}
 		return totalMoneySpent;
+	}
+	
+	public List<HoaDon> fillteredListHoaDonByDateCreated(LocalDate dateCreated){
+	    List<HoaDon> listHD = new ArrayList();
+        String query = "SELECT * FROM HoaDon\r\n"
+        		+ "WHERE ngayLap = ?";
+        try (Connection connect = ConnectDB.getConnection();
+             PreparedStatement ps = connect.prepareStatement(query)) {
+            ps.setDate(1, java.sql.Date.valueOf(dateCreated));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                	NhanVien nv = (new Dao_NhanVien()).findNhanVienByMaNV(rs.getString(3));
+    				KhachHang kh = (new Dao_KhachHang()).findKhachHangByMaKH(rs.getString(4));
+    				KhuyenMai km = (new Dao_KhuyenMai()).findKhuyenMaiByID(rs.getString(7));
+    				HoaDon hd = new HoaDon(rs.getString(1),
+    						rs.getDate(2).toLocalDate(),
+    						rs.getFloat(5),
+    						rs.getString(6),
+    						rs.getFloat(8),
+    						rs.getFloat(9),
+    						rs.getString(10),
+    						rs.getFloat(11),
+    						rs.getFloat(12),
+    						rs.getString(13)
+    					);
+    				hd.setNhanVien(nv);
+    				hd.setKhachHang(kh);
+    				hd.setKhuyenMai(km);
+    				List<ChiTietHoaDon> listCTHD = (new Dao_ChiTietHoaDon()).readChiTietHoaDonFromSQLByMaHD(hd.getMaHD());
+    				hd.setChiTietHoaDon(listCTHD);
+    				listHD.add(hd);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listHD;
 	}
 }

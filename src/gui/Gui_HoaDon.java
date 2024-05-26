@@ -8,8 +8,14 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -21,6 +27,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -36,26 +43,31 @@ import com.toedter.calendar.JDateChooser;
 
 import dao.Dao_HoaDon;
 import dao.Dao_KhachHang;
+import dao.Dao_Thuoc;
 import entity.HoaDon;
 import entity.KhachHang;
+import entity.Thuoc;
 import utils.ButtonDeleteEditor;
 import utils.ButtonDeleteRenderer;
+import utils.PrintOrder;
 public class Gui_HoaDon extends JPanel {
 	private JPanel pTable;
 	private JPanel pAction;
 	private JLabel lbl1;
 	private DefaultTableModel dataModel;
 	private JTable tableModel;
-	private JTextField txtSearch;
+	private JTextField txtTim;
 	private JButton btnTim;
 	private JPanel pSearch;
 	private JPanel pFillDate;
-	private Component dateChooserDate;
+	private JDateChooser dateChooserDate;
 	private JLabel lbl2;
 	private int widthComp;
 	private int heightComp;
 	private JLayeredPane layeredPane;
 	private JPanel pMain;
+	private JButton btnLamMoi;
+	private JButton btnInHoaDon;
 	public Gui_HoaDon(int widthComp, int heightComp) {
 		super();
 		// TODO Auto-generated constructor stub
@@ -64,7 +76,7 @@ public class Gui_HoaDon extends JPanel {
 		this.setBackground(Color.WHITE);
 		initCompoent();
 		loadDataTable();
-		
+		handleCompoent();
 	}
 	
 	public void initCompoent() {
@@ -72,11 +84,13 @@ public class Gui_HoaDon extends JPanel {
 		pMain = new JPanel();
 		pAction = new JPanel();
 		pSearch = new JPanel();
-		txtSearch = new JTextField();
+		txtTim = new JTextField();
 		btnTim = new JButton();
 		pFillDate = new JPanel();
 		lbl1 = new JLabel();
         dateChooserDate = new JDateChooser();
+        btnLamMoi = new JButton("Làm mới");
+        btnInHoaDon = new JButton("In hóa đơn");
         pTable = new JPanel();
 		lbl2 = new JLabel();
 		
@@ -91,7 +105,8 @@ public class Gui_HoaDon extends JPanel {
 		pFillDate.setBackground(Color.WHITE);
 		pAction.setBackground(Color.WHITE);
 		pAction.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.1)));
-		txtSearch.setPreferredSize(new Dimension(150, 25));
+		txtTim.setPreferredSize(new Dimension(150, 25));
+		txtTim.setText("Tìm hóa đơn theo mã");
 		btnTim.setText("Tìm");
 		btnTim.setForeground(Color.WHITE);
 		btnTim.setFont(new Font("Arial", Font.BOLD, 16));
@@ -102,6 +117,20 @@ public class Gui_HoaDon extends JPanel {
         btnTim.setFocusPainted(false);
 		lbl1.setText("Lọc theo ngày lập:");
 		dateChooserDate.setPreferredSize(new Dimension(200,25));
+		btnLamMoi.setForeground(Color.WHITE);
+		btnLamMoi.setFont(new Font("Arial", Font.BOLD, 16));
+		btnLamMoi.setBackground(new Color(40,156,164));
+		btnLamMoi.setOpaque(true);
+		btnLamMoi.setContentAreaFilled(true);
+        btnLamMoi.setBorderPainted(false);
+        btnLamMoi.setFocusPainted(false);
+        btnInHoaDon.setForeground(Color.WHITE);
+		btnInHoaDon.setFont(new Font("Arial", Font.BOLD, 16));
+		btnInHoaDon.setBackground(new Color(40,156,164));
+		btnInHoaDon.setOpaque(true);
+		btnInHoaDon.setContentAreaFilled(true);
+        btnInHoaDon.setBorderPainted(false);
+        btnInHoaDon.setFocusPainted(false);
 		pTable.setLayout(new FlowLayout());
 		pTable.setPreferredSize(new Dimension((int) (widthComp*0.95),(int) (heightComp*0.8)));
 		pTable.setBackground(Color.WHITE);
@@ -134,13 +163,17 @@ public class Gui_HoaDon extends JPanel {
 		JScrollPane pane = new JScrollPane(tableModel);
 		pane.setPreferredSize(new Dimension((int)(widthComp*0.9),(int) (heightComp*0.7)));
 		
-		pSearch.add(txtSearch);
+		pSearch.add(txtTim);
 		pSearch.add(btnTim);
 		pFillDate.add(lbl1);
 		pFillDate.add(dateChooserDate);
 		pAction.add(pSearch);
-		pAction.add(Box.createHorizontalStrut(300));
+		pAction.add(Box.createHorizontalStrut(30));
 		pAction.add(pFillDate);
+		pAction.add(Box.createHorizontalStrut(30));
+		pAction.add(btnLamMoi);
+		pAction.add(Box.createHorizontalStrut(30));
+		pAction.add(btnInHoaDon);
 		pTable.add(lbl2);
 		pTable.add(pane);
 		pMain.setLayout(new BorderLayout());
@@ -148,6 +181,81 @@ public class Gui_HoaDon extends JPanel {
 		pMain.add(pTable, BorderLayout.CENTER);
 		layeredPane.add(pMain, JLayeredPane.DEFAULT_LAYER);
 		this.add(layeredPane);
+	}
+	
+	private void handleCompoent() {
+		txtTim.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				if (txtTim.getText().equals("")) {
+		        	txtTim.setText("Tìm hóa đơn theo mã");
+		
+		        }
+			}
+			@Override
+			public void focusGained(FocusEvent e) {
+				// TODO Auto-generated method stub
+				if (txtTim.getText().equals("Tìm hóa đơn theo mã")) {
+		        	txtTim.setText("");                	}
+				}
+    	});
+		
+		btnTim.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String maHD = txtTim.getText();
+				if(!maHD.equals("Tìm hóa đơn theo mã")) {
+					HoaDon hd = (new Dao_HoaDon()).findHoaDonByMaHD(maHD);
+					if(hd != null) {
+						dataModel.setRowCount(0);
+						addRowHoaDon(hd);
+					}else {
+		                JOptionPane.showMessageDialog(null, "Không tìm thấy hóa đơn với mã " + maHD);
+					}
+				}
+			}
+		});
+		dateChooserDate.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("date".equals(evt.getPropertyName())) {
+                    LocalDate date = dateChooserDate.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    if (date != null) {
+                        dataModel.setRowCount(0);
+                        List<HoaDon> filteredHoaDonList = (new Dao_HoaDon()).fillteredListHoaDonByDateCreated(date);
+                        for (HoaDon hd : filteredHoaDonList) {
+                            addRowHoaDon(hd);
+                        }
+                    } 
+                }
+            }
+        });
+		btnLamMoi.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				dataModel.setRowCount(0);
+				loadDataTable();
+			}
+		});
+		btnInHoaDon.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				int row = tableModel.getSelectedRow();
+				if (row != -1 ) {
+					HoaDon hd = (new Dao_HoaDon()).findHoaDonByMaHD(dataModel.getValueAt(row, 0).toString());
+		            (new PrintOrder()).PrintOrder(hd);
+				}else {
+					JOptionPane.showMessageDialog(null, "Bạn vẫn chưa chọn hóa đơn cần in");
+				}
+			}
+		});
 	}
 	
 	public void addRowHoaDon(HoaDon hd) {
