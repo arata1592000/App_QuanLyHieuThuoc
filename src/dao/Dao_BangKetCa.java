@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -194,5 +195,34 @@ public class Dao_BangKetCa {
 	        }
 	    }
 	    return bkc;
+	}
+	
+	public List<BangKetCa> fillteredListBangKetCaByDateCreated(LocalDate dateCreated){
+	    List<BangKetCa> listBKC = new ArrayList();
+        String query = "SELECT * FROM BangKetCa\r\n"
+        		+ "WHERE ngayLap = ?";
+        try (Connection connect = ConnectDB.getConnection();
+             PreparedStatement ps = connect.prepareStatement(query)) {
+            ps.setDate(1, java.sql.Date.valueOf(dateCreated));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                	NhanVien nv = (new Dao_NhanVien()).findNhanVienByMaNV(rs.getString(2));
+    				BangKetCa bkc = new BangKetCa(rs.getString(1),
+    						nv,
+    						rs.getDate(3).toLocalDate(),
+    						rs.getFloat(4),
+    						rs.getFloat(5),
+    						rs.getFloat(6),
+    						rs.getFloat(7)
+    					);
+    				List<ChiTietBangKetCa> listCTBKC = (new Dao_ChiTietBangKetCa()).readChiTietBangKetCaFromSQLByMaHD(bkc.getMaCa());
+    				bkc.setChiTietBangKetCa(listCTBKC);
+    				listBKC.add(bkc);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listBKC;
 	}
 }
