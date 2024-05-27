@@ -21,14 +21,14 @@ public class CustomMenuItemThuoc extends JMenuItem {
     private int heightComp;
 	private JLabel lblMaThuoc;
 	private JLabel lblTenThuoc;
-	private JLabel lblGia;
+	private JLabel lblThanhPhan;
 	private JLabel lblDonViTinh;
-	private JLabel lblSoLuong;
+	private JLabel lblTrangThai;
 
     public CustomMenuItemThuoc(int widthComp, Thuoc thuoc) {
         super(thuoc.getMaThuoc());
         this.widthComp = widthComp;
-        heightComp = 50;
+        heightComp = 100;
         panel = createPanel(thuoc);
         setPreferredSize(new Dimension(widthComp, heightComp));
     }
@@ -36,17 +36,17 @@ public class CustomMenuItemThuoc extends JMenuItem {
     private JPanel createPanel(Thuoc thuoc) {
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension(widthComp, heightComp));
-        lblMaThuoc = new JLabel(String.format("%-25s", ("Mã thuốc: " + thuoc.getMaThuoc())));
+        lblMaThuoc = new JLabel(String.format("%-35s", ("Mã thuốc: " + thuoc.getMaThuoc())));
         lblTenThuoc = new JLabel(String.format("%-35s", ("Tên thuốc: " + thuoc.getTenThuoc())));
-        lblGia = new JLabel(String.format("%-20s", ("Giá: " + thuoc.getGia())));
-        lblDonViTinh = new JLabel(String.format("%-25s", ("Đơn vị tính: "+thuoc.getDonViTinh())));
-        lblSoLuong = new JLabel(String.format("%-25s", ("Số lượng: "+thuoc.getSoLuong())));
+        lblThanhPhan = new JLabel(String.format("%-35s", ("Thành phần: " + thuoc.getThanhPhan())));
+        lblDonViTinh = new JLabel(String.format("%-35s", ("Đơn vị tính: "+thuoc.getDonViTinh())));
+        lblTrangThai = new JLabel(String.format("%-35s", ("Trạng thái: "+thuoc.getTrangThai())));
         
         lblMaThuoc.setFont(new Font("Arial", Font.PLAIN, 17));
         lblTenThuoc.setFont(new Font("Arial", Font.PLAIN, 17));
-        lblGia.setFont(new Font("Arial", Font.PLAIN, 17));
+        lblThanhPhan.setFont(new Font("Arial", Font.PLAIN, 17));
         lblDonViTinh.setFont(new Font("Arial", Font.PLAIN, 17));
-        lblSoLuong.setFont(new Font("Arial", Font.PLAIN, 17));
+        lblTrangThai.setFont(new Font("Arial", Font.PLAIN, 17));
 
 
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -54,9 +54,9 @@ public class CustomMenuItemThuoc extends JMenuItem {
 
         panel.add(lblMaThuoc);
         panel.add(lblTenThuoc);
-        panel.add(lblGia);
         panel.add(lblDonViTinh);
-        panel.add(lblSoLuong);
+        panel.add(lblThanhPhan);
+        panel.add(lblTrangThai);
 
         return panel;
     }

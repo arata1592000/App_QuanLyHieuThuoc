@@ -119,7 +119,11 @@ public class Gui_ChiTietHoaDon extends JPanel{
             pLeftFooter.setPreferredSize(new Dimension((int) (this.widthComp/3*2), 220));
             lbl2.setText("<html><div style='text-align: left;'>Mã HD:" + hd.getMaHD() +"<br>Danh sách thuốc đã mua:</div></html>");
         	lbl3.setText("VAT: " + hd.getThue());
-            lbl4.setText("KM: " + hd.getKhuyenMai().getMaKM());
+        	if (hd.getKhuyenMai() == null) {
+                lbl4.setText("Không có khuyến mãi" );
+        	}else {
+                lbl4.setText("KM: " + hd.getKhuyenMai().getMaKM());
+        	}
             lbl5.setText("Tổng tiền: " + hd.getTongTien());
             lbl6.setText("Thành tiền: " + hd.getThanhTien());
             lbl7.setText("Phương thức thanh toán: " + hd.getPhuongThucTT());

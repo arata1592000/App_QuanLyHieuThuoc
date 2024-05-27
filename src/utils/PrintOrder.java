@@ -129,7 +129,7 @@ public class PrintOrder {
                 document.add(new Paragraph("VAT: " + hd.getThue() + "%", font));
                 KhuyenMai km = hd.getKhuyenMai();
                 if (km == null) {
-                    document.add(new Paragraph("Không có", font));
+                    document.add(new Paragraph("Không có khuyến mãi", font));
                 } else {
                     document.add(new Paragraph("Mã khuyến mãi trên hóa đơn: " + hd.getKhuyenMai().getMaKM() + "(Khách hàng được giảm " + hd.getKhuyenMai().getTyLeKM() + "% cho hóa đơn)", font));
                 }

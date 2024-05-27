@@ -38,7 +38,11 @@ public class Dao_HoaDon {
 			stmt.setString(4, hd.getKhachHang().getMaKH());
 			stmt.setFloat(5, hd.getTongTien());
 			stmt.setString(6, hd.getLoaiHD());
-			stmt.setString(7, hd.getKhuyenMai().getMaKM());
+			if (hd.getKhuyenMai() == null) {
+				stmt.setString(7, null);
+			}else {
+				stmt.setString(7, hd.getKhuyenMai().getMaKM());
+			}
 			stmt.setFloat(8, hd.getThue());
 			stmt.setFloat(9, hd.getThanhTien());
 			stmt.setString(10, hd.getPhuongThucTT());

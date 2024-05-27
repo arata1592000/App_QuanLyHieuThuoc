@@ -101,13 +101,28 @@ public class Gui_SanPham extends JPanel implements ActionListener{
 		btnDoiTraThuoc.addActionListener(this);
 		btnXemThongTin.addActionListener(this);
 		
-		pMenu.add(Box.createHorizontalStrut(40));
-		pMenu.add(btnBanThuoc);
-		pMenu.add(Box.createHorizontalStrut(40));
-		pMenu.add(btnDoiTraThuoc);
-		pMenu.add(Box.createHorizontalStrut(40));
-		pMenu.add(btnXemThongTin);
-		pMain.add(new Gui_BanThuoc(nv, widthComp, (int) (heightComp*0.9)));
+		if (nv.getChucVu().equals("Quản Lý")) {
+			pMenu.add(Box.createHorizontalStrut(40));
+			pMenu.add(btnXemThongTin);
+			pMain.add(new Gui_XemThongTinThuoc(widthComp, (int) (heightComp*0.9)));
+			btnXemThongTin.setForeground(Color.WHITE);
+			btnXemThongTin.setFont(new Font("Arial", Font.BOLD, 16));
+			btnXemThongTin.setBackground(new Color (40,156,164));
+			btnXemThongTin.setOpaque(true);
+			btnXemThongTin.setContentAreaFilled(true);
+	        btnXemThongTin.setBorderPainted(false);
+	        btnXemThongTin.setFocusPainted(false);
+		}else {
+			pMenu.add(Box.createHorizontalStrut(40));
+			pMenu.add(btnBanThuoc);
+			pMenu.add(Box.createHorizontalStrut(40));
+			pMenu.add(btnDoiTraThuoc);
+			pMenu.add(Box.createHorizontalStrut(40));
+			pMenu.add(btnXemThongTin);
+			pMain.add(new Gui_BanThuoc(nv, widthComp, (int) (heightComp*0.9)));
+		}
+		
+		
 		btnBack = btnBanThuoc;
 		this.add(pMenu, BorderLayout.NORTH);
 		this.add(pMain, BorderLayout.CENTER);

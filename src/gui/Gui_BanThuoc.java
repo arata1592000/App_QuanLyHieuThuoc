@@ -566,10 +566,12 @@ public class Gui_BanThuoc extends JPanel{
 							""
 							);
 					KhuyenMai km = (new Dao_KhuyenMai()).findKhuyenMaiByID(txtMaKM.getText());
+					if (km != null) {
+						hd.setKhuyenMai(km);
+					}
 					hd.setNhanVien(nv);
 					hd.setKhachHang(kh);
 					hd.setChiTietHoaDon(listCTHD);
-					hd.setKhuyenMai(km);
 					if ((new Dao_HoaDon().addHoaDon(hd))) {
 						(new Dao_Thuoc()).setCountByMaThuoc(listThuoc, listSoLuong);
 			            JOptionPane.showMessageDialog(null, "Thanh toán thành công");
