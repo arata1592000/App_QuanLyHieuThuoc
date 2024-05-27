@@ -75,9 +75,11 @@ public class Gui_KetCa extends JPanel implements ActionListener{
 	private JTextField txtTienLay;
 	private JTextField txtATM;
 	private JLabel lblTien2;
-	public Gui_KetCa(NhanVien nv, int width, int height) {
+	private JButton btnDangXuat;
+	public Gui_KetCa(JButton btnDangXuat, NhanVien nv, int width, int height) {
 		widthComp = width;
 		heightComp = height;
+		this.btnDangXuat = btnDangXuat;
 		this.nv = nv;
 		initCompoent();
 		loadDataTable();
@@ -293,7 +295,7 @@ public class Gui_KetCa extends JPanel implements ActionListener{
 					bkc.setChiTietBangKetCa(listCTBKC);
 					if ((new Dao_BangKetCa()).addBangKetCa(bkc)) {
 						JOptionPane.showMessageDialog(null, "Kết ca thành công");
-	    				System.exit(0);
+						btnDangXuat.doClick();
 					}
 		        } else {
 		            

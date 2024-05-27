@@ -326,7 +326,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				btnKetCa.setBackground(new Color(224,255,255));
 				pContent.removeAll();
 				System.gc();
-				pContent.add(new Gui_KetCa(nv, pContent.getWidth(), pContent.getHeight()));
+				pContent.add(new Gui_KetCa(btnDangXuat,nv, pContent.getWidth(), pContent.getHeight()));
 				lbl1.setText("KẾT CA");
 			}
 			actButtonBack = btnKetCa;

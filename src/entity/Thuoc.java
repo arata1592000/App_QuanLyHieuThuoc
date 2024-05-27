@@ -101,7 +101,7 @@ public class Thuoc {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Thuoc(String maThuoc, String tenThuoc, LocalDate ngayNhapVe, LocalDate ngaySanXuat, LocalDate ngayHetHan,
+	public Thuoc(String maThuoc, String tenThuoc, LocalDate ngayNhapVe, LocalDate ngayHetHan, LocalDate ngaySanXuat,
 			String noiSanXuat, float gia, String donViTinh, String thanhPhan, int soLuong) {
 		super();
 		this.maThuoc = maThuoc;
