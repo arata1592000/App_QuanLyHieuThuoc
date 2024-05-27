@@ -1,10 +1,10 @@
-package Test;
+package test;
 
 import javax.swing.SwingUtilities;
 
 import gui.Gui_DangNhap;
 
-public class test {
+public class Test {
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 

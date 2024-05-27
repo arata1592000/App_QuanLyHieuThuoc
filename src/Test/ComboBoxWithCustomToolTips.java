@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;

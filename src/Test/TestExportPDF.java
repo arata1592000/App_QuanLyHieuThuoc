@@ -1,5 +1,5 @@
 
-package Test;
+package test;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;

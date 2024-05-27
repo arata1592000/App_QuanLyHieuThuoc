@@ -47,9 +47,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import Test.BarChartExample;
 import dao.Dao_ChiTietHoaDon;
 import dao.Dao_HoaDon;
+import test.BarChartExample;
 
 public class Gui_ThongKe extends JPanel{
 

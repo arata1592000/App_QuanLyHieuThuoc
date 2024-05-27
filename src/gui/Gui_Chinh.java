@@ -80,7 +80,6 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 		this.setResizable(false);
 		initCompoent();
 		addCompoent();
-		phimTat();
 		try {
             ConnectDB.getConnection();
         } catch (Exception e) {
@@ -177,6 +176,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
 	        pMenu.add(btnKetCa);
 	        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
+//			phimTat();
 		}else if (nv.getChucVu().equals("Quản Lý")) {
 			pMenu.add(btnSanPham);
 	        pMenu.add(Box.createRigidArea(new Dimension(0, 40))); // Khoảng cách đầu tiên
@@ -337,7 +337,7 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 				pContent.removeAll();
 				System.gc();
 				pContent.add(new Gui_QuanLyKetCa(pContent.getWidth(), pContent.getHeight()));
-				lbl1.setText("Quản Lý Kết Ca");
+				lbl1.setText("QUẢN LÝ KẾT CA");
 			}
 			actButtonBack = btnQuanLyKetCa;
 		}else if (act.equals(btnHuongDan)) {
@@ -418,42 +418,56 @@ public class Gui_Chinh extends JFrame implements ActionListener{
 	            btnHoaDon.doClick();
 	        }
 	    });
-	    KeyStroke keyNhanVien = KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0);
-	    inputMap.put(keyNhanVien, "nhanVien");
-	    actionMap.put("nhanVien", new AbstractAction() {
-	        public void actionPerformed(ActionEvent e) {
-	            btnNhanVien.doClick(); 
-	        }
-	    });
-	    KeyStroke keyKhuyenMai = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0);
-	    inputMap.put(keyKhuyenMai, "khuyenMai");
-	    actionMap.put("khuyenMai", new AbstractAction() {
-	        public void actionPerformed(ActionEvent e) {
-	            btnKhuyenMai.doClick();
-	        }
-	    });
-	    KeyStroke keyKhachHang = KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0);
+//	    KeyStroke keyNhanVien = KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0);
+//	    inputMap.put(keyNhanVien, "nhanVien");
+//	    actionMap.put("nhanVien", new AbstractAction() {
+//	        public void actionPerformed(ActionEvent e) {
+//	            btnNhanVien.doClick(); 
+//	        }
+//	    });
+//	    KeyStroke keyKhuyenMai = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0);
+//	    inputMap.put(keyKhuyenMai, "khuyenMai");
+//	    actionMap.put("khuyenMai", new AbstractAction() {
+//	        public void actionPerformed(ActionEvent e) {
+//	            btnKhuyenMai.doClick();
+//	        }
+//	    });
+	    KeyStroke keyKhachHang = KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0);
 	    inputMap.put(keyKhachHang, "khachHang");
 	    actionMap.put("khachHang", new AbstractAction() {
 	        public void actionPerformed(ActionEvent e) {
 	            btnKhachHang.doClick();
 	        }
 	    });
-	    KeyStroke keyThongKe = KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0);
-	    inputMap.put(keyThongKe, "thongKe");
-	    actionMap.put("thongKe", new AbstractAction() {
-	        public void actionPerformed(ActionEvent e) {
-	            btnThongKe.doClick(); 
-	        }
-	    });
-	    KeyStroke keyHuongDan = KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0);
+//	    KeyStroke keyThongKe = KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0);
+//	    inputMap.put(keyThongKe, "thongKe");
+//	    actionMap.put("thongKe", new AbstractAction() {
+//	        public void actionPerformed(ActionEvent e) {
+//	            btnThongKe.doClick(); 
+//	        }
+//	    });
+	    KeyStroke keyHuongDan = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0);
 	    inputMap.put(keyHuongDan, "huongDan");
 	    actionMap.put("huongDan", new AbstractAction() {
 	        public void actionPerformed(ActionEvent e) {     
 	            btnHuongDan.doClick(); 
 	        }
 	    });
-	    KeyStroke keyDangXuat = KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+	    KeyStroke keyKetCa = KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0);
+	    inputMap.put(keyKetCa, "KetCa");
+	    actionMap.put("KetCa", new AbstractAction() {
+	        public void actionPerformed(ActionEvent e) {     
+	            btnKetCa.doClick(); 
+	        }
+	    });
+	    KeyStroke keyDoiMatKhau = KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0);
+	    inputMap.put(keyDoiMatKhau, "doiMatKhau");
+	    actionMap.put("doiMatKhau", new AbstractAction() {
+	        public void actionPerformed(ActionEvent e) {     
+	            btnTaiKhoan.doClick(); 
+	        }
+	    });
+	    KeyStroke keyDangXuat = KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0);
 	    inputMap.put(keyDangXuat, "dangXuat");
 	    actionMap.put("dangXuat", new AbstractAction() {
 	        public void actionPerformed(ActionEvent e) {               

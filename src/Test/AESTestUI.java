@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import Test.RSATestUI.KeyPair;
+import test.RSATestUI.KeyPair;
 
 public class AESTestUI extends JFrame{
 

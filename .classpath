@@ -6,6 +6,9 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="images"/>
+	<classpathentry kind="src" path="libs"/>
 	<classpathentry kind="lib" path="libs/jbcrypt-0.4.jar"/>
 	<classpathentry kind="lib" path="libs/jcalendar-1.2.2.jar"/>
 	<classpathentry kind="lib" path="libs/jcalendar-1.4.jar"/>

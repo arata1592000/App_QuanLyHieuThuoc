@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import java.math.BigInteger;
 import java.util.Random;
